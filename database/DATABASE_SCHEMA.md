@@ -1,8 +1,8 @@
 # Database Schema - Entity Relationship Diagram
 
 ## Doctor Appointment Mobile App
-
-```
+;;;;
+```jkljljllj
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                           USERS (Central Table)                              │
 ├─────────────────────────────────────────────────────────────────────────────┤
