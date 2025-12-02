@@ -14,9 +14,9 @@ If you haven't downloaded the project yet, clone it from GitHub:
 ## 2. Creating a New Branch
 
 Make sure you are on the main branch:
-
+```bash
  git checkout main  
-
+```
 Create a new branch and switch to it:
 ```bash
  git checkout -b your-branch-name 
