@@ -13,17 +13,17 @@ return new class extends Migration
     {
         Schema::create('availability_slots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
+            $table->foreignId('doctor_profile_id')->constrained('doctor_profiles')->onDelete('cascade');
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
-            $table->boolean('is_available')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->boolean('is_booked')->default(false);
             $table->timestamps();
 
             // Indexes for efficient querying
-            $table->index(['doctor_id', 'date', 'is_available']);
-            $table->unique(['doctor_id', 'date', 'start_time']); // Prevent duplicate slots
+            $table->index(['doctor_profile_id', 'date', 'is_active']);
+            $table->unique(['doctor_profile_id', 'date', 'start_time']); // Prevent duplicate slots
         });
     }
 

@@ -17,6 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('mobile')->nullable();
+            $table->string('google_id')->nullable();
+            $table->timestamp('mobile_verified_at')->nullable();
+            $table->string('profile_photo_path')->nullable();
+            $table->tinyInteger('status')->default(1);
+            $table->enum('user_type', ['patient', 'doctor', 'admin'])->default('patient');
+            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

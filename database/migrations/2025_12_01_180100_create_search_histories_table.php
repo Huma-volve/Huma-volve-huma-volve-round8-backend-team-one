@@ -9,19 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('conversation_participants', function (Blueprint $table) {
+        Schema::create('search_histories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('conversation_id')->constrained('conversations')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->integer('unread_count')->default(0);
-            $table->timestamp('last_read_at')->nullable();
+            $table->string('keyword');
+            $table->json('filters')->nullable();
             $table->timestamps();
 
-            // Unique constraint
-            $table->unique(['conversation_id', 'user_id']);
-            $table->index(['user_id', 'unread_count']);
+            // Index for quick retrieval
+            $table->index(['user_id', 'created_at']);
         });
     }
 
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('conversation_participants');
+        Schema::dropIfExists('search_histories');
     }
 };

@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('patients', function (Blueprint $table) {
+        Schema::create('chat_participants', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('conversation_id')->constrained('conversations')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->date('birthdate')->nullable();
-            $table->enum('gender', ['male', 'female'])->nullable();
-            $table->decimal('latitude', 10, 8)->nullable();
-            $table->decimal('longitude', 11, 8)->nullable();
+            $table->timestamp('last_read_at')->nullable();
+            $table->boolean('is_archived')->default(false);
+            $table->boolean('is_favorite')->default(false);
             $table->timestamps();
+
+            // Unique constraint
+            $table->unique(['conversation_id', 'user_id']);
         });
     }
 
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('patients');
+        Schema::dropIfExists('chat_participants');
     }
 };

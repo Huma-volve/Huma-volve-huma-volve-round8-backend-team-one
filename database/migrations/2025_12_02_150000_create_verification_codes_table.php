@@ -11,16 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('faqs', function (Blueprint $table) {
+        Schema::create('verification_codes', function (Blueprint $table) {
             $table->id();
-            $table->string('question');
-            $table->text('answer');
-            $table->integer('order')->default(0); // For ordering FAQs
-            $table->boolean('is_active')->default(true);
+            $table->string('identifier'); // email or mobile
+            $table->string('code');
+            $table->enum('type', ['mobile', 'email'])->default('mobile');
+            $table->timestamp('expires_at');
             $table->timestamps();
 
-            // Index for ordering
-            $table->index(['is_active', 'order']);
+            $table->index(['identifier', 'type']);
         });
     }
 
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('faqs');
+        Schema::dropIfExists('verification_codes');
     }
 };
