@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id')->constrained('doctors_profiles')->onDelete('cascade');
-            $table->foreignId('patient_id')->constrained('patients_profiles')->onDelete('cascade');
-            $table->foreignId('booking_id')->nullable()->constrained('bookings')->onDelete('set null');
-            $table->integer('rating')->unsigned(); // 1-5 rating
+            $table->foreignId('doctor_id')->constrained('doctor_profiles')->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained('patient_profiles')->onDelete('cascade');
+            $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
+            $table->tinyInteger('rating')->unsigned(); // 1-5 rating
             $table->text('comment')->nullable();
             $table->text('doctor_response')->nullable(); // Doctor can respond to reviews
             $table->timestamp('responded_at')->nullable();

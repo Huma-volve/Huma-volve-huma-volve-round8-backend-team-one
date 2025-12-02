@@ -9,16 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::create('admin_permissions', function (Blueprint $table) {
+        Schema::create('search_histories', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->json('permissions'); // Array of permissions like ['create_doctor', 'manage_users', 'view_reports']
+            $table->string('keyword');
+            $table->json('filters')->nullable();
             $table->timestamps();
 
-            // Ensure user is admin or helper
-            $table->index('user_id');
+            // Index for quick retrieval
+            $table->index(['user_id', 'created_at']);
         });
     }
 
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('admin_permissions');
+        Schema::dropIfExists('search_histories');
     }
 };

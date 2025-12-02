@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('doctor_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('specialty_id')->constrained('specialties')->onDelete('restrict');
+            $table->foreignId('specialty_id')->constrained('specialities')->onDelete('restrict');
             $table->string('license_number', 50)->unique();
             $table->text('bio')->nullable();
             $table->decimal('session_price', 8, 2);
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->decimal('rating_avg', 3, 2)->default(0);
             $table->integer('total_reviews')->default(0);
             $table->boolean('is_approved')->default(false);
+            $table->tinyInteger('experience_length')->default(0);
             $table->string('temporary_password')->nullable(); // For admin-created accounts
             $table->boolean('password_changed')->default(false); // Track if temp password was changed
             $table->timestamps();
