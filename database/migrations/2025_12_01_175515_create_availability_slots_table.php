@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('availability_slots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
+            $table->foreignId('doctor_id')->constrained('doctors_profiles')->onDelete('cascade');
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');

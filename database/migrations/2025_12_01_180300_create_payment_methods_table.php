@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('payment_methods', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained('patients_profiles')->onDelete('cascade');
             $table->enum('type', ['paypal', 'stripe', 'card']);
             $table->string('provider_customer_id')->nullable(); // Stripe customer ID or PayPal email
             $table->string('last_four')->nullable(); // Last 4 digits of card

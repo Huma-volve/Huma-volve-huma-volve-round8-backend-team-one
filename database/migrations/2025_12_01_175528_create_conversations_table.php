@@ -18,8 +18,8 @@ return new class extends Migration
             $table->timestamp('last_message_at')->nullable();
             $table->boolean('is_archived_by_patient')->default(false);
             $table->boolean('is_archived_by_doctor')->default(false);
-            $table->boolean('is_favorited_by_patient')->default(false);
-            $table->boolean('is_favorited_by_doctor')->default(false);
+            $table->boolean('is_favored_by_patient')->default(false);
+            $table->boolean('is_favored_by_doctor')->default(false);
             $table->timestamps();
 
             // Unique constraint to prevent duplicate conversations

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('search_history', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained('patients_profiles')->onDelete('cascade');
             $table->string('search_query');
             $table->enum('search_type', ['specialty', 'name', 'location'])->default('specialty');
             $table->decimal('latitude', 10, 8)->nullable(); // For location-based searches

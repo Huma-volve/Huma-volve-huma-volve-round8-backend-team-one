@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('favorites', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('patient_id')->constrained('patients')->onDelete('cascade');
-            $table->foreignId('doctor_id')->constrained('doctors')->onDelete('cascade');
+            $table->foreignId('patient_id')->constrained('patients_profiles')->onDelete('cascade');
+            $table->foreignId('doctor_id')->constrained('doctors_profiles')->onDelete('cascade');
             $table->timestamps();
 
             // Unique constraint to prevent duplicate favorites
