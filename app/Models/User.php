@@ -21,6 +21,14 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'mobile',
+        'google_id',
+        'mobile_verified_at',
+        'profile_photo_path',
+        'status',
+        'user_type',
+        'phone',
+        'address',
     ];
 
     /**
@@ -42,7 +50,34 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'mobile_verified_at' => 'datetime',
             'password' => 'hashed',
+            'status' => 'integer',
         ];
+    }
+
+    public function doctorProfile()
+    {
+        return $this->hasOne(DoctorProfile::class);
+    }
+
+    public function patientProfile()
+    {
+        return $this->hasOne(PatientProfile::class);
+    }
+
+    public function savedCards()
+    {
+        return $this->hasMany(SavedCard::class);
+    }
+
+    public function searchHistories()
+    {
+        return $this->hasMany(SearchHistory::class);
+    }
+
+    public function chatParticipants()
+    {
+        return $this->hasMany(ChatParticipant::class);
     }
 }
