@@ -62,4 +62,35 @@ class DoctorProfile extends Model
     {
         return $this->hasMany(AvailabilitySlot::class, 'doctor_profile_id');
     }
+
+    public function isFavoritedBy(int $userId): bool
+    {
+        $patient = PatientProfile::where('user_id', $userId)->first();
+        if (!$patient) return false;
+
+        return \Illuminate\Support\Facades\DB::table('favorites')
+            ->where('doctor_id', $this->id)
+            ->where('patient_id', $patient->id)
+            ->exists();
+    }
+
+    public function getUpcomingSlots()
+    {
+        return $this->availabilitySlots()
+            ->where('date', '>=', now()->format('Y-m-d'))
+            ->where('is_active', true)
+            ->where('is_booked', false)
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->take(5)
+            ->get()
+            ->map(function ($slot) {
+                return [
+                    'id' => $slot->id,
+                    'date' => $slot->date->format('Y-m-d'),
+                    'start_time' => $slot->start_time->format('H:i'),
+                    'end_time' => $slot->end_time->format('H:i'),
+                ];
+            });
+    }
 }
