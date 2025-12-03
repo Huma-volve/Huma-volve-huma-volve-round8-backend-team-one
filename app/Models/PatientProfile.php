@@ -40,9 +40,6 @@ class PatientProfile extends Model
 
     public function searchHistories()
     {
-        return $this->hasMany(SearchHistory::class, 'patient_id'); // Actually user_id in migration, but kept for consistency if needed or remove.
-        // Wait, search_histories migration uses user_id now. So this relationship might be better on User model directly.
-        // But if we want to access from profile:
-        // return $this->hasManyThrough(SearchHistory::class, User::class, 'id', 'user_id', 'user_id', 'id');
+        return $this->hasMany(SearchHistory::class, 'patient_id'); 
     }
 }
