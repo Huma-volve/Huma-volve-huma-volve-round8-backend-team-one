@@ -15,13 +15,14 @@ return new class extends Migration
 
         Schema::create('saved_cards', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->text('provider_token');
             $table->text('brand');
             $table->text('last_four');
-            $table->date('exp_month');
-            $table->date('exp_year');
+            $table->unsignedTinyInteger('exp_month');
+            $table->unsignedSmallInteger('exp_year');
             $table->boolean('is_default');
+            $table->timestamps();
         });
 
         Schema::enableForeignKeyConstraints();
