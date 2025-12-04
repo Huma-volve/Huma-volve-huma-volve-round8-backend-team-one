@@ -62,4 +62,9 @@ class DoctorProfile extends Model
     {
         return $this->hasMany(AvailabilitySlot::class, 'doctor_profile_id');
     }
+
+    public function favoritedByUsers()
+    {
+        return $this->hasMany(FavoriteDoctor::class, 'doctor_profile_id');
+    }
 }
