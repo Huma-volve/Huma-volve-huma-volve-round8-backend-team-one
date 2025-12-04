@@ -15,6 +15,17 @@ class ChatService
         protected ChatRepositoryInterface $chatRepository
     ) {}
 
+    /**
+     * Send a new message in a conversation.
+     *
+     * Handles text and file attachments, persists to database,
+     * updates conversation timestamp, and dispatches real-time event.
+     *
+     * @param User $sender
+     * @param Conversation $conversation
+     * @param array $data Validated data containing 'body' and optional 'attachment'
+     * @return Message
+     */
     public function sendMessage(User $sender, Conversation $conversation, array $data): Message
     {
         $messageData = [
@@ -39,6 +50,13 @@ class ChatService
         return $message->load('sender');
     }
 
+
+    /**
+     * Determine the media type based on the file MIME type.
+     *
+     * @param UploadedFile $file
+     * @return string 'image', 'video', or 'file'
+     */
     protected function getMediaType(UploadedFile $file): string
     {
         $mime = $file->getMimeType();

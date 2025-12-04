@@ -18,6 +18,12 @@ class ChatController extends Controller
         protected ChatService $chatService
     ) {}
 
+    /**
+     * List user conversations with pagination.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function index(Request $request)
     {
         $conversations = $this->chatRepository->getUserConversations($request->user()->id);
@@ -25,6 +31,13 @@ class ChatController extends Controller
         return ConversationResource::collection($conversations);
     }
 
+    /**
+     * Display a conversation and mark it as read.
+     *
+     * @param Request $request
+     * @param Conversation $conversation
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function show(Request $request, Conversation $conversation)
     {
         $participant = $conversation->participants()->where('user_id', $request->user()->id)->firstOrFail();
@@ -38,6 +51,13 @@ class ChatController extends Controller
         return MessageResource::collection($messages);
     }
 
+    /**
+     * Send a new message to a conversation.
+     *
+     * @param SendMessageRequest $request
+     * @param Conversation $conversation
+     * @return MessageResource
+     */
     public function store(SendMessageRequest $request, Conversation $conversation)
     {
         if (! $conversation->participants()->where('user_id', $request->user()->id)->exists()) {
@@ -53,6 +73,13 @@ class ChatController extends Controller
         return new MessageResource($message);
     }
 
+    /**
+     * Toggle the archived status of a conversation.
+     *
+     * @param Request $request
+     * @param Conversation $conversation
+     * @return \Illuminate\Http\Response
+     */
     public function toggleArchive(Request $request, Conversation $conversation)
     {
         $participant = $conversation->participants()->where('user_id', $request->user()->id)->firstOrFail();
@@ -64,6 +91,13 @@ class ChatController extends Controller
         return response()->noContent();
     }
 
+    /**
+     * Toggle the favorite status of a conversation.
+     *
+     * @param Request $request
+     * @param Conversation $conversation
+     * @return \Illuminate\Http\Response
+     */
     public function toggleFavorite(Request $request, Conversation $conversation)
     {
         $participant = $conversation->participants()->where('user_id', $request->user()->id)->firstOrFail();
