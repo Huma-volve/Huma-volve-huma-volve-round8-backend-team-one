@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\PatientProfile;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
+use App\Services\SendSMSService;
 use App\Repositories\VerificationCodeRepository;
 
 class RegisterController extends Controller
@@ -30,6 +31,7 @@ class RegisterController extends Controller
         $this->repo->createOtp($request->phone,$otp);
 
         // send sms
+        app(SendSMSService::class)->sendSms($request->phone, "Your verification code is: $otp");
 
         return response()->json([
             'status'  => 'success',
