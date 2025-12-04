@@ -1,8 +1,17 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\
+{
+    LoginController,
+    VerifyOtpController,
+    RegisterController
+};
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+
+Route::post('/login',[LoginController::class,'sendOtp']);
+Route::post('/verify-otp',[VerifyOtpController::class,'verifyOtp']);
+Route::post('/register',[RegisterController::class,'Register']);
+
+
