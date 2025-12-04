@@ -15,10 +15,10 @@ class LoginController extends Controller
     {
     }
 
-    public function sendOtp(LoginRequest $request)
+    public function login(LoginRequest $request)
     {
         return response()->json(
-            $this->service->sendOtpToUser($request->phone)
+            $this->service->login($request->phone , $request->password)
         );
     }
 
