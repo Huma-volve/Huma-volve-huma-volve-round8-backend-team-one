@@ -41,4 +41,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conversations/{conversation}/messages', [ChatController::class, 'store']);
     Route::patch('/conversations/{conversation}/archive', [ChatController::class, 'toggleArchive']);
     Route::patch('/conversations/{conversation}/favorite', [ChatController::class, 'toggleFavorite']);
+
+    // Booking Routes
+    Route::apiResource('bookings', \App\Http\Controllers\BookingController::class);
+    Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel']);
+
+    // Payment Routes
+    Route::post('/payments/process', [\App\Http\Controllers\PaymentController::class, 'process']);
+
+    // Saved Cards Routes
+    Route::apiResource('saved-cards', \App\Http\Controllers\SavedCardController::class)->only(['index', 'store', 'destroy']);
 });
