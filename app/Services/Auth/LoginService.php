@@ -5,6 +5,7 @@ namespace App\Services\Auth;
 use App\Models\User;
 use App\Repositories\VerificationCodeRepository;
 use Illuminate\Support\Facades\Hash;
+use App\Services\SendSMSService;
 
 class LoginService {
 
@@ -30,13 +31,13 @@ class LoginService {
             $otp = random_int(1000, 9999);
             $this->repo->createOtp($phone, $otp);
 
-            // Send SMS
-            // SmsService::send($phone, "Your OTP is $otp");
+            // send sms
+            app(SendSMSService::class)->sendSms($phone, "Your verification code is: $otp");
 
-            return [
-                'status'  =>'fail',
-                'message' => 'Your account is not verified, OTP sent for verification'
-            ];
+                return [
+                    'status'  =>'fail',
+                    'message' => 'Your account is not verified, OTP sent for verification'
+                ];
         }
 
         $user->tokens()->delete();
