@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('conversations', function (Blueprint $table) {
             $table->id();
+            $table->boolean('is_private')->default(true);
             $table->timestamp('last_message_at')->nullable();
             $table->timestamps();
         });

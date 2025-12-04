@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\PatientProfile;
 use App\Models\User;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Faker\Factory as Faker;
 
 class PatientSeeder extends Seeder
 {
