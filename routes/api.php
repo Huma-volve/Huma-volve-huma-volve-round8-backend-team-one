@@ -1,10 +1,17 @@
 <?php
 
-use App\Http\Controllers\Auth\OtpLoginController;
+use App\Http\Controllers\Auth\
+{
+    LoginController,
+    VerifyOtpController,
+    RegisterController
+};
 use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('/login/send-otp',[OtpLoginController::class,'sendOtp']);
-Route::post('/login/verify-otp',[OtpLoginController::class,'verifyOtp']);
+Route::post('/login',[LoginController::class,'sendOtp']);
+Route::post('/verify-otp',[VerifyOtpController::class,'verifyOtp']);
+Route::post('/register',[RegisterController::class,'Register']);
+
 

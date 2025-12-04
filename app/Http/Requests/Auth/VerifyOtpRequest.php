@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth\Login;
+namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SendOtpRequest extends FormRequest
+class VerifyOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,6 +23,7 @@ class SendOtpRequest extends FormRequest
     {
         return [
             'phone' => ['required','regex:/^(?:\+?20|0)?1[0-2,5][0-9]{8}$/','exists:users,phone'],
+            'otp'   => ['required' , 'digits:4']
         ];
     }
 }
