@@ -4,8 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\SavedCard;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class SavedCardSeeder extends Seeder
 {

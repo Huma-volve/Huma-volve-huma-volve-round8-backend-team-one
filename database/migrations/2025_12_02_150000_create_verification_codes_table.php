@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('identifier'); // email or mobile
             $table->string('code');
-            $table->enum('type', ['mobile', 'email'])->default('mobile');
+            $table->enum('type', ['phone', 'email'])->default('phone');
             $table->timestamp('expires_at');
             $table->timestamps();
 

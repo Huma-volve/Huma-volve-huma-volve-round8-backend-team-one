@@ -19,8 +19,8 @@ return new class extends Migration
             $table->text('provider_token');
             $table->text('brand');
             $table->text('last_four');
-            $table->unsignedTinyInteger('exp_month'); 
-            $table->unsignedSmallInteger('exp_year'); 
+            $table->unsignedTinyInteger('exp_month');
+            $table->unsignedSmallInteger('exp_year');
             $table->boolean('is_default');
             $table->timestamps();
         });
