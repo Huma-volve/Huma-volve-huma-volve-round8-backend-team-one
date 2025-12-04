@@ -26,10 +26,10 @@ class Booking extends Model
     ];
 
     protected $casts = [
-        'appointment_date'        => 'date',
-        'appointment_time'        => 'datetime:H:i',
-        'price_at_booking'        => 'float',
-        'cancelled_at'            => 'datetime',
+        'appointment_date' => 'date',
+        'appointment_time' => 'datetime:H:i',
+        'price_at_booking' => 'float',
+        'cancelled_at' => 'datetime',
     ];
 
     public function doctor()

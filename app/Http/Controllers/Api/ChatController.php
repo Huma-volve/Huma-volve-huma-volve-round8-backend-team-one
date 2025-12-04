@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Http\Requests\Api\SendMessageRequest;
 use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
-use App\Repositories\Contracts\ChatRepositoryInterface;
 use App\Models\Conversation;
+use App\Repositories\Contracts\ChatRepositoryInterface;
 use App\Services\Chat\ChatService;
-use App\Http\Requests\Api\SendMessageRequest;
+use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {

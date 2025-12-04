@@ -19,7 +19,7 @@ class PatientProfile extends Model
 
     protected $casts = [
         'birthdate' => 'date',
-        'latitude'  => 'float',
+        'latitude' => 'float',
         'longitude' => 'float',
     ];
 

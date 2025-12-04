@@ -17,7 +17,7 @@ class ConversationFactory extends Factory
     public function definition(): array
     {
         return [
-            'is_private' => true
+            'is_private' => true,
         ];
     }
 }

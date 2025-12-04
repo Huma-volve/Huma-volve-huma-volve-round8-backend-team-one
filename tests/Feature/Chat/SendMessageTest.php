@@ -19,7 +19,7 @@ class SendMessageTest extends TestCase
     public function test_user_can_send_text_message()
     {
         $this->withoutExceptionHandling();
-        
+
         // Arrange
         Event::fake();
         $user = User::factory()->create();
@@ -39,7 +39,7 @@ class SendMessageTest extends TestCase
                     'body' => 'Hello World',
                     'conversation_id' => $conversation->id,
                     'type' => 'text',
-                ]
+                ],
             ]);
 
         $this->assertDatabaseHas('messages', [
@@ -56,7 +56,7 @@ class SendMessageTest extends TestCase
 
         // Arrange
         Event::fake();
-        Storage::fake('public'); 
+        Storage::fake('public');
 
         $user = User::factory()->create();
         $conversation = Conversation::factory()->create();
@@ -67,7 +67,7 @@ class SendMessageTest extends TestCase
         // Act
         $response = $this->actingAs($user)
             ->postJson("/api/conversations/{$conversation->id}/messages", [
-                'attachment' => $file, 
+                'attachment' => $file,
             ]);
 
         // Assert
@@ -84,10 +84,10 @@ class SendMessageTest extends TestCase
         $response->assertJson([
             'data' => [
                 'type' => 'image',
-                'body' => Storage::url($message->body), 
-            ]
+                'body' => Storage::url($message->body),
+            ],
         ]);
-        
+
         Event::assertDispatched(MessageSent::class);
     }
 }

@@ -28,9 +28,9 @@ class MessageFactory extends Factory
 
     public function image()
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'type' => 'image',
-            'body' => 'https://via.placeholder.com/640x480.png'
+            'body' => 'https://via.placeholder.com/640x480.png',
         ]);
     }
 }

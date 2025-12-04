@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Contracts;
 
-use App\Models\Conversation;
 use App\Models\Message;
 use Illuminate\Database\Eloquent\Collection;
 

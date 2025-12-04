@@ -22,7 +22,7 @@ class MessageResource extends JsonResource
             'sender_name' => $this->sender->name,
             'body' => $this->type === 'text' ? $this->body : Storage::url($this->body),
             'type' => $this->type,
-            'is_read' => !is_null($this->read_at),
+            'is_read' => ! is_null($this->read_at),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }

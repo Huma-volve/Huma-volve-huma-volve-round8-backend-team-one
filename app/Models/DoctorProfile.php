@@ -27,13 +27,13 @@ class DoctorProfile extends Model
     ];
 
     protected $casts = [
-        'rating_avg'      => 'float',
-        'total_reviews'   => 'integer',
-        'is_approved'     => 'boolean',
+        'rating_avg' => 'float',
+        'total_reviews' => 'integer',
+        'is_approved' => 'boolean',
         'password_changed' => 'boolean',
-        'session_price'   => 'float',
-        'latitude'        => 'float',
-        'longitude'       => 'float',
+        'session_price' => 'float',
+        'latitude' => 'float',
+        'longitude' => 'float',
         'experience_length' => 'integer',
     ];
 
