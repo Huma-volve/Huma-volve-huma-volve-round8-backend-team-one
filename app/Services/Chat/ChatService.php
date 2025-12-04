@@ -2,6 +2,7 @@
 
 namespace App\Services\Chat;
 
+use App\Events\MessageSent;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
@@ -33,7 +34,9 @@ class ChatService
 
         $this->chatRepository->updateConversationTimestamp($conversation->id);
 
-        return $message;
+        MessageSent::dispatch($message);
+
+        return $message->load('sender');
     }
 
     protected function getMediaType(UploadedFile $file): string
