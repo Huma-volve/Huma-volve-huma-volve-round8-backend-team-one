@@ -4,6 +4,7 @@ namespace App\Services\Auth;
 
 use App\Models\User;
 use App\Repositories\VerificationCodeRepository;
+use Illuminate\Support\Facades\Hash;
 
 class LoginService {
 
@@ -12,23 +13,42 @@ class LoginService {
     }
 
 
-    public function sendOtpToUser(string $phone): array
+    public function login(string $phone , string $password): array
     {
         $user = User::where('phone', $phone)->first();
 
-        $this->repo->deleteOld($phone);
-        $otp = random_int(1000, 9999);
-        $this->repo->createOtp($phone, $otp);
+        if(!$user || !Hash::check($password, $user->password)){
+            return [
+                'status'  => 'fail',
+                'message' => 'Invalid credentials!'
+            ];
+        }
 
-        // Send SMS
-        // SmsService::send($phone, "Your OTP is $otp");
+        if(!$user->phone_verified_at){
+
+            $this->repo->deleteOld($phone);
+            $otp = random_int(1000, 9999);
+            $this->repo->createOtp($phone, $otp);
+
+            // Send SMS
+            // SmsService::send($phone, "Your OTP is $otp");
+
+            return [
+                'status'  =>'fail',
+                'message' => 'Your account is not verified, OTP sent for verification'
+            ];
+        }
+
+        $user->tokens()->delete();
+        $token = $user->createToken('authToken', ['*'], now()->addDay())->plainTextToken;
 
         return [
-            'status'  => $user->phone_verified_at ? 'pending' : 'fail',
-            'message' => $user->phone_verified_at
-                ? 'OTP sent for login'
-                : 'Your account is not verified, OTP sent for verification'
+            'status'  => 'success',
+            'message' => 'Logged in successfully',
+            'token'   => $token
         ];
+
+
     }
 
 

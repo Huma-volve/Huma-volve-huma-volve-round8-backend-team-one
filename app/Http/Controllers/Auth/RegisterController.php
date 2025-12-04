@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\VerificationCode;
 use App\Repositories\VerificationCodeRepository;
 
 class RegisterController extends Controller
