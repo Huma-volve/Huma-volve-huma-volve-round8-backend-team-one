@@ -67,7 +67,7 @@ class BookingController extends Controller
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
             'status' => 'pending',
-            'price_at_booking' => $doctor->consultation_price ?? 0, // Assuming price is on doctor profile
+            'price_at_booking' => $doctor->session_price ?? 0, 
             'payment_method' => $request->payment_method,
             'payment_status' => 'unpaid',
             'notes' => $request->notes,

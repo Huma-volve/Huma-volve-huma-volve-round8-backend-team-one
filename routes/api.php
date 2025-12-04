@@ -6,6 +6,9 @@ use App\Http\Controllers\Auth\{
     VerifyOtpController,
     RegisterController
 };
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\SavedCardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +39,7 @@ Route::get('/user', function (Request $request) {
 */
 
 Route::middleware('auth:sanctum')->group(function () {
+    // Chat Routes
     Route::get('/conversations', [ChatController::class, 'index']);
     Route::get('/conversations/{conversation}', [ChatController::class, 'show']);
     Route::post('/conversations/{conversation}/messages', [ChatController::class, 'store']);
@@ -43,12 +47,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/conversations/{conversation}/favorite', [ChatController::class, 'toggleFavorite']);
 
     // Booking Routes
-    Route::apiResource('bookings', \App\Http\Controllers\BookingController::class);
-    Route::post('/bookings/{booking}/cancel', [\App\Http\Controllers\BookingController::class, 'cancel']);
+    Route::apiResource('bookings', BookingController::class);
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
 
     // Payment Routes
-    Route::post('/payments/process', [\App\Http\Controllers\PaymentController::class, 'process']);
+    Route::post('/payments/process', [PaymentController::class, 'process']);
 
     // Saved Cards Routes
-    Route::apiResource('saved-cards', \App\Http\Controllers\SavedCardController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('saved-cards', SavedCardController::class)->only(['index', 'store', 'destroy']);
 });
