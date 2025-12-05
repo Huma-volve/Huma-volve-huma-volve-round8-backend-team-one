@@ -10,6 +10,7 @@ use App\Models\Booking;
 use App\Models\Review;
 use App\Notifications\DoctorNotification;
 use App\Notifications\PatientNotification;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class ReviewController extends Controller
@@ -32,9 +33,11 @@ class ReviewController extends Controller
         ], 422);
         }
 
+        $patientProfile = Auth::user()->patientProfile;
+
         $review = Review::create([
         'doctor_id' => $booking->doctor_id,
-        'patient_id' =>$request->patient_id,
+        'patient_id' => $patientProfile->id,
         'booking_id' => $booking->id,
         'rating' => $request->rating,
         'comment' => $request->comment ?? null,
@@ -54,12 +57,20 @@ class ReviewController extends Controller
         ], 201);
     }
 
-    public function reviews()
+    public function reviews(Request $request)
     {
 
-    $doctorId = 1;
+    $doctorUser = $request->user(); 
+    $doctorProfile = $doctorUser->doctorProfile;
+
+    if (!$doctorProfile) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Doctor profile not found for this user.'
+        ], 404);
+    }
     $reviews = Review::with(['patient.user'])   
-                    ->where('doctor_id', $doctorId)
+                    ->where('doctor_id',  $doctorProfile->id)
                     ->orderBy('created_at', 'desc')
                     ->get();
 
@@ -71,13 +82,13 @@ class ReviewController extends Controller
 
      public function reply(DoctorResponseRequest $request, Review $review)
     {
-
-        // if ($review->doctor_id != auth()->id()) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'It is not appropriate for you to reply to this review'
-        //     ], 403);
-        // }
+        $doctor = $request->user()->doctorProfile;
+        if (!$doctor || $review->doctor_id != $doctor->id) {
+        return response()->json([
+            'success' => false,
+            'message' => 'It is not appropriate for you to reply to this review'
+        ], 403);
+        }
 
         $review->doctor_response = $request->doctor_response;
         $review->responded_at = now();

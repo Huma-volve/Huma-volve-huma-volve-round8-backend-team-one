@@ -22,7 +22,7 @@ class DoctorResponseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'doctor_response' => 'nullable|string|max:1000',
+            'doctor_response' => 'required|string|max:1000',
         ];
     }
 }

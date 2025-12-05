@@ -56,10 +56,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/conversations/{conversation}/messages', [ChatController::class, 'store']);
     Route::patch('/conversations/{conversation}/archive', [ChatController::class, 'toggleArchive']);
     Route::patch('/conversations/{conversation}/favorite', [ChatController::class, 'toggleFavorite']);
-    Route::post('store/review', [ReviewController::class, 'store']);
-    Route::get('doctor/reviews', [ReviewController::class, 'reviews']);
+    Route::post('/store/review', [ReviewController::class, 'store']);
+    Route::get('/doctor/reviews', [ReviewController::class, 'reviews']);
     Route::post('/doctor/review/{review}/reply', [ReviewController::class, 'reply']);
     Route::get('/notifications', [NotificationController::class, 'index']);
-    Route::get('notifications/unread', [NotificationController::class, 'unread']);
-    Route::post('notifications/{id}/read', [NotificationController::class, 'markAsRead']);  
+    Route::get('/notifications/unread', [NotificationController::class, 'unread']);
+    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead']);  
 });
