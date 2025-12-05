@@ -64,7 +64,7 @@ class User extends Authenticatable
 
     public function patientProfile()
     {
-        return $this->hasOne(PatientProfile::class);
+        return $this->hasOne(PatientProfile::class,'user_id');
     }
 
     public function savedCards()
@@ -82,6 +82,9 @@ class User extends Authenticatable
         return $this->hasMany(ChatParticipant::class);
     }
 
+    public function favoriteDoctors()
+    {
+        return $this->hasMany(FavoriteDoctor::class, 'user_id');
     public function conversations()
     {
         return $this->belongsToMany(Conversation::class, 'chat_participants', 'user_id', 'conversation_id')
