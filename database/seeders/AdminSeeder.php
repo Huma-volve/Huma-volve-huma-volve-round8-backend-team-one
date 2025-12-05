@@ -11,13 +11,13 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-            'user_type' => 'admin',
-            'status' => 1,
-            'mobile' => '1234567890',
-            'email_verified_at' => now(),
-        ]);
+    'name' => 'Super Admin',
+    'email' => 'admin@admin.com',
+    'password' => Hash::make('password'),
+    'user_type' => 'admin',
+    'status' => 1,
+    'phone' => '1234567890', // غيرت من mobile لـ phone
+    'email_verified_at' => now(),
+]);
     }
 }
