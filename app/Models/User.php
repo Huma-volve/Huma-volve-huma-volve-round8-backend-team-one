@@ -85,5 +85,10 @@ class User extends Authenticatable
     public function favoriteDoctors()
     {
         return $this->hasMany(FavoriteDoctor::class, 'user_id');
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'chat_participants', 'user_id', 'conversation_id')
+            ->withPivot(['last_read_at'])
+            ->withTimestamps();
     }
 }

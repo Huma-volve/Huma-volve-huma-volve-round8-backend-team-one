@@ -7,8 +7,8 @@ use App\Models\Conversation;
 use App\Models\DoctorProfile;
 use App\Models\Message;
 use App\Models\PatientProfile;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class ConversationSeeder extends Seeder
 {
