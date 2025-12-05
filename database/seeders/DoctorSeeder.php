@@ -24,7 +24,7 @@ class DoctorSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'user_type' => 'doctor',
                 'status' => 1,
-                'mobile' => $faker->phoneNumber,
+                'phone' => $faker->phoneNumber,
                 'email_verified_at' => now(),
             ]);
 
