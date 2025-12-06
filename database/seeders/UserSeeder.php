@@ -13,46 +13,43 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Admin User
+        // Admin User
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
             'user_type' => 'admin',
             'status' => 1,
-            'mobile' => '+1234567890',
             'phone' => '+1234567890',
             'address' => '123 Admin Street, City',
             'email_verified_at' => now(),
-            'mobile_verified_at' => now(),
+            'phone_verified_at' => now(), // العمود موجود في الميرجيشن
         ]);
 
-        // Create Test Doctor User
+        // Doctor User
         User::create([
             'name' => 'Dr. John Smith',
             'email' => 'doctor@example.com',
             'password' => Hash::make('password'),
             'user_type' => 'doctor',
             'status' => 1,
-            'mobile' => '+1234567891',
             'phone' => '+1234567891',
             'address' => '456 Medical Center, City',
             'email_verified_at' => now(),
-            'mobile_verified_at' => now(),
+            'phone_verified_at' => now(),
         ]);
 
-        // Create Test Patient User
+        // Patient User
         User::create([
             'name' => 'Jane Doe',
             'email' => 'patient@example.com',
             'password' => Hash::make('password'),
             'user_type' => 'patient',
             'status' => 1,
-            'mobile' => '+1234567892',
             'phone' => '+1234567892',
             'address' => '789 Patient Avenue, City',
             'email_verified_at' => now(),
-            'mobile_verified_at' => now(),
+            'phone_verified_at' => now(),
         ]);
     }
 }

@@ -21,7 +21,7 @@ class AvailabilitySlot extends Model
     protected $casts = [
         'date' => 'date',
         'start_time' => 'datetime:H:i',
-        'end_time'   => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
         'is_active' => 'boolean',
         'is_booked' => 'boolean',
     ];

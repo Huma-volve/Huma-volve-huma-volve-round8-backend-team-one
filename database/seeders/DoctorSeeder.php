@@ -6,9 +6,9 @@ use App\Models\AvailabilitySlot;
 use App\Models\DoctorProfile;
 use App\Models\Speciality;
 use App\Models\User;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Faker\Factory as Faker;
 
 class DoctorSeeder extends Seeder
 {
@@ -24,7 +24,7 @@ class DoctorSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'user_type' => 'doctor',
                 'status' => 1,
-                'mobile' => $faker->phoneNumber,
+                'phone' => $faker->phoneNumber, // we changed mobile to phone
                 'email_verified_at' => now(),
             ]);
 

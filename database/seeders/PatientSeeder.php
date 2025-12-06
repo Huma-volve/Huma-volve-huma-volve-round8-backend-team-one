@@ -4,9 +4,9 @@ namespace Database\Seeders;
 
 use App\Models\PatientProfile;
 use App\Models\User;
+use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use Faker\Factory as Faker;
 
 class PatientSeeder extends Seeder
 {
@@ -21,11 +21,10 @@ class PatientSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'user_type' => 'patient',
                 'status' => 1,
-                'mobile' => $faker->phoneNumber,
-                'phone' => $faker->phoneNumber,
+                'phone' => $faker->phoneNumber, // we changed mobile to phone
                 'address' => $faker->address,
                 'email_verified_at' => now(),
-                'mobile_verified_at' => now(),
+                'phone_verified_at' => now(), // we changed mobile_verified_at to phone_verified_at
             ]);
 
             PatientProfile::create([
