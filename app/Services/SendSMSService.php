@@ -2,22 +2,17 @@
 
 namespace App\Services;
 
-use Twilio\Rest\Client;
-
 class SendSMSService
 {
-    protected $client;
+    public function SendSMS($phone ,$otp){
+        $basic  = new \Vonage\Client\Credentials\Basic(env('VONAGE_API_KEY'), env('VONAGE_API_SECRET'));
+        $client = new \Vonage\Client($basic);
+        $response = $client->sms()->send(
+            new \Vonage\SMS\Message\SMS($phone, env('VONAGE_SENDER'), "Your OTP Code is $otp")
+        );
 
-    public function __construct()
-    {
-        $this->client = new Client(env('TWILIO_SID'), env('TWILIO_TOKEN'));
-    }
+        $message = $response->current();
 
-    public function sendSms($to, $message)
-    {
-        return $this->client->messages->create($to, [
-            'from' => env('TWILIO_FROM'),
-            'body' => $message
-        ]);
+        return $message;
     }
 }
