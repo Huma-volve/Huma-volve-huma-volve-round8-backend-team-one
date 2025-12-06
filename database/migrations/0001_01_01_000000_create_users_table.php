@@ -20,7 +20,8 @@ return new class extends Migration
             $table->string('google_id')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('profile_photo_path')->nullable();
-            $table->tinyInteger('status')->default(1);
+            $table->boolean('notification_status')->default(1);
+            $table->boolean('can_reset_password')->default(0);
             $table->enum('user_type', ['patient', 'doctor', 'admin'])->default('patient');
             $table->string('phone')->unique()->nullable();
             $table->string('address')->nullable();
@@ -29,7 +30,7 @@ return new class extends Migration
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('phone')->primary();
             $table->string('token');
             $table->timestamp('created_at')->nullable();
         });

@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\Auth\{
     LoginController,
+    GoogleLoginController,
+    ResetPasswordController,
+    ForgetPasswordController,
     LogoutController,
     RegisterController,
-    VerifyOtpController
+    VerifyOtpController,
+    GoogleRegisterController
 };
-
 use App\Http\Controllers\Profile\{
     ChangePasswordController,
     DeleteAccountController,
@@ -36,6 +39,10 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
     Route::post('/verify-otp', [VerifyOtpController::class, 'verifyOtp'])->name('verify-otp');
+    Route::post('/google-login',[GoogleLoginController::class,'googleLogin'])->name('loginWithGoogle');
+    Route::post('/google-register',[GoogleRegisterController::class,'googleRegister'])->name('registerWithGoogle');
+    Route::post('/forget-password',[ForgetPasswordController::class,'forgetPassword'])->name('forget-password');
+    Route::post('/reset-password',[ResetPasswordController::class,'resetPassword'])->name('reset-password');
 });
 
 // ============================================================================
