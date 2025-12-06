@@ -11,16 +11,45 @@ class ChatRepository implements ChatRepositoryInterface
 {
     public function getUserConversations(int $userId): Collection
     {
-        return Conversation::whereHas('participants', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })->orderByDesc('updated_at')->get();
+        // 1. get conversations where this user is a participant
+        $query = Conversation::whereHas('participants', function ($q) use ($userId) {
+            $q->where('user_id', $userId);
+        });
+
+        // 2. apply search by participant name
+        if (request()->has('search') && request('search') != null) {
+            $searchTerm = request('search');
+            $query->whereHas('participants.user', function ($q) use ($searchTerm) {
+                $q->where('name', 'like', "%{$searchTerm}%");
+            });
+        }
+
+        // 3. apply filters favorites or unread
+        if (request()->has('type')) {
+
+            // filter favorite conversations
+            if (request('type') === 'favorites') {
+                $query->whereHas('participants', function ($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                        ->where('is_favorite', true);
+                });
+            }
+
+            // filter unread conversations
+            if (request('type') === 'unread') {
+                $query->whereHas('participants', function ($q) use ($userId) {
+                    $q->where('user_id', $userId)
+                        ->whereRaw('(SELECT COUNT(*) FROM messages WHERE messages.conversation_id = conversations.id AND messages.created_at > chat_participants.last_read_at) > 0');
+                });
+            }
+        }
+
+        return $query->with(['participants.user', 'lastMessage'])->orderByDesc('updated_at')->get();
     }
 
     public function getConversationMessages(int $conversationId): Collection
     {
-        return Message::where('conversation_id', $conversationId)
-            ->orderBy('created_at', 'asc')
-            ->get();
+        return Message::where('conversation_id', $conversationId)->with('sender')->orderBy('created_at', 'asc')->get();
     }
 
     public function createMessage(array $data): Message

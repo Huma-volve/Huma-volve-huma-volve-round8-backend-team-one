@@ -16,17 +16,16 @@ class PatientSeeder extends Seeder
 
         foreach (range(1, 20) as $index) {
             $user = User::create([
-    'name' => $faker->name,
-    'email' => "patient{$index}@example.com",
-    'password' => Hash::make('password'),
-    'user_type' => 'patient',
-    'status' => 1,
-    'phone' => $faker->phoneNumber, // بدل mobile
-    'address' => $faker->address,
-    'email_verified_at' => now(),
-    'phone_verified_at' => now(), // بدل mobile_verified_at
-]);
-
+                'name' => $faker->name,
+                'email' => "patient{$index}@example.com",
+                'password' => Hash::make('password'),
+                'user_type' => 'patient',
+                'status' => 1,
+                'phone' => $faker->phoneNumber, // we changed mobile to phone
+                'address' => $faker->address,
+                'email_verified_at' => now(),
+                'phone_verified_at' => now(), // we changed mobile_verified_at to phone_verified_at
+            ]);
 
             PatientProfile::create([
                 'user_id' => $user->id,

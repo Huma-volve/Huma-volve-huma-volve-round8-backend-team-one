@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Http\Resources\MessageResource;
 use App\Models\Message;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -18,20 +19,12 @@ class MessageSent implements ShouldBroadcastNow
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('chat.'.$this->message->conversation_id),
+            new PrivateChannel('chat.' . $this->message->conversation_id),
         ];
     }
 
     public function broadcastWith(): array
     {
-        return [
-            'id' => $this->message->id,
-            'body' => $this->message->body,
-            'type' => $this->message->type,
-            'conversation_id' => $this->message->conversation_id,
-            'sender_id' => $this->message->sender_id,
-            // convert date to iso8601 standard to ensure the frontend whether it's mobile or web can parse it correctly in any timezone
-            'created_at' => $this->message->created_at->toIso8601String(),
-        ];
+        return (new MessageResource($this->message))->resolve();
     }
 }

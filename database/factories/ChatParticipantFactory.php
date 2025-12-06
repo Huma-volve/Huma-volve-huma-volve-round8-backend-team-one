@@ -21,7 +21,6 @@ class ChatParticipantFactory extends Factory
         return [
             'conversation_id' => Conversation::factory(),
             'user_id' => User::factory(),
-            'joined_at' => now(),
         ];
     }
 }

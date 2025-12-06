@@ -90,4 +90,86 @@ class SendMessageTest extends TestCase
 
         Event::assertDispatched(MessageSent::class);
     }
+
+    public function test_user_can_send_video_message()
+    {
+        $this->withoutExceptionHandling();
+
+        // Arrange
+        Event::fake();
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+        $conversation = Conversation::factory()->create();
+        $conversation->participants()->create(['user_id' => $user->id]);
+
+        $file = UploadedFile::fake()->create('test-video.mp4', 5000, 'video/mp4');
+
+        // Act
+        $response = $this->actingAs($user)
+            ->postJson("/api/conversations/{$conversation->id}/messages", [
+                'attachment' => $file,
+            ]);
+
+        // Assert
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $conversation->id,
+            'type' => 'video',
+        ]);
+
+        $message = Message::where('conversation_id', $conversation->id)->latest()->first();
+        Storage::disk('public')->assertExists($message->body);
+
+        $response->assertJson([
+            'data' => [
+                'type' => 'video',
+                'body' => Storage::url($message->body),
+            ],
+        ]);
+
+        Event::assertDispatched(MessageSent::class);
+    }
+
+    public function test_user_can_send_audio_message()
+    {
+        $this->withoutExceptionHandling();
+
+        // Arrange
+        Event::fake();
+        Storage::fake('public');
+
+        $user = User::factory()->create();
+        $conversation = Conversation::factory()->create();
+        $conversation->participants()->create(['user_id' => $user->id]);
+
+        $file = UploadedFile::fake()->create('voice-message.mp3', 1000, 'audio/mpeg');
+
+        // Act
+        $response = $this->actingAs($user)
+            ->postJson("/api/conversations/{$conversation->id}/messages", [
+                'attachment' => $file,
+            ]);
+
+        // Assert
+        $response->assertCreated();
+
+        $this->assertDatabaseHas('messages', [
+            'conversation_id' => $conversation->id,
+            'type' => 'audio',
+        ]);
+
+        $message = Message::where('conversation_id', $conversation->id)->latest()->first();
+        Storage::disk('public')->assertExists($message->body);
+
+        $response->assertJson([
+            'data' => [
+                'type' => 'audio',
+                'body' => Storage::url($message->body),
+            ],
+        ]);
+
+        Event::assertDispatched(MessageSent::class);
+    }
 }
