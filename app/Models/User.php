@@ -30,6 +30,8 @@ class User extends Authenticatable
         'user_type',
         'phone',
         'address',
+        'can_reset_password',
+        'stripe_customer_id ',
     ];
 
     /**

@@ -7,13 +7,15 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "google/apiclient": "^2.18",
         "laravel/framework": "^12.0",
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
         "stripe/stripe-php": "^19.0",
-        "twilio/sdk": "^8.9"
+        "twilio/sdk": "^8.9",
+        "vonage/client": "^4.2"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",

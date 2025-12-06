@@ -5,6 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+
 
 class ConversationResource extends JsonResource
 {
@@ -24,6 +26,7 @@ class ConversationResource extends JsonResource
             'other_user' => $otherParticipant ? [
                 'id' => $otherParticipant->id,
                 'name' => $otherParticipant->name,
+                'avatar' => $otherParticipant->profile_photo_path ? Storage::url($otherParticipant->profile_photo_path) : null,
             ] : null,
             'last_message' => new MessageResource($this->messages->last()),
             'unread_count' => $unreadCount,

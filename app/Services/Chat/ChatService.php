@@ -69,6 +69,10 @@ class ChatService
             return 'video';
         }
 
+        if (str_contains($mime, 'audio')) {
+            return 'audio';
+        }
+
         return 'file';
     }
 }

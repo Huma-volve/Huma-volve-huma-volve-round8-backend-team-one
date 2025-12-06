@@ -18,7 +18,7 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
         return response()->json(
-            $this->service->login($request->phone , $request->password)
+            $this->service->login($request->phone , $request->password , $request->remember_me)
         );
     }
 

@@ -12,9 +12,10 @@ use App\Repositories\VerificationCodeRepository;
 
 class RegisterController extends Controller
 {
-    public function __construct(protected VerificationCodeRepository $repo)
+    public function __construct(protected VerificationCodeRepository $repo , protected SendSMSService $send)
     {
     }
+
 
     public function Register(RegisterRequest $request){
         $user = User::create([
@@ -31,11 +32,18 @@ class RegisterController extends Controller
         $this->repo->createOtp($request->phone,$otp);
 
         // send sms
-        app(SendSMSService::class)->sendSms($request->phone, "Your verification code is: $otp");
+        $message = $this->send->SendSMS($request->phone , $otp);
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Account created. Please verify using the OTP sent to your phone.'
-        ],201);
+        if($message->getStatus() == 0){
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Account created. Please verify using the OTP sent to your phone.'
+            ],201);
+        }else{
+            return response()->json([
+                'status'  => 'fail',
+                'message' => "The message failed with status: " . $message->getStatus() . "\n"
+            ],201);
+        }
     }
 }

@@ -19,15 +19,13 @@ class DoctorSeeder extends Seeder
 
         foreach (range(1, 10) as $index) {
             $user = User::create([
-    'name' => $faker->name,
-    'email' => "doctor{$index}@example.com",
-    'password' => Hash::make('password'),
-    'user_type' => 'doctor',
-    'status' => 1,
-    'phone' => $faker->phoneNumber, // تم التصحيح هنا
-    'email_verified_at' => now(),
-]);
-
+                'name' => $faker->name,
+                'email' => "doctor{$index}@example.com",
+                'password' => Hash::make('password'),
+                'user_type' => 'doctor',
+                'phone' => $faker->phoneNumber, // we changed mobile to phone
+                'email_verified_at' => now(),
+            ]);
 
             $profile = DoctorProfile::create([
                 'user_id' => $user->id,

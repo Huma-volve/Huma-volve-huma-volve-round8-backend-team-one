@@ -4,7 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,8 +23,7 @@ class LoginRequest extends FormRequest
     {
         return [
             'phone' => ['required','regex:/^(?:\+?20|0)?1[0-2,5][0-9]{8}$/','exists:users,phone'],
-            'password' => 'required|string',
-            'remember_me' => 'nullable|in:on,off'
+            'new_password' => 'required|string|min:8|confirmed'
         ];
     }
 }
