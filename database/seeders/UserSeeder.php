@@ -13,7 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create Admin User
+        // Admin User
         User::create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
@@ -23,10 +23,10 @@ class UserSeeder extends Seeder
             'phone' => '+1234567890',
             'address' => '123 Admin Street, City',
             'email_verified_at' => now(),
-            'phone_verified_at' => now(),
+            'phone_verified_at' => now(), // العمود موجود في الميرجيشن
         ]);
 
-        // Create Test Doctor User
+        // Doctor User
         User::create([
             'name' => 'Dr. John Smith',
             'email' => 'doctor@example.com',
@@ -39,7 +39,7 @@ class UserSeeder extends Seeder
             'phone_verified_at' => now(),
         ]);
 
-        // Create Test Patient User
+        // Patient User
         User::create([
             'name' => 'Jane Doe',
             'email' => 'patient@example.com',

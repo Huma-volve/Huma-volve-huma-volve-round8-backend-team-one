@@ -52,7 +52,7 @@ class ConversationSeeder extends Seeder
                 Message::create([
                     'conversation_id' => $conversation->id,
                     'sender_id' => $sender,
-                    'type' => $faker->randomElement(['text', 'text', 'text', 'image', 'video']), // More text messages
+                    'type' => $faker->randomElement(['text', 'text', 'text', 'image', 'video', 'audio', 'file']), // More text messages
                     'body' => $faker->sentence,
                     'read_at' => $faker->optional(60)->dateTimeBetween('-1 day', 'now'),
                 ]);

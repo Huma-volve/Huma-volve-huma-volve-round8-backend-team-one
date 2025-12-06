@@ -21,10 +21,10 @@ class PatientSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'user_type' => 'patient',
                 'status' => 1,
-                'phone' => $faker->phoneNumber,
+                'phone' => $faker->phoneNumber, // we changed mobile to phone
                 'address' => $faker->address,
                 'email_verified_at' => now(),
-                'phone_verified_at' => now(),
+                'phone_verified_at' => now(), // we changed mobile_verified_at to phone_verified_at
             ]);
 
             PatientProfile::create([

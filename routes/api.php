@@ -34,25 +34,34 @@ use App\Http\Controllers\Api\{
 
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
-    Route::post('/register', [RegisterController::class, 'Register'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register');
     Route::post('/verify-otp', [VerifyOtpController::class, 'verifyOtp'])->name('verify-otp');
 });
 
 // ============================================================================
-// PROTECTED ROUTES
+// PROTECTED ROUTES (auth:sanctum)
 // ============================================================================
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Profile
+    // ------------------------------------------------------------------------
+    // PROFILE MANAGEMENT
+    // ------------------------------------------------------------------------
     Route::prefix('profile')->name('profile.')->group(function () {
-        Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-        Route::delete('/delete-account', [DeleteAccountController::class, 'deleteAccount'])->name('delete');
-        Route::post('/edit-profile', [ProfileAccountController::class, 'editProfile'])->name('edit');
-        Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
-        Route::post('/notifications', [ProfileNotificationController::class, 'toggle'])->name('notifications.toggle');
-        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites');
 
+        // Account Management
+        Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+        Route::post('/edit', [ProfileAccountController::class, 'editProfile'])->name('edit');
+        Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
+        Route::delete('/delete', [DeleteAccountController::class, 'deleteAccount'])->name('delete');
+
+        // Favorites
+        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+
+        // Notification Settings
+        Route::post('/notifications/toggle', [ProfileNotificationController::class, 'toggle'])->name('notifications.toggle');
+
+        // Payment Methods
         Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
             Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
             Route::post('/', [PaymentMethodController::class, 'store'])->name('store');
@@ -60,7 +69,9 @@ Route::middleware('auth:sanctum')->group(function () {
         });
     });
 
-    // Chat
+    // ------------------------------------------------------------------------
+    // CHAT / CONVERSATIONS
+    // ------------------------------------------------------------------------
     Route::prefix('conversations')->name('conversations.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');
         Route::get('/{conversation}', [ChatController::class, 'show'])->name('show');
@@ -69,14 +80,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::patch('/{conversation}/favorite', [ChatController::class, 'toggleFavorite'])->name('toggle-favorite');
     });
 
-    // Reviews
+    // ------------------------------------------------------------------------
+    // REVIEWS
+    // ------------------------------------------------------------------------
     Route::prefix('reviews')->name('reviews.')->group(function () {
-        Route::post('/store', [ReviewController::class, 'store'])->name('store');
+        Route::post('/', [ReviewController::class, 'store'])->name('store');
         Route::get('/doctor', [ReviewController::class, 'reviews'])->name('doctor.index');
         Route::post('/doctor/{review}/reply', [ReviewController::class, 'reply'])->name('doctor.reply');
     });
 
-    // Notifications
+    // ------------------------------------------------------------------------
+    // NOTIFICATIONS
+    // ------------------------------------------------------------------------
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/', [ApiNotificationController::class, 'index'])->name('index');
         Route::get('/unread', [ApiNotificationController::class, 'unread'])->name('unread');
