@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Booking;
@@ -67,7 +68,7 @@ class BookingController extends Controller
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
             'status' => 'pending',
-            'price_at_booking' => $doctor->session_price ?? 0, 
+            'price_at_booking' => $doctor->session_price ?? 0,
             'payment_method' => $request->payment_method,
             'payment_status' => 'unpaid',
             'notes' => $request->notes,

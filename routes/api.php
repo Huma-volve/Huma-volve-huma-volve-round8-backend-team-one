@@ -19,9 +19,10 @@ use App\Http\Controllers\Profile\
     PaymentMethodController,
     FavoriteController
 };
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\SavedCardController;
+
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\SavedCardController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 

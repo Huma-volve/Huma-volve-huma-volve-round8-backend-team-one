@@ -2,16 +2,16 @@
 
 namespace App\Services\Payment;
 
-use Stripe\StripeClient;
 use Exception;
+use Stripe\StripeClient;
 
 class StripePaymentGateway implements PaymentGatewayInterface
 {
     protected $stripe;
 
-    public function __construct()
+    public function __construct(?StripeClient $stripe = null)
     {
-        $this->stripe = new StripeClient(config('services.stripe.secret'));
+        $this->stripe = $stripe ?? new StripeClient(config('services.stripe.secret'));
     }
 
     public function charge(float $amount, string $currency, string $source, array $options = []): array
