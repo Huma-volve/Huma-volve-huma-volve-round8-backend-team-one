@@ -7,7 +7,6 @@ use App\Repositories\VerificationCodeRepository;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
-// use App\Services\SendSMSService;
 
 class LoginService {
 use ApiResponse;
@@ -32,12 +31,7 @@ use ApiResponse;
             $this->repo->createOtp($phone, $otp);
 
             // send sms
-            // $message = $this->send->SendSMS($phone , $otp);
-            // if($message->getStatus() == 0){
             return $this->fail('Your account is not verified, OTP sent for verification');
-            // }else{
-            // $this->fail("The message failed with status: " . $message->getStatus() . "\n","fail",500);
-            // }
         }
 
         $user->tokens()->delete();
