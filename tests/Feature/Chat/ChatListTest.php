@@ -164,4 +164,24 @@ class ChatListTest extends TestCase
             'is_favorite' => false
         ]);
     }
+
+    public function test_user_cannot_access_other_users_conversation()
+    {
+        // Arrange
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+        $outsider = User::factory()->create();
+
+        // create conversation between user1 and user2
+        $conversation = Conversation::create();
+        ChatParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $user1->id]);
+        ChatParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $user2->id]);
+
+        // Act - outsider tries to access the conversation
+        $response = $this->actingAs($outsider)->getJson("/api/conversations/{$conversation->id}");
+
+        // Assert
+        $response->assertStatus(403);
+    }
 }
+    
