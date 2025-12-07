@@ -42,10 +42,10 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
     Route::post('/verify-otp', [VerifyOtpController::class, 'verifyOtp'])->name('verify-otp');
-    Route::post('/google-login',[GoogleLoginController::class,'googleLogin'])->name('loginWithGoogle');
-    Route::post('/google-register',[GoogleRegisterController::class,'googleRegister'])->name('registerWithGoogle');
-    Route::post('/forget-password',[ForgetPasswordController::class,'forgetPassword'])->name('forget-password');
-    Route::post('/reset-password',[ResetPasswordController::class,'resetPassword'])->name('reset-password');
+    Route::post('/google-login', [GoogleLoginController::class, 'googleLogin'])->name('loginWithGoogle');
+    Route::post('/google-register', [GoogleRegisterController::class, 'googleRegister'])->name('registerWithGoogle');
+    Route::post('/forget-password', [ForgetPasswordController::class, 'forgetPassword'])->name('forget-password');
+    Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
 });
 
 // ============================================================================
@@ -84,10 +84,15 @@ Route::middleware('auth:sanctum')->group(function () {
     // ------------------------------------------------------------------------
     Route::prefix('conversations')->name('conversations.')->group(function () {
         Route::get('/', [ChatController::class, 'index'])->name('index');
-        Route::get('/{conversation}', [ChatController::class, 'show'])->name('show');
-        Route::post('/{conversation}/messages', [ChatController::class, 'store'])->name('messages.store');
-        Route::patch('/{conversation}/archive', [ChatController::class, 'toggleArchive'])->name('toggle-archive');
-        Route::patch('/{conversation}/favorite', [ChatController::class, 'toggleFavorite'])->name('toggle-favorite');
+        Route::post('/start', [ChatController::class, 'startConversation'])->name('start');
+
+        Route::prefix('{conversation}')->group(function () {
+            Route::get('/', [ChatController::class, 'show'])->name('show');
+            Route::post('/messages', [ChatController::class, 'sendMessage'])->name('messages.store');
+            Route::post('/mark-read', [ChatController::class, 'markAsRead'])->name('mark-read');
+            Route::patch('/archive', [ChatController::class, 'toggleArchive'])->name('toggle-archive');
+            Route::patch('/favorite', [ChatController::class, 'toggleFavorite'])->name('toggle-favorite');
+        });
     });
 
     // ------------------------------------------------------------------------
