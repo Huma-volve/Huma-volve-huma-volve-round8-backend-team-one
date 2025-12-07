@@ -1,0 +1,227 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\BookingRequest;
+use App\Http\Resources\BookingResource;
+use App\Models\Booking;
+use App\Models\DoctorProfile;
+use App\Models\Transaction;
+use App\Services\Payment\PaymentFactory;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class BookingController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $user = Auth::user();
+
+        if ($user->user_type === 'doctor') {
+            $doctorProfile = $user->doctorProfile;
+            if (! $doctorProfile) {
+                return response()->json(['message' => 'Doctor profile not found'], 404);
+            }
+            $bookings = Booking::where('doctor_id', $doctorProfile->id)
+                ->with(['patient.user', 'doctor.user'])
+                ->orderBy('appointment_date', 'desc')
+                ->orderBy('appointment_time', 'desc')
+                ->get();
+        } else {
+            $patientProfile = $user->patientProfile;
+            if (! $patientProfile) {
+                return response()->json(['message' => 'Patient profile not found'], 404);
+            }
+            $bookings = Booking::where('patient_id', $patientProfile->id)
+                ->with(['doctor.user', 'doctor.speciality', 'patient.user'])
+                ->orderBy('appointment_date', 'desc')
+                ->orderBy('appointment_time', 'desc')
+                ->get();
+        }
+
+        return BookingResource::collection($bookings);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(BookingRequest $request)
+    {
+        $user = Auth::user();
+        $patientProfile = $user->patientProfile;
+
+        if (! $patientProfile) {
+            return response()->json(['message' => 'Only patients can book appointments'], 403);
+        }
+
+        $doctor = DoctorProfile::findOrFail($request->doctor_id);
+
+        // Check availability
+        // Ideally we should check against AvailabilitySlot model here
+
+        return DB::transaction(function () use ($request, $user, $patientProfile, $doctor) {
+            $amount = $doctor->session_price ?? 0;
+            $currency = 'usd'; // Default currency
+
+            if ($request->payment_method === 'stripe') {
+                // Get saved card
+                $savedCard = $user->savedCards()->where('is_default', true)->first() ?? $user->savedCards()->latest()->first();
+
+                if (! $savedCard) {
+                    abort(400, 'No saved card found for payment.');
+                }
+
+                $paymentGateway = PaymentFactory::create('stripe');
+                $chargeResult = $paymentGateway->charge($amount, $currency, $savedCard->provider_token);
+
+                if (! $chargeResult['success']) {
+                    abort(400, 'Payment failed: '.($chargeResult['message'] ?? 'Unknown error'));
+                }
+
+                $transactionId = $chargeResult['transaction_id'];
+                $paymentData = $chargeResult['data'];
+                $paymentStatus = 'paid';
+            } else {
+                // Handle other payment methods or default behavior
+                $transactionId = null;
+                $paymentData = null;
+                $paymentStatus = 'unpaid';
+            }
+
+            $booking = Booking::create([
+                'doctor_id' => $doctor->id,
+                'patient_id' => $patientProfile->id,
+                'appointment_date' => $request->appointment_date,
+                'appointment_time' => $request->appointment_time,
+                'status' => 'pending',
+                'price_at_booking' => $amount,
+                'payment_method' => $request->payment_method,
+                'payment_status' => $paymentStatus,
+                'payment_transaction_id' => $transactionId,
+                'notes' => $request->notes,
+            ]);
+
+            if ($transactionId) {
+                Transaction::create([
+                    'booking_id' => $booking->id,
+                    'external_id' => $transactionId,
+                    'amount' => $amount,
+                    'type' => 'payment',
+                    'status' => 'success',
+                    'gateway' => $request->payment_method,
+                    'payload' => $paymentData,
+                    'currency' => $currency,
+                ]);
+            }
+
+            return new BookingResource($booking->load(['doctor.user', 'patient.user']));
+        });
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(string $id)
+    {
+        $booking = Booking::with(['doctor.user', 'patient.user'])->findOrFail($id);
+        $this->authorizeBookingAccess($booking);
+
+        return new BookingResource($booking);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(BookingRequest $request, string $id)
+    {
+        $booking = Booking::findOrFail($id);
+        $this->authorizeBookingAccess($booking);
+
+        $booking->update($request->validated());
+
+        if ($request->has('appointment_date') || $request->has('appointment_time')) {
+            $booking->status = 'rescheduled';
+            $booking->save();
+        }
+
+        return new BookingResource($booking->load(['doctor.user', 'patient.user']));
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function cancel(Request $request, string $id)
+    {
+        $booking = Booking::findOrFail($id);
+        $this->authorizeBookingAccess($booking);
+
+        $request->validate([
+            'cancellation_reason' => 'required|string|max:500',
+        ]);
+
+        // Calculate appointment datetime
+        $appointmentDateTime = Carbon::parse($booking->appointment_date)->setTimeFromTimeString(Carbon::parse($booking->appointment_time)->format('H:i:s'));
+
+        if (now()->addHours(24)->gt($appointmentDateTime)) {
+            return response()->json(['message' => 'Cancellation must be made at least 24 hours in advance.'], 400);
+        }
+
+        return DB::transaction(function () use ($booking, $request) {
+            // Check for payment to refund
+            if ($booking->payment_status === 'paid' && $booking->payment_transaction_id) {
+                if ($booking->payment_method === 'stripe') {
+                    $paymentGateway = PaymentFactory::create('stripe');
+                    $refundResult = $paymentGateway->refund($booking->payment_transaction_id);
+
+                    if (! $refundResult['success']) {
+                        abort(400, 'Refund failed: '.($refundResult['message'] ?? 'Unknown error'));
+                    }
+
+                    // Record refund transaction
+                    Transaction::create([
+                        'booking_id' => $booking->id,
+                        'external_id' => $refundResult['transaction_id'],
+                        'amount' => $booking->price_at_booking,
+                        'type' => 'refund',
+                        'status' => 'success',
+                        'gateway' => $booking->payment_method,
+                        'payload' => $refundResult['data'],
+                        'currency' => 'usd',
+                    ]);
+
+                    $booking->payment_status = 'refunded';
+                }
+            }
+
+            $booking->update([
+                'status' => 'cancelled',
+                'cancellation_reason' => $request->cancellation_reason,
+                'cancelled_at' => now(),
+                'cancelled_by' => Auth::id(),
+                'payment_status' => $booking->payment_status,
+            ]);
+
+            return new BookingResource($booking->load(['doctor.user', 'patient.user']));
+        });
+    }
+
+    private function authorizeBookingAccess(Booking $booking)
+    {
+        $user = Auth::user();
+        if ($user->user_type === 'doctor') {
+            if ($booking->doctor_id !== $user->doctorProfile->id) {
+                abort(403, 'Unauthorized access to this booking');
+            }
+        } else {
+            if ($booking->patient_id !== $user->patientProfile->id) {
+                abort(403, 'Unauthorized access to this booking');
+            }
+        }
+    }
+}

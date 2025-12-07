@@ -5,11 +5,15 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DoctorFilterRequest;
 use App\Http\Resources\DoctorResource;
+use App\Models\DoctorProfile;
 use App\Services\DoctorService;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class DoctorController extends Controller
 {
+    use ApiResponse;
+
     protected $doctorService;
 
     public function __construct(DoctorService $doctorService)
@@ -24,62 +28,23 @@ class DoctorController extends Controller
     {
         $doctors = $this->doctorService->getDoctors($request->validated());
 
-        return response()->json([
-            'success' => true,
-            'data' => DoctorResource::collection($doctors),
-            'meta' => [
-                'total' => $doctors->total(),
-                'per_page' => $doctors->perPage(),
-                'current_page' => $doctors->currentPage(),
-                'last_page' => $doctors->lastPage(),
-            ]
-        ]);
+        return $this->paginatedResponse(
+            DoctorResource::collection($doctors),
+            'Doctors retrieved successfully'
+        );
     }
 
     /**
      * Get single doctor details
      */
-    public function show(int $id): JsonResponse
+    public function show(DoctorProfile $doctor): JsonResponse
     {
-        $doctor = $this->doctorService->getDoctorById($id);
+        // Load necessary relationships
+        $doctor->load(['user', 'speciality', 'reviews.patient.user']);
 
-        if (!$doctor) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Doctor not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => new DoctorResource($doctor)
-        ]);
-    }
-
-    /**
-     * Toggle favorite doctor
-     */
-    public function toggleFavorite(int $id): JsonResponse
-    {
-        $result = $this->doctorService->toggleFavorite($id, auth()->id());
-
-        return response()->json([
-            'success' => true,
-            'message' => $result['message'],
-            'is_favorite' => $result['is_favorite']
-        ]);
-    }
-
-    /**
-     * Get doctor availability slots
-     */
-    public function availability(int $id): JsonResponse
-    {
-        $slots = $this->doctorService->getAvailability($id);
-
-        return response()->json([
-            'success' => true,
-            'data' => $slots
-        ]);
+        return $this->successResponse(
+            new DoctorResource($doctor),
+            'Doctor details retrieved successfully'
+        );
     }
 }

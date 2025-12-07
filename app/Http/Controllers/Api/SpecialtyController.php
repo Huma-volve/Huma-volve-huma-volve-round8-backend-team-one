@@ -5,10 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SpecialtyResource;
 use App\Models\Speciality;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 
 class SpecialtyController extends Controller
 {
+    use ApiResponse;
+
     /**
      * Get all specialties
      */
@@ -16,9 +19,9 @@ class SpecialtyController extends Controller
     {
         $specialties = Speciality::all();
 
-        return response()->json([
-            'success' => true,
-            'data' => SpecialtyResource::collection($specialties)
-        ]);
+        return $this->successResponse(
+            SpecialtyResource::collection($specialties),
+            'Specialties retrieved successfully'
+        );
     }
 }

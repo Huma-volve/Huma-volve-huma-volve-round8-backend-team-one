@@ -6,8 +6,8 @@ use App\Models\Booking;
 use App\Models\DoctorProfile;
 use App\Models\PatientProfile;
 use App\Models\Transaction;
-use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
 
 class BookingSeeder extends Seeder
 {

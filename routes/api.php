@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\Api\GetDoctorAvailabilityController;
+use App\Http\Controllers\Api\SpecialtyController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,15 +22,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Doctors Routes
-Route::prefix('doctors')->group(function () {
-    Route::get('/', [DoctorController::class, 'index']);
-    Route::get('/specialties', [\App\Http\Controllers\Api\SpecialtyController::class, 'index']);
-    Route::get('/{id}', [DoctorController::class, 'show']);
-    Route::get('/{id}/availability', [DoctorController::class, 'availability']);
+// Specialties Routes
+Route::get('/specialties', [SpecialtyController::class, 'index']);
 
-    // Protected Routes
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/{id}/favorite', [DoctorController::class, 'toggleFavorite']);
-    });
+// Doctors Routes
+Route::apiResource('doctors', DoctorController::class)->only(['index', 'show']);
+
+// Doctor Availability
+Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class);
+
+// Protected Routes (require authentication)
+Route::middleware('auth:sanctum')->group(function () {
+    // Toggle favorite
+    Route::post('/doctors/{doctor}/favorite', FavoriteController::class);
 });

@@ -7,14 +7,19 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class DoctorResource extends JsonResource
 {
+    /**
+     * Transform the resource into an array.
+     */
     public function toArray(Request $request): array
     {
         return [
-            'Doctor Name' => $this->user->name,
+            'id' => $this->id,
+            'name' => $this->user->name,
             'email' => $this->user->email,
             'mobile' => $this->user->mobile,
             'profile_photo' => $this->user->profile_photo_path,
             'specialty' => [
+                'id' => $this->speciality->id,
                 'name' => $this->speciality->name,
                 'image' => $this->speciality->image,
             ],
@@ -38,7 +43,16 @@ class DoctorResource extends JsonResource
             ),
             'availability' => $this->when(
                 $request->include_availability,
-                fn() => $this->getUpcomingSlots()
+                fn() => AvailabilitySlotResource::collection(
+                    $this->availabilitySlots()
+                        ->where('date', '>=', now()->format('Y-m-d'))
+                        ->where('is_active', true)
+                        ->where('is_booked', false)
+                        ->orderBy('date')
+                        ->orderBy('start_time')
+                        ->take(5)
+                        ->get()
+                )
             ),
             'reviews' => $this->when(
                 $request->include_reviews,

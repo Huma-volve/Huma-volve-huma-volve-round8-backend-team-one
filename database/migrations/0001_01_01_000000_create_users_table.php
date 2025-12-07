@@ -17,22 +17,23 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('mobile')->nullable();
             $table->string('google_id')->nullable();
-            $table->timestamp('mobile_verified_at')->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
             $table->string('profile_photo_path')->nullable();
-            $table->tinyInteger('status')->default(1);
+            $table->boolean('status')->default(1); // required by user seeder to fix column not found error
+            $table->boolean('notification_status')->default(1);
+            $table->boolean('can_reset_password')->default(0);
             $table->enum('user_type', ['patient', 'doctor', 'admin'])->default('patient');
-            $table->string('phone')->nullable();
+            $table->string('phone')->unique()->nullable();
             $table->string('address')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
+            $table->string('phone')->primary();
             $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->timestamp('created_at');
         });
 
         Schema::create('sessions', function (Blueprint $table) {

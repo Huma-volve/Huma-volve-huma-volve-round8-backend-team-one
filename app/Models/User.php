@@ -6,11 +6,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory , Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -21,14 +22,16 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'mobile',
         'google_id',
-        'mobile_verified_at',
+        'phone_verified_at',
+        'email_verified_at',
         'profile_photo_path',
         'status',
         'user_type',
         'phone',
         'address',
+        'can_reset_password',
+        'stripe_customer_id ',
     ];
 
     /**
@@ -50,7 +53,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'mobile_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => 'integer',
         ];
@@ -63,7 +66,7 @@ class User extends Authenticatable
 
     public function patientProfile()
     {
-        return $this->hasOne(PatientProfile::class);
+        return $this->hasOne(PatientProfile::class, 'user_id');
     }
 
     public function savedCards()
@@ -79,5 +82,17 @@ class User extends Authenticatable
     public function chatParticipants()
     {
         return $this->hasMany(ChatParticipant::class);
+    }
+
+    public function favoriteDoctors()
+    {
+        return $this->hasMany(FavoriteDoctor::class, 'user_id');
+    }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class, 'chat_participants', 'user_id', 'conversation_id')
+            ->withPivot(['last_read_at'])
+            ->withTimestamps();
     }
 }

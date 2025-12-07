@@ -21,7 +21,7 @@ class SavedCard extends Model
 
     protected $casts = [
         'exp_month' => 'integer',
-        'exp_year'  => 'integer',
+        'exp_year' => 'integer',
         'is_default' => 'boolean',
     ];
 

@@ -50,35 +50,4 @@ class DoctorService
                 : 'Doctor removed from favorites'
         ];
     }
-
-    /**
-     * Get doctor availability slots
-     */
-    public function getAvailability(int $doctorId): array
-    {
-        return $this->doctorRepository->getAvailabilitySlots($doctorId);
-    }
-
-    /**
-     * Search doctors by keyword
-     */
-    public function searchDoctors(string $keyword, int $userId): array
-    {
-        // Save search history
-        $this->saveSearchHistory($keyword, $userId);
-
-        return $this->doctorRepository->search($keyword);
-    }
-
-    /**
-     * Save search history
-     */
-    protected function saveSearchHistory(string $keyword, int $userId): void
-    {
-        \App\Models\SearchHistory::create([
-            'user_id' => $userId,
-            'keyword' => $keyword,
-            'filters' => null,
-        ]);
-    }
 }
