@@ -41,4 +41,27 @@ class StripePaymentGateway implements PaymentGatewayInterface
             ];
         }
     }
+
+    public function refund(string $transactionId, ?float $amount = null): array
+    {
+        try {
+            $params = ['payment_intent' => $transactionId];
+            if ($amount) {
+                $params['amount'] = (int) ($amount * 100);
+            }
+
+            $refund = $this->stripe->refunds->create($params);
+
+            return [
+                'success' => true,
+                'transaction_id' => $refund->id,
+                'data' => $refund->toArray(),
+            ];
+        } catch (Exception $e) {
+            return [
+                'success' => false,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
 }
