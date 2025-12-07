@@ -9,47 +9,54 @@ use Illuminate\Database\Eloquent\Collection;
 
 class ChatRepository implements ChatRepositoryInterface
 {
-    public function getUserConversations(int $userId): Collection
+    public function getUserConversations(int $userId, array $filters = []): Collection
     {
-        // 1. get conversations where this user is a participant
-        $query = Conversation::whereHas('participants', function ($q) use ($userId) {
-            $q->where('user_id', $userId);
-        });
-
-        // 2. apply search by participant name
-        if (request()->has('search') && request('search') != null) {
-            $searchTerm = request('search');
-            $query->whereHas('participants.user', function ($q) use ($searchTerm) {
-                $q->where('name', 'like', "%{$searchTerm}%");
-            });
-        }
-
-        // 3. apply filters favorites or unread
-        if (request()->has('type')) {
-
-            // filter favorite conversations
-            if (request('type') === 'favorites') {
-                $query->whereHas('participants', function ($q) use ($userId) {
-                    $q->where('user_id', $userId)
-                        ->where('is_favorite', true);
+        return Conversation::query()
+            // user must be participant
+            ->whereHas('participants', function ($q) use ($userId) {
+                $q->where('user_id', $userId);
+            })
+            // search by other participant's name
+            ->when(!empty($filters['search']), function ($q) use ($filters, $userId) {
+                $q->whereHas('participants', function ($subQ) use ($filters, $userId) {
+                    $subQ->where('user_id', '!=', $userId)
+                         ->whereHas('user', function ($userQ) use ($filters) {
+                             $userQ->where('name', 'like', '%' . $filters['search'] . '%');
+                         });
                 });
-            }
-
-            // filter unread conversations
-            if (request('type') === 'unread') {
-                $query->whereHas('participants', function ($q) use ($userId) {
-                    $q->where('user_id', $userId)
-                        ->whereRaw('(SELECT COUNT(*) FROM messages WHERE messages.conversation_id = conversations.id AND messages.created_at > chat_participants.last_read_at) > 0');
+            })
+            // filter by favorites
+            ->when(($filters['type'] ?? '') === 'favorites', function ($q) use ($userId) {
+                $q->whereHas('participants', function ($subQ) use ($userId) {
+                    $subQ->where('user_id', $userId)
+                         ->where('is_favorite', true);
                 });
-            }
-        }
-
-        return $query->with(['participants.user', 'lastMessage'])->orderByDesc('updated_at')->get();
+            })
+            // filter by unread
+            ->when(($filters['type'] ?? '') === 'unread', function ($q) use ($userId) {
+                $q->whereHas('participants', function ($subQ) use ($userId) {
+                    $subQ->where('user_id', $userId)
+                         ->whereColumn('last_read_at', '<', 'conversations.updated_at');
+                });
+            })
+            // filter archived
+            ->when(($filters['type'] ?? '') === 'archived', function ($q) use ($userId) {
+                $q->whereHas('participants', function ($subQ) use ($userId) {
+                    $subQ->where('user_id', $userId)
+                         ->where('is_archived', true);
+                });
+            })
+            ->with(['lastMessage.sender', 'participants.user'])
+            ->latest('updated_at')
+            ->get();
     }
 
     public function getConversationMessages(int $conversationId): Collection
     {
-        return Message::where('conversation_id', $conversationId)->with('sender')->orderBy('created_at', 'asc')->get();
+        return Message::where('conversation_id', $conversationId)
+            ->with('sender')
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 
     public function createMessage(array $data): Message
