@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('google_id')->nullable();
             $table->timestamp('phone_verified_at')->nullable();
             $table->string('profile_photo_path')->nullable();
+            $table->boolean('status')->default(1); // required by user seeder to fix column not found error
             $table->boolean('notification_status')->default(1);
             $table->boolean('can_reset_password')->default(0);
             $table->enum('user_type', ['patient', 'doctor', 'admin'])->default('patient');
