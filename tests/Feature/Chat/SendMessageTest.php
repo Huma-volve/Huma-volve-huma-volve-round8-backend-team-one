@@ -11,6 +11,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
+use App\Models\ChatParticipant;
 
 class SendMessageTest extends TestCase
 {
@@ -171,5 +172,23 @@ class SendMessageTest extends TestCase
         ]);
 
         Event::assertDispatched(MessageSent::class);
+    }
+
+    public function test_cannot_send_empty_message()
+    {
+        // Arrange
+        $user1 = User::factory()->create();
+        $user2 = User::factory()->create();
+
+        $conversation = Conversation::create();
+        ChatParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $user1->id]);
+        ChatParticipant::create(['conversation_id' => $conversation->id, 'user_id' => $user2->id]);
+
+        // Act try to send empty message
+        $response = $this->actingAs($user1)->postJson("/api/conversations/{$conversation->id}/messages", []);
+
+        // Assert
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['body']);
     }
 }
