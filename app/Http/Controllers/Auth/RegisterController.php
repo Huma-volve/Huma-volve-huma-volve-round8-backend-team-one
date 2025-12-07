@@ -8,7 +8,6 @@ use App\Http\Resources\UserResource;
 use App\Models\PatientProfile;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-// use App\Services\SendSMSService;
 use App\Repositories\VerificationCodeRepository;
 use App\Traits\ApiResponse;
 
@@ -36,12 +35,7 @@ class RegisterController extends Controller
         $this->repo->createOtp($request->phone,$otp);
 
         // send sms
-        // $message = $this->send->SendSMS($request->phone , $otp);
         $data = User::where('phone' , $request->phone)->first();
-        // if($message->getStatus() == 0){
-                return $this->success(new UserResource($data),'Account created. Please verify using the OTP sent to your phone.','success',201);
-        // }else{
-        // return $this->fail("The message failed with status: " . $message->getStatus() . "\n","fail",500);
-        // }
+        return $this->success(new UserResource($data),'Account created. Please verify using the OTP sent to your phone.','success',201);
     }
 }

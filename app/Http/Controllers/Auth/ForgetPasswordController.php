@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ForgetPasswordRequest;
 use App\Repositories\VerificationCodeRepository;
 use Illuminate\Support\Facades\DB;
-// use App\Services\SendSMSService;
 use App\Models\User;
 use App\Traits\ApiResponse;
 
@@ -28,13 +27,7 @@ class ForgetPasswordController extends Controller
             $this->repo->createOtp($request->phone, $otp);
 
             // send sms
-            // $message = $this->send->SendSMS($request->phone , $otp);
-
-            // if($message->getStatus() == 0){
-                    return $this->fail('Your account is not verified, OTP sent for verification','fail',400);
-            // }else{
-                // return $this->fail("The message failed with status: " . $message->getStatus() . "\n","fail",500);
-            // }
+            return $this->fail('Your account is not verified, OTP sent for verification','fail',400);
         }
 
         DB::table('password_reset_tokens')->updateOrInsert(
@@ -42,13 +35,8 @@ class ForgetPasswordController extends Controller
             ['token' => $otp, 'created_at' => now()]
         );
             // send sms
-            // $message = $this->send->SendSMS($request->phone , $otp);
+            return $this->success(['phone' => $request->phone],'OTP is sent for your phone number for reseting password',"success",200);
 
-            // if($message->getStatus() == 0){
-                return $this->success(['phone' => $request->phone],'OTP is sent for your phone number for reseting password',"success",200);
-            // }else{
-                return $this->fail('Your account is not verified, OTP sent for verification','fail',400);
-            // }
 
     }
 }
