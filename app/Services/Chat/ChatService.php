@@ -19,22 +19,22 @@ class ChatService
     // get existing conversation or create new one between patient and doctor
     public function getOrCreateConversation(int $patientId, int $doctorId): Conversation
     {
-        // Check if conversation already exists between these two users
+        // check if conversation already exists between these two users
         $conversation = Conversation::whereHas('participants', function ($q) use ($patientId) {
             $q->where('user_id', $patientId);
         })->whereHas('participants', function ($q) use ($doctorId) {
             $q->where('user_id', $doctorId);
         })->first();
 
-        // If exists return it
+        // if exists return it
         if ($conversation) {
             return $conversation->load(['participants.user', 'lastMessage']);
         }
 
-        // Create new conversation
+        // create new conversation
         $conversation = Conversation::create();
 
-        // Add both users as participants
+        // add both users as participants
         $conversation->participants()->createMany([
             ['user_id' => $patientId],
             ['user_id' => $doctorId],
@@ -43,7 +43,7 @@ class ChatService
         return $conversation->load(['participants.user', 'lastMessage']);
     }
 
-    // Send a new message in a conversation
+    // send a new message in a conversation
     public function sendMessage(User $sender, Conversation $conversation, array $data): Message
     {
         $messageData = [
@@ -67,7 +67,7 @@ class ChatService
         return $message->load('sender');
     }
 
-    // Determine the media type based on file MIME type
+    // determine the media type based on file MIME type
     protected function getMediaType(UploadedFile $file): string
     {
         $mime = $file->getMimeType();
