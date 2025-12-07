@@ -29,6 +29,7 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'phone' => $this->generateEgyptianPhone(), // رقم مصري
         ];
     }
 
@@ -40,5 +41,14 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
+    }
+
+    /**
+     * Generate a random valid Egyptian phone number.
+     */
+    private function generateEgyptianPhone()
+    {
+        $prefixes = ['010', '011', '012', '015'];
+        return $prefixes[array_rand($prefixes)] . rand(10000000, 99999999);
     }
 }

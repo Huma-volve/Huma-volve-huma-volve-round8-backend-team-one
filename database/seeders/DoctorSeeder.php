@@ -12,6 +12,18 @@ use Illuminate\Support\Facades\Hash;
 
 class DoctorSeeder extends Seeder
 {
+    /**
+     * Generate a random Egyptian phone number.
+     */
+    private function generateEgyptianPhone()
+    {
+        $prefixes = ['010', '011', '012', '015'];
+        return $prefixes[array_rand($prefixes)] . rand(10000000, 99999999);
+    }
+
+    /**
+     * Run the database seeds.
+     */
     public function run(): void
     {
         $faker = Faker::create();
@@ -23,7 +35,7 @@ class DoctorSeeder extends Seeder
                 'email' => "doctor{$index}@example.com",
                 'password' => Hash::make('password'),
                 'user_type' => 'doctor',
-                'phone' => $faker->phoneNumber, // we changed mobile to phone
+                'phone' => $this->generateEgyptianPhone(), // تم التعديل هنا
                 'email_verified_at' => now(),
             ]);
 

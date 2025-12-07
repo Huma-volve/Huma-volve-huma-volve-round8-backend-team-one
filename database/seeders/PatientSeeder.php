@@ -10,6 +10,13 @@ use Illuminate\Support\Facades\Hash;
 
 class PatientSeeder extends Seeder
 {
+    // ✅ Function تولد رقم مصري
+    private function generateEgyptianPhone()
+    {
+        $prefixes = ['010', '011', '012', '015'];
+        return $prefixes[array_rand($prefixes)] . rand(10000000, 99999999);
+    }
+
     public function run(): void
     {
         $faker = Faker::create();
@@ -20,10 +27,10 @@ class PatientSeeder extends Seeder
                 'email' => "patient{$index}@example.com",
                 'password' => Hash::make('password'),
                 'user_type' => 'patient',
-                'phone' => $faker->phoneNumber, // we changed mobile to phone
+                'phone' => $this->generateEgyptianPhone(), // تم التعديل هنا
                 'address' => $faker->address,
                 'email_verified_at' => now(),
-                'phone_verified_at' => now(), // we changed mobile_verified_at to phone_verified_at
+                'phone_verified_at' => now(),
             ]);
 
             PatientProfile::create([
