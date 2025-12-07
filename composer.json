@@ -12,7 +12,8 @@
         "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
-        "laravel/tinker": "^2.10.1"
+        "laravel/tinker": "^2.10.1",
+        "stripe/stripe-php": "^19.0",
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",

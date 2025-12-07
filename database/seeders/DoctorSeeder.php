@@ -23,7 +23,6 @@ class DoctorSeeder extends Seeder
                 'email' => "doctor{$index}@example.com",
                 'password' => Hash::make('password'),
                 'user_type' => 'doctor',
-                'status' => 1,
                 'phone' => $faker->phoneNumber, // we changed mobile to phone
                 'email_verified_at' => now(),
             ]);

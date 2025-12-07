@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable , HasApiTokens;
+    use HasApiTokens, HasFactory , Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -30,7 +30,8 @@ class User extends Authenticatable
         'user_type',
         'phone',
         'address',
-        'can_reset_password'
+        'can_reset_password',
+        'stripe_customer_id ',
     ];
 
     /**
@@ -65,7 +66,7 @@ class User extends Authenticatable
 
     public function patientProfile()
     {
-        return $this->hasOne(PatientProfile::class,'user_id');
+        return $this->hasOne(PatientProfile::class, 'user_id');
     }
 
     public function savedCards()
@@ -87,6 +88,7 @@ class User extends Authenticatable
     {
         return $this->hasMany(FavoriteDoctor::class, 'user_id');
     }
+
     public function conversations()
     {
         return $this->belongsToMany(Conversation::class, 'chat_participants', 'user_id', 'conversation_id')

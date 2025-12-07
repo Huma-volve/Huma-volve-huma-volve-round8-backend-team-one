@@ -15,7 +15,6 @@ class AdminSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => Hash::make('password'),
             'user_type' => 'admin',
-            'status' => 1,
             'phone' => '1234567890', // we changed mobile to phone
             'email_verified_at' => now(),
         ]);
