@@ -28,7 +28,10 @@ use App\Http\Controllers\Profile\{
 use App\Http\Controllers\Api\{
     ChatController,
     NotificationController as ApiNotificationController,
-    ReviewController
+    ReviewController,
+    BookingController,
+    PaymentController,
+    SavedCardController
 };
 
 // ============================================================================
@@ -104,4 +107,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/unread', [ApiNotificationController::class, 'unread'])->name('unread');
         Route::post('/{id}/read', [ApiNotificationController::class, 'markAsRead'])->name('mark-read');
     });
+
+    // Booking Routes
+    Route::apiResource('bookings', BookingController::class);
+    Route::post('/bookings/{booking}/cancel', [BookingController::class, 'cancel']);
+
+    // Payment Routes
+    Route::post('/payments/process', [PaymentController::class, 'process']);
+
+    // Saved Cards Routes
+    Route::apiResource('saved-cards', SavedCardController::class)->only(['index', 'store', 'destroy']);
 });

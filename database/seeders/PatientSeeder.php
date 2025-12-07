@@ -20,7 +20,6 @@ class PatientSeeder extends Seeder
                 'email' => "patient{$index}@example.com",
                 'password' => Hash::make('password'),
                 'user_type' => 'patient',
-                'status' => 1,
                 'phone' => $faker->phoneNumber, // we changed mobile to phone
                 'address' => $faker->address,
                 'email_verified_at' => now(),

@@ -13,6 +13,7 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
+        "stripe/stripe-php": "^19.0",
         "twilio/sdk": "^8.9",
         "vonage/client": "^4.2"
     },
