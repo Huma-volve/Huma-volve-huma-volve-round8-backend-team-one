@@ -11,6 +11,7 @@ use App\Models\Conversation;
 use App\Repositories\Contracts\ChatRepositoryInterface;
 use App\Services\Chat\ChatService;
 use Illuminate\Http\Request;
+use App\Models\SearchHistory;
 
 class ChatController extends Controller
 {
@@ -21,6 +22,15 @@ class ChatController extends Controller
 
     public function index(Request $request)
     {
+        // Log search history if a search term is present
+        if ($request->filled('search')) {
+            SearchHistory::create([
+                'user_id' => $request->user()->id,
+                'keyword' => $request->search, 
+                'filters' => $request->type ? ['type' => $request->type] : null, // Save type filter if it exists
+            ]);
+        }
+
         $conversations = $this->chatRepository->getUserConversations(
             $request->user()->id,
             $request->only(['search', 'type'])
