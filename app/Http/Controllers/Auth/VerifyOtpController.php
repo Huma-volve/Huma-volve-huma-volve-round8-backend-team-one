@@ -14,8 +14,6 @@ class VerifyOtpController extends Controller
 
     public function verifyOtp(VerifyOtpRequest $request)
     {
-        return response()->json(
-            $this->service->verifyOtp($request->phone, $request->otp)
-        );
+        return $this->service->verifyOtp($request->phone, $request->otp);
     }
 }
