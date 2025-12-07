@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Google\Client as GoogleClient;
 use App\Models\User;
+use App\Traits\ApiResponse;
 
 class GoogleRegisterController extends Controller
 {
+    use ApiResponse;
     public function googleRegister(Request $request)
     {
         $request->validate([
@@ -19,7 +21,7 @@ class GoogleRegisterController extends Controller
         $payload = $client->verifyIdToken($request->id_token);
 
         if (!$payload) {
-            return response()->json(['error' => 'Invalid Google Token'], 401);
+            return $this->fail('Invalid Google token',"fail",400);
         }
 
 
@@ -49,12 +51,7 @@ class GoogleRegisterController extends Controller
 
         $user->tokens()->delete();
         $token = $user->createToken('authToken')->plainTextToken;
-
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Authenticated Successfully',
-            'token'   => $token,
-        ]);
+        return $this->success(['token' => $token],'Logged in successfully',"success",200);
     }
 }
 

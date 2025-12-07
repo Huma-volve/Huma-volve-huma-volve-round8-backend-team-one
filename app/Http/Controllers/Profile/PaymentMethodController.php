@@ -5,21 +5,20 @@ namespace App\Http\Controllers\Profile;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Profile\PaymentMethodRequest;
 use App\Models\SavedCard;
+use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentMethodController extends Controller
 {
+    use ApiResponse;
     public function index()
     {
         if(Auth::user()->savedCards->isEmpty()){
-            return response()->json([
-                'message' => 'Nothing to display here!'
-            ]);
+            return $this->success(null,'Nothing to display here!');
         }
 
-        return response()->json([
-            'methods' => Auth::user()->savedCards
-        ],200);
+        return $this->success(Auth::user()->savedCards,"");
+
     }
 
     public function store(PaymentMethodRequest $request)
@@ -34,11 +33,7 @@ class PaymentMethodController extends Controller
             'is_default'       => $isDefault,
         ]);
 
-        return response()->json([
-            'status'  => 'success',
-            'message' => 'Card Added Successfully',
-            'data'    => $method,
-        ]);
+        return $this->success($method,'Card Added Successfully',"success",201);
     }
 
     public function setDefault($id)
@@ -46,15 +41,11 @@ class PaymentMethodController extends Controller
         $user = Auth::user();
 
         if($user->savedCards->isEmpty()){
-            return response()->json([
-                'message' => 'Nothing to display here!'
-            ]);
+            return $this->success(null,'Nothing to display here!');
         }
 
         $user->savedCards->update(['is_default' => false]);
         $user->savedCards->where('id', $id)->update(['is_default' => true]);
-
-        return response()->json(['message' => 'Default Updated']);
-
+        return $this->success(null,'Default Updated successfully');
     }
 }

@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Models\FavoriteDoctor;
+use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
+    use ApiResponse;
     public function index(){
 
         $favorits = FavoriteDoctor::with('doctorProfile.user')
@@ -15,15 +17,9 @@ class FavoriteController extends Controller
                                     ->get();
 
         if($favorits->count() > 0){
-            return response()->json([
-                'status' => 'success',
-                'data'   => $favorits
-            ],200);
+            return $this->success($favorits,"","success",200);
         }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'There is no favorites to display!'
-        ],200);
+        return $this->success(null,'There is no favorites to display!',"success",200);
     }
 }

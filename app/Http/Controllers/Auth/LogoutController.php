@@ -3,17 +3,19 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 
 class LogoutController extends Controller
 {
-    public function logout(Request $request){
+    use ApiResponse;
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->remember_token = null ;
+        $user->save();
 
         $request->user()->currentAccessToken()->delete();
-
-        return response()->json([
-            'status'  => 'Success',
-            'message' => 'Logged out'
-        ]);
+        return $this->success(null,'Logged out successfully',"success",200);
     }
 }
