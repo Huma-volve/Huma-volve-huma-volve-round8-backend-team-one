@@ -6,24 +6,31 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SendMessageRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'body' => 'required_without:attachment|string|max:5000',
-            'attachment' => 'required_without:body|file|mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,mp3,wav,ogg,m4a,aac|max:51200',
+            'body' => 'nullable|string|max:5000|required_without:attachment',
+            'attachment' => [
+                'nullable',
+                'file',
+                'max:51200', // 50MB
+                'mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,mp3,wav,m4a,ogg,aac',
+                'required_without:body'
+            ],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'body.required_without' => 'Either message text or attachment is required.',
+            'attachment.required_without' => 'Either message text or attachment is required.',
+            'attachment.max' => 'File size must not exceed 50MB.',
         ];
     }
 }
