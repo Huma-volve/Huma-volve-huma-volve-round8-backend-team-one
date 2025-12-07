@@ -8,6 +8,13 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
+    // ✅ Function تولد رقم مصري
+    private function generateEgyptianPhone()
+    {
+        $prefixes = ['010', '011', '012', '015'];
+        return $prefixes[array_rand($prefixes)] . rand(10000000, 99999999);
+    }
+
     /**
      * Run the database seeds.
      */
@@ -19,10 +26,10 @@ class UserSeeder extends Seeder
             'email' => 'admin@example.com',
             'password' => Hash::make('password'),
             'user_type' => 'admin',
-            'phone' => '+1234567890',
+            'phone' => $this->generateEgyptianPhone(), // تم التعديل هنا
             'address' => '123 Admin Street, City',
             'email_verified_at' => now(),
-            'phone_verified_at' => now(), // العمود موجود في الميرجيشن
+            'phone_verified_at' => now(),
         ]);
 
         // Doctor User
@@ -31,7 +38,7 @@ class UserSeeder extends Seeder
             'email' => 'doctor@example.com',
             'password' => Hash::make('password'),
             'user_type' => 'doctor',
-            'phone' => '+1234567891',
+            'phone' => $this->generateEgyptianPhone(), // تم التعديل هنا
             'address' => '456 Medical Center, City',
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
@@ -43,7 +50,7 @@ class UserSeeder extends Seeder
             'email' => 'patient@example.com',
             'password' => Hash::make('password'),
             'user_type' => 'patient',
-            'phone' => '+1234567892',
+            'phone' => $this->generateEgyptianPhone(), // تم التعديل هنا
             'address' => '789 Patient Avenue, City',
             'email_verified_at' => now(),
             'phone_verified_at' => now(),
