@@ -4,42 +4,37 @@ namespace Database\Seeders;
 
 use App\Models\PatientProfile;
 use App\Models\User;
-use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class PatientSeeder extends Seeder
 {
-    // ✅ Function تولد رقم مصري
-    private function generateEgyptianPhone()
-    {
-        $prefixes = ['010', '011', '012', '015'];
-        return $prefixes[array_rand($prefixes)] . rand(10000000, 99999999);
-    }
-
     public function run(): void
     {
-        $faker = Faker::create();
+        // داتا ثابتة للـ6 مرضى اللي عملناهم في UserSeeder
+        $patients = [
+            ['user_email' => 'patient1@example.com', 'birthdate' => '1990-01-01', 'gender' => 'female', 'latitude' => 30.0444, 'longitude' => 31.2357],
+            ['user_email' => 'patient2@example.com', 'birthdate' => '1985-05-12', 'gender' => 'male', 'latitude' => 30.0500, 'longitude' => 31.2330],
+            ['user_email' => 'patient3@example.com', 'birthdate' => '1992-03-22', 'gender' => 'female', 'latitude' => 30.0460, 'longitude' => 31.2300],
+            ['user_email' => 'patient4@example.com', 'birthdate' => '1988-07-15', 'gender' => 'male', 'latitude' => 30.0480, 'longitude' => 31.2400],
+            ['user_email' => 'patient5@example.com', 'birthdate' => '1995-11-30', 'gender' => 'female', 'latitude' => 30.0420, 'longitude' => 31.2380],
+            ['user_email' => 'patient6@example.com', 'birthdate' => '1991-09-05', 'gender' => 'male', 'latitude' => 30.0450, 'longitude' => 31.2360],
+        ];
 
-        foreach (range(1, 20) as $index) {
-            $user = User::create([
-                'name' => $faker->name,
-                'email' => "patient{$index}@example.com",
-                'password' => Hash::make('password'),
-                'user_type' => 'patient',
-                'phone' => $this->generateEgyptianPhone(), // تم التعديل هنا
-                'address' => $faker->address,
-                'email_verified_at' => now(),
-                'phone_verified_at' => now(),
-            ]);
+        foreach ($patients as $patientData) {
+            $user = User::where('email', $patientData['user_email'])->first();
 
-            PatientProfile::create([
-                'user_id' => $user->id,
-                'birthdate' => $faker->date('Y-m-d', '-18 years'),
-                'gender' => $faker->randomElement(['male', 'female']),
-                'latitude' => $faker->latitude,
-                'longitude' => $faker->longitude,
-            ]);
+            if ($user) {
+                // استخدمي firstOrCreate عشان تمنعي التكرار
+                PatientProfile::firstOrCreate(
+                    ['user_id' => $user->id],
+                    [
+                        'birthdate' => $patientData['birthdate'],
+                        'gender' => $patientData['gender'],
+                        'latitude' => $patientData['latitude'],
+                        'longitude' => $patientData['longitude'],
+                    ]
+                );
+            }
         }
     }
 }
