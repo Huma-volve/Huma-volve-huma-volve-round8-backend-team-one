@@ -15,17 +15,35 @@ class ChatService
         protected ChatRepositoryInterface $chatRepository
     ) {}
 
-    /**
-     * Send a new message in a conversation.
-     *
-     * Handles text and file attachments, persists to database,
-     * updates conversation timestamp, and dispatches real-time event.
-     *
-     * @param User $sender
-     * @param Conversation $conversation
-     * @param array $data Validated data containing 'body' and optional 'attachment'
-     * @return Message
-     */
+
+    // get existing conversation or create new one between patient and doctor
+    public function getOrCreateConversation(int $patientId, int $doctorId): Conversation
+    {
+        // check if conversation already exists between these two users
+        $conversation = Conversation::whereHas('participants', function ($q) use ($patientId) {
+            $q->where('user_id', $patientId);
+        })->whereHas('participants', function ($q) use ($doctorId) {
+            $q->where('user_id', $doctorId);
+        })->first();
+
+        // if exists return it
+        if ($conversation) {
+            return $conversation->load(['participants.user', 'lastMessage']);
+        }
+
+        // create new conversation
+        $conversation = Conversation::create();
+
+        // add both users as participants
+        $conversation->participants()->createMany([
+            ['user_id' => $patientId],
+            ['user_id' => $doctorId],
+        ]);
+
+        return $conversation->load(['participants.user', 'lastMessage']);
+    }
+
+    // send a new message in a conversation
     public function sendMessage(User $sender, Conversation $conversation, array $data): Message
     {
         $messageData = [
@@ -42,7 +60,6 @@ class ChatService
         }
 
         $message = $this->chatRepository->createMessage($messageData);
-
         $this->chatRepository->updateConversationTimestamp($conversation->id);
 
         MessageSent::dispatch($message);
@@ -50,13 +67,7 @@ class ChatService
         return $message->load('sender');
     }
 
-
-    /**
-     * Determine the media type based on the file MIME type.
-     *
-     * @param UploadedFile $file
-     * @return string 'image', 'video', or 'file'
-     */
+    // determine the media type based on file MIME type
     protected function getMediaType(UploadedFile $file): string
     {
         $mime = $file->getMimeType();
