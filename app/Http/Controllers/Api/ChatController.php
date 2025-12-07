@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\SendMessageRequest;
+use App\Http\Requests\Api\StartConversationRequest;
 use App\Http\Resources\ConversationResource;
 use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
@@ -18,50 +19,40 @@ class ChatController extends Controller
         protected ChatService $chatService
     ) {}
 
-    /**
-     * List user conversations with pagination.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
     public function index(Request $request)
     {
-        $conversations = $this->chatRepository->getUserConversations($request->user()->id);
+        $conversations = $this->chatRepository->getUserConversations(
+            $request->user()->id,
+            $request->only(['search', 'type'])
+        );
 
         return ConversationResource::collection($conversations);
     }
 
-    /**
-     * Display a conversation and mark it as read.
-     *
-     * @param Request $request
-     * @param Conversation $conversation
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
-     */
+    public function startConversation(StartConversationRequest $request)
+    {
+        $conversation = $this->chatService->getOrCreateConversation(
+            $request->user()->id,
+            $request->validated('doctor_id')
+        );
+
+        return new ConversationResource($conversation);
+    }
+
     public function show(Request $request, Conversation $conversation)
     {
-        $participant = $conversation->participants()->where('user_id', $request->user()->id)->firstOrFail();
-
-        $participant->update([
-            'last_read_at' => now(),
-        ]);
+        if (!$conversation->participants()->where('user_id', $request->user()->id)->exists()) {
+            abort(403, 'Unauthorized');
+        }
 
         $messages = $this->chatRepository->getConversationMessages($conversation->id);
-
         return MessageResource::collection($messages);
     }
 
-    /**
-     * Send a new message to a conversation.
-     *
-     * @param SendMessageRequest $request
-     * @param Conversation $conversation
-     * @return MessageResource
-     */
-    public function store(SendMessageRequest $request, Conversation $conversation)
+    public function sendMessage(SendMessageRequest $request, Conversation $conversation)
     {
-        if (! $conversation->participants()->where('user_id', $request->user()->id)->exists()) {
-            abort(403);
+        if (!$conversation->participants()->where('user_id', $request->user()->id)->exists()) {
+            abort(403, 'Unauthorized');
         }
 
         $message = $this->chatService->sendMessage(
@@ -73,38 +64,47 @@ class ChatController extends Controller
         return new MessageResource($message);
     }
 
-    /**
-     * Toggle the archived status of a conversation.
-     *
-     * @param Request $request
-     * @param Conversation $conversation
-     * @return \Illuminate\Http\Response
-     */
-    public function toggleArchive(Request $request, Conversation $conversation)
+    public function markAsRead(Request $request, Conversation $conversation)
     {
-        $participant = $conversation->participants()->where('user_id', $request->user()->id)->firstOrFail();
+        if (!$conversation->participants()->where('user_id', $request->user()->id)->exists()) {
+            abort(403, 'Unauthorized');
+        }
 
-        $participant->update([
-            'is_archived' => ! $participant->is_archived,
-        ]);
+        $participant = $conversation->participants()
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
+        $participant->update(['last_read_at' => now()]);
 
         return response()->noContent();
     }
 
-    /**
-     * Toggle the favorite status of a conversation.
-     *
-     * @param Request $request
-     * @param Conversation $conversation
-     * @return \Illuminate\Http\Response
-     */
+    public function toggleArchive(Request $request, Conversation $conversation)
+    {
+        if (!$conversation->participants()->where('user_id', $request->user()->id)->exists()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $participant = $conversation->participants()
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
+        $participant->update(['is_archived' => !$participant->is_archived]);
+
+        return response()->noContent();
+    }
+
     public function toggleFavorite(Request $request, Conversation $conversation)
     {
-        $participant = $conversation->participants()->where('user_id', $request->user()->id)->firstOrFail();
+        if (!$conversation->participants()->where('user_id', $request->user()->id)->exists()) {
+            abort(403, 'Unauthorized');
+        }
 
-        $participant->update([
-            'is_favorite' => ! $participant->is_favorite,
-        ]);
+        $participant = $conversation->participants()
+            ->where('user_id', $request->user()->id)
+            ->firstOrFail();
+
+        $participant->update(['is_favorite' => !$participant->is_favorite]);
 
         return response()->noContent();
     }
