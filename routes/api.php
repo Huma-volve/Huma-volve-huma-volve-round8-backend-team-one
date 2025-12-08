@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // ============================================================================
@@ -19,7 +20,7 @@ use App\Http\Controllers\Auth\{
 use App\Http\Controllers\Profile\{
     ChangePasswordController,
     DeleteAccountController,
-    FavoriteController,
+    FavoriteController as ProfileFavoriteController,
     NotificationController as ProfileNotificationController,
     PaymentMethodController,
     ProfileAccountController
@@ -31,13 +32,29 @@ use App\Http\Controllers\Api\{
     ReviewController,
     BookingController,
     PaymentController,
-    SavedCardController
+    SavedCardController,
+    DoctorController,
+    SpecialtyController,
+    GetDoctorAvailabilityController,
+    FavoriteController as ToggleFavoriteController
 };
+
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register API routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "api" middleware group. Make something great!
+|
+*/
 
 // ============================================================================
 // PUBLIC ROUTES
 // ============================================================================
 
+// Authentication
 Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
@@ -48,11 +65,24 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
 });
 
+// Specialties
+Route::get('/specialties', [SpecialtyController::class, 'index']);
+
+// Doctors
+Route::apiResource('doctors', DoctorController::class)->only(['index', 'show']);
+Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class);
+
+
 // ============================================================================
 // PROTECTED ROUTES (auth:sanctum)
 // ============================================================================
 
 Route::middleware('auth:sanctum')->group(function () {
+
+    // User Info
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
 
     // ------------------------------------------------------------------------
     // PROFILE MANAGEMENT
@@ -65,8 +95,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
         Route::delete('/delete', [DeleteAccountController::class, 'deleteAccount'])->name('delete');
 
-        // Favorites
-        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+        // Favorites (List)
+        Route::get('/favorites', [ProfileFavoriteController::class, 'index'])->name('favorites.index');
 
         // Notification Settings
         Route::post('/notifications/toggle', [ProfileNotificationController::class, 'toggle'])->name('notifications.toggle');
@@ -78,6 +108,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/{id}/default', [PaymentMethodController::class, 'setDefault'])->name('set-default');
         });
     });
+
+    // Toggle Favorite Doctor
+    Route::post('/doctors/{doctor}/favorite', ToggleFavoriteController::class);
 
     // ------------------------------------------------------------------------
     // CHAT / CONVERSATIONS
