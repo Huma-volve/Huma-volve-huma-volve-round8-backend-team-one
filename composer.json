@@ -13,14 +13,11 @@
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
-        "stripe/stripe-php": "^19.0",
+        "stripe/stripe-php": "^19.0"
     },
     "require-dev": {
-<<<<<<< HEAD
         "barryvdh/laravel-debugbar": "^3.16",
-=======
         "barryvdh/laravel-ide-helper": "^3.6",
->>>>>>> 0685c72c6671cefb22349bca660ff5f5f29e16f5
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",

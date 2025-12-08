@@ -29,6 +29,22 @@ trait ApiResponse
     }
 
     /**
+     * Alias for successResponse
+     */
+    protected function success($data = null, string $message = '', int $status = 200): JsonResponse
+    {
+        return $this->successResponse($data, $message, $status);
+    }
+
+    /**
+     * Alias for errorResponse
+     */
+    protected function fail(string $message, int $status = 400, $errors = null): JsonResponse
+    {
+        return $this->errorResponse($message, $status, $errors);
+    }
+
+    /**
      * Return an error response
      */
     protected function errorResponse(string $message, int $status = 400, $errors = null): JsonResponse
