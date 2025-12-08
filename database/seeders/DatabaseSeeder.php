@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ConversationSeeder::class,
             SearchHistorySeeder::class,
             SavedCardSeeder::class,
+            NotificationSeeder::class,
         ]);
     }
 }
