@@ -101,16 +101,19 @@ class UserSeeder extends Seeder
         ];
 
         foreach ($users as $user) {
-            User::create([
-                'name' => $user['name'],
-                'email' => $user['email'],
-                'password' => Hash::make('password'),
-                'user_type' => $user['user_type'],
-                'phone' => $user['phone'],
-                'address' => $user['address'],
-                'email_verified_at' => now(),
-                'phone_verified_at' => now(),
-            ]);
-        }
+    User::firstOrCreate(
+        ['email' => $user['email']], // تشيك على الإيميل
+        [
+            'name' => $user['name'],
+            'password' => Hash::make('password'),
+            'user_type' => $user['user_type'],
+            'phone' => $user['phone'],
+            'address' => $user['address'],
+            'email_verified_at' => now(),
+            'phone_verified_at' => now(),
+        ]
+    );
+}
+
     }
 }
