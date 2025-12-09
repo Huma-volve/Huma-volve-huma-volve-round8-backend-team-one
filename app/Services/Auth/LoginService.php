@@ -5,15 +5,18 @@ namespace App\Services\Auth;
 use App\Models\User;
 use App\Repositories\VerificationCodeRepository;
 use App\Traits\ApiResponse;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\
+{
+    Hash,
+    Auth
+};
 
 class LoginService {
-use ApiResponse;
+
+    use ApiResponse;
     public function __construct(protected VerificationCodeRepository $repo)
     {
     }
-
 
     public function login(string $phone , string $password , $remember_me = "off")
     {
@@ -25,18 +28,17 @@ use ApiResponse;
 
         if(!$user->phone_verified_at){
 
-            $this->repo->deleteOld($phone);
-            // $otp = random_int(1000, 9999);
             $otp = 1234;
+            $this->repo->deleteOld($phone);
             $this->repo->createOtp($phone, $otp);
 
             // send sms
-            return $this->fail('Your account is not verified, OTP sent for verification');
+            return $this->fail('Your account is not verified, OTP is sent for verification');
         }
 
         $user->tokens()->delete();
         $token = $user->createToken('authToken')->plainTextToken;
         Auth::login($user,$remember_me);
-        return $this->success(['token'=>$token],'You are logged in successfully');
+        return $this->success(['token' => $token],'You are logged in successfully');
     }
 }

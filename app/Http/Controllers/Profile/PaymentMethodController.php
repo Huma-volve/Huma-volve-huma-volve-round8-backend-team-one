@@ -33,7 +33,7 @@ class PaymentMethodController extends Controller
             'is_default'       => $isDefault,
         ]);
 
-        return $this->success($method,'Card Added Successfully',"success",201);
+        return $this->success($method,'Card Added Successfully',201);
     }
 
     public function setDefault($id)

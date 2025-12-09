@@ -19,11 +19,11 @@ class ChangePasswordController extends Controller
 
         $user = User::find(Auth::id());
         if(!Hash::check($request->current_password,$user->password)){
-            return $this->fail('Your password is incorrect!',"fail",400);
+            return $this->fail('Your password is incorrect!',400);
         }
 
         $user->password = Hash::make($request->new_password);
         $user->save();
-        return $this->success(null,'Your password is changed successfully',"success",200);
+        return $this->success(null,'Your password is changed successfully',200);
     }
 }

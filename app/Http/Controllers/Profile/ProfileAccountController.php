@@ -21,6 +21,13 @@ class ProfileAccountController extends Controller
                 ['birthdate' => $request->birthdate]
         );
 
-        return $this->success(null,'Profile updated successfully');
+        $user = User::with('patientProfile')->find(Auth::id());
+        $data = [
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
+            'birthdate' => $user->patientProfile->birthdate->format('d-m-Y'),
+        ];
+        return $this->success($data,'Profile updated successfully');
     }
 }

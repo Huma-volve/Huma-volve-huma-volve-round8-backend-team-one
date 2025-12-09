@@ -15,6 +15,7 @@ use App\Http\Controllers\Auth\{
     LogoutController,
     RegisterController,
     VerifyOtpController,
+    ResendOtpController,
     GoogleRegisterController
 };
 use App\Http\Controllers\Profile\{
@@ -59,10 +60,11 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/register', [RegisterController::class, 'register'])->name('register');
     Route::post('/verify-otp', [VerifyOtpController::class, 'verifyOtp'])->name('verify-otp');
+    Route::post('/resend-otp', [ResendOtpController::class, 'resendOtp'])->middleware('throttle:resend-otp')->name('resend-otp');
     Route::post('/google-login', [GoogleLoginController::class, 'googleLogin'])->name('loginWithGoogle');
     Route::post('/google-register', [GoogleRegisterController::class, 'googleRegister'])->name('registerWithGoogle');
     Route::post('/forget-password', [ForgetPasswordController::class, 'forgetPassword'])->name('forget-password');
-    Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
+    Route::put('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
 });
 
 // Specialties
@@ -91,21 +93,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Account Management
         Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-        Route::post('/edit', [ProfileAccountController::class, 'editProfile'])->name('edit');
-        Route::post('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
+        Route::put('/edit', [ProfileAccountController::class, 'editProfile'])->name('edit');
+        Route::put('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
         Route::delete('/delete', [DeleteAccountController::class, 'deleteAccount'])->name('delete');
 
         // Favorites (List)
         Route::get('/favorites', [ProfileFavoriteController::class, 'index'])->name('favorites.index');
 
         // Notification Settings
-        Route::post('/notifications/toggle', [ProfileNotificationController::class, 'toggle'])->name('notifications.toggle');
+        Route::put('/notifications/toggle', [ProfileNotificationController::class, 'toggle'])->name('notifications.toggle');
 
         // Payment Methods
         Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
             Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
             Route::post('/', [PaymentMethodController::class, 'store'])->name('store');
-            Route::post('/{id}/default', [PaymentMethodController::class, 'setDefault'])->name('set-default');
+            Route::put('/{id}/default', [PaymentMethodController::class, 'setDefault'])->name('set-default');
         });
     });
 
