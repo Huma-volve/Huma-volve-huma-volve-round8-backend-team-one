@@ -2,12 +2,18 @@
 
 namespace App\Providers;
 
-use App\Repositories\Contracts\ChatRepositoryInterface;
-use App\Repositories\Eloquent\ChatRepository;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
+
+// Interfaces
+use App\Repositories\Contracts\ChatRepositoryInterface;
+use App\Repositories\Contracts\DoctorChatRepositoryInterface;
+
+// Implementations
+use App\Repositories\Eloquent\ChatRepository;
+use App\Repositories\DoctorChatRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -16,9 +22,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Bind Patient Chat Repository
         $this->app->bind(
             ChatRepositoryInterface::class,
             ChatRepository::class
+        );
+
+        // Bind Doctor Chat Repository
+        $this->app->bind(
+            DoctorChatRepositoryInterface::class,
+            DoctorChatRepository::class
         );
     }
 
