@@ -21,7 +21,7 @@ class GoogleRegisterController extends Controller
         $payload = $client->verifyIdToken($request->id_token);
 
         if (!$payload) {
-            return $this->fail('Invalid Google token',"fail",400);
+            return $this->fail('Invalid Google token',400);
         }
 
 
@@ -51,7 +51,7 @@ class GoogleRegisterController extends Controller
 
         $user->tokens()->delete();
         $token = $user->createToken('authToken')->plainTextToken;
-        return $this->success(['token' => $token],'Logged in successfully',"success",200);
+        return $this->success(['token' => $token],'Logged in successfully',200);
     }
 }
 

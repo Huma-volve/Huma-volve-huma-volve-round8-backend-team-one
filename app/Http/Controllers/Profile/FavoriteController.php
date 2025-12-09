@@ -17,9 +17,9 @@ class FavoriteController extends Controller
                                     ->get();
 
         if($favorits->count() > 0){
-            return $this->success($favorits,"","success",200);
+            return $this->success($favorits,'',200);
         }
 
-        return $this->success(null,'There is no favorites to display!',"success",200);
+        return $this->success(null,'There is no favorites to display!',200);
     }
 }

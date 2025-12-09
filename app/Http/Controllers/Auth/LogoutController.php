@@ -16,6 +16,6 @@ class LogoutController extends Controller
         $user->save();
 
         $request->user()->currentAccessToken()->delete();
-        return $this->success(null,'Logged out successfully',"success",200);
+        return $this->success(null,'Logged out successfully',200);
     }
 }

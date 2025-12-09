@@ -11,6 +11,6 @@ class DeleteAccountController extends Controller
     use ApiResponse;
     public function deleteAccount(Request $request){
         $request->user()->delete();
-        return $this->success(null,'Your account is deleted successfully',"success",200);
+        return $this->success(null,'Your account is deleted successfully',200);
     }
 }
