@@ -64,7 +64,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/google-login', [GoogleLoginController::class, 'googleLogin'])->name('loginWithGoogle');
     Route::post('/google-register', [GoogleRegisterController::class, 'googleRegister'])->name('registerWithGoogle');
     Route::post('/forget-password', [ForgetPasswordController::class, 'forgetPassword'])->name('forget-password');
-    Route::put('/resetPassword', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
+    Route::put('/changePassword', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
 });
 
 // Specialties
