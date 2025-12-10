@@ -70,68 +70,7 @@
          class="fixed inset-0 z-20 bg-black/50 lg:hidden" 
          @click="sidebarOpen = false"></div>
 
-    <!-- Sidebar -->
-    <aside class="fixed inset-y-0 start-0 z-30 w-64 bg-white border-r {{ $isRtl ? 'border-l' : 'border-r' }} border-slate-200 transform transition-transform duration-300 lg:translate-x-0"
-           :class="{'translate-x-0': sidebarOpen, '{{ $isRtl ? 'translate-x-full' : '-translate-x-full' }}': !sidebarOpen}">
-        
-        <!-- Logo -->
-        <div class="flex items-center justify-center h-16 border-b border-slate-100">
-            <div class="flex items-center gap-2 text-primary-600 font-bold text-2xl">
-                <i class="ph-fill ph-heartbeat"></i>
-                <span>Huma<span class="text-slate-800">Volve</span></span>
-            </div>
-        </div>
-
-        <!-- Scrollable Navigation -->
-        <nav class="p-4 space-y-1 overflow-y-auto h-[calc(100vh-4rem)]">
-            
-            <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {{ $isRtl ? 'لوحة الطبيب' : 'Doctor Panel' }}
-            </div>
-            
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-50 text-primary-700 font-medium transition-colors">
-                <i class="ph ph-squares-four text-lg"></i>
-                <span>{{ $isRtl ? 'لوحة التحكم' : 'Dashboard' }}</span>
-            </a>
-            
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-chats-circle text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'الرسائل' : 'Messages' }}</span>
-                <span class="bg-primary-100 text-primary-700 py-0.5 px-2 rounded-full text-xs font-bold {{ $isRtl ? 'mr-auto' : 'ml-auto' }}">5</span>
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-calendar-check text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'المواعيد' : 'Appointments' }}</span>
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-users text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'مرضاي' : 'My Patients' }}</span>
-            </a>
-
-            <div class="my-4 border-t border-slate-100"></div>
-
-            <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                {{ $isRtl ? 'لوحة المسؤول' : 'Admin Panel' }}
-            </div>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-article text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'إدارة المحتوى' : 'Content Management' }}</span>
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-sliders text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'إعدادات النظام' : 'System Settings' }}</span>
-            </a>
-
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-users-three text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'إدارة المستخدمين' : 'User Management' }}</span>
-            </a>
-        </nav>
-    </aside>
+    @include('layouts.partials.sidebar')
 
     <!-- Main Content -->
     <div class="lg:{{ $isRtl ? 'mr-64' : 'ml-64' }} flex flex-col min-h-screen transition-all duration-300">
