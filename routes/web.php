@@ -13,3 +13,8 @@ Route::middleware(['auth:web'])->prefix('doctor')->name('doctor.')->group(functi
     Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
 });
+
+// الراوت ده للتجربة بس  يا شباب علشان اللي حابب يشوف شكل التصميم
+Route::get('test-design', function () {
+    return view('test-design');
+});
