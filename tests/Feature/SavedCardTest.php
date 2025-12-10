@@ -76,4 +76,25 @@ class SavedCardTest extends TestCase
             'is_default' => false,
         ]);
     }
+    public function test_returns_friendly_error_if_card_not_found()
+    {
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->putJson("/api/saved-cards/99999", [
+            'exp_month' => 12,
+        ]);
+
+        $response->assertStatus(404)
+            ->assertJson(['message' => 'Card not found.']);
+
+        $response = $this->actingAs($user)->putJson("/api/saved-cards/99999/default");
+
+        $response->assertStatus(404)
+            ->assertJson(['message' => 'Card not found.']);
+
+        $response = $this->actingAs($user)->deleteJson("/api/saved-cards/99999");
+
+        $response->assertStatus(404)
+            ->assertJson(['message' => 'Card not found.']);
+    }
 }

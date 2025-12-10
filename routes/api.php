@@ -27,7 +27,6 @@ use App\Http\Controllers\Profile\ChangePasswordController;
 use App\Http\Controllers\Profile\DeleteAccountController;
 use App\Http\Controllers\Profile\FavoriteController as ProfileFavoriteController;
 use App\Http\Controllers\Profile\NotificationController as ProfileNotificationController;
-use App\Http\Controllers\Profile\PaymentMethodController;
 use App\Http\Controllers\Profile\ProfileAccountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
