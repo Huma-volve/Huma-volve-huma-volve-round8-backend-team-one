@@ -58,15 +58,17 @@ class DoctorProfile extends Model
         return $this->hasMany(Review::class, 'doctor_id');
     }
 
-    public function availabilitySlots()
+    public function doctorSchedules()
     {
-        return $this->hasMany(AvailabilitySlot::class, 'doctor_profile_id');
+        return $this->hasMany(DoctorSchedule::class, 'doctor_profile_id');
     }
 
     public function isFavoritedBy(int $userId): bool
     {
         $patient = PatientProfile::where('user_id', $userId)->first();
-        if (!$patient) return false;
+        if (! $patient) {
+            return false;
+        }
 
         return \Illuminate\Support\Facades\DB::table('favorites')
             ->where('doctor_id', $this->id)
@@ -76,22 +78,54 @@ class DoctorProfile extends Model
 
     public function getUpcomingSlots()
     {
-        return $this->availabilitySlots()
-            ->where('date', '>=', now()->format('Y-m-d'))
-            ->where('is_active', true)
-            ->where('is_booked', false)
-            ->orderBy('date')
-            ->orderBy('start_time')
-            ->take(5)
-            ->get()
-            ->map(function ($slot) {
-                return [
-                    'id' => $slot->id,
-                    'date' => $slot->date->format('Y-m-d'),
-                    'start_time' => $slot->start_time->format('H:i'),
-                    'end_time' => $slot->end_time->format('H:i'),
-                ];
-            });
+        $schedules = $this->doctorSchedules;
+        $slots = collect([]);
+        $today = now();
+
+        for ($i = 0; $i < 7; $i++) {
+            $date = $today->copy()->addDays($i);
+            $dayOfWeek = $date->dayOfWeek; // 0 (Sunday) - 6 (Saturday)
+
+            $schedule = $schedules->firstWhere('day_of_week', $dayOfWeek);
+
+            if ($schedule) {
+                // Generate slots for this day
+                $startTime = \Carbon\Carbon::parse($schedule->start_time);
+                $endTime = \Carbon\Carbon::parse($schedule->end_time);
+
+                while ($startTime->lt($endTime)) {
+                    $slotEnd = $startTime->copy()->addMinutes($schedule->avg_consultation_time ?? 30);
+
+                    if ($slotEnd->gt($endTime)) {
+                        break;
+                    }
+
+                    // Check if already booked
+                    $isBooked = Booking::where('doctor_id', $this->id)
+                        ->whereDate('appointment_date', $date->format('Y-m-d'))
+                        ->where('appointment_time', $startTime->format('H:i:s'))
+                        ->whereIn('status', ['pending', 'confirmed'])
+                        ->exists();
+
+                    if (! $isBooked) {
+                        $slots->push([
+                            'date' => $date->format('Y-m-d'),
+                            'start_time' => $startTime->format('H:i'),
+                            'end_time' => $slotEnd->format('H:i'),
+                            'day_name' => $date->format('l'),
+                        ]);
+                    }
+
+                    $startTime->addMinutes($schedule->avg_consultation_time ?? 30);
+
+                    if ($slots->count() >= 5) {
+                        break 2;
+                    } // Return first 5 slots
+                }
+            }
+        }
+
+        return $slots;
     }
 
     // Query Scopes
@@ -130,6 +164,7 @@ class DoctorProfile extends Model
         if ($maxPrice !== null) {
             $query->where('session_price', '<=', $maxPrice);
         }
+
         return $query;
     }
 

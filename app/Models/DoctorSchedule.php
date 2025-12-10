@@ -5,29 +5,27 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class AvailabilitySlot extends Model
+class DoctorSchedule extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'doctor_profile_id',
-        'date',
+        'day_of_week',
         'start_time',
         'end_time',
-        'is_active',
-        'is_booked',
+        'avg_consultation_time',
     ];
 
     protected $casts = [
-        'date' => 'date',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
-        'is_active' => 'boolean',
-        'is_booked' => 'boolean',
+        'day_of_week' => 'integer',
+        'avg_consultation_time' => 'integer',
     ];
 
-    public function doctor()
+    public function doctorProfile()
     {
-        return $this->belongsTo(DoctorProfile::class, 'doctor_profile_id');
+        return $this->belongsTo(DoctorProfile::class);
     }
 }

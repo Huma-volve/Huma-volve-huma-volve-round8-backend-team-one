@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\AvailabilitySlotResource;
 use App\Models\DoctorProfile;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -17,16 +16,10 @@ class GetDoctorAvailabilityController extends Controller
      */
     public function __invoke(DoctorProfile $doctor): JsonResponse
     {
-        $slots = $doctor->availabilitySlots()
-            ->where('date', '>=', now()->format('Y-m-d'))
-            ->where('is_active', true)
-            ->where('is_booked', false)
-            ->orderBy('date')
-            ->orderBy('start_time')
-            ->get();
+        $slots = $doctor->getUpcomingSlots();
 
         return $this->successResponse(
-            AvailabilitySlotResource::collection($slots),
+            $slots,
             'Availability slots retrieved successfully'
         );
     }

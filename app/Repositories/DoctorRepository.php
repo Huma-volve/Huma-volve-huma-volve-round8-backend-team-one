@@ -78,7 +78,7 @@ class DoctorRepository
      */
     public function findById(int $id): ?DoctorProfile
     {
-        return DoctorProfile::with(['user', 'speciality', 'reviews', 'availabilitySlots'])
+        return DoctorProfile::with(['user', 'speciality', 'reviews', 'doctorSchedules'])
             ->find($id);
     }
 }

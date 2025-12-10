@@ -8,7 +8,6 @@ use App\Http\Resources\PaymentResource;
 use App\Models\Booking;
 use App\Models\Transaction;
 use App\Services\Payment\PaymentFactory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -74,12 +73,16 @@ class PaymentController extends Controller
                     'failure_reason' => $result['message'],
                 ]);
 
-                return response()->json(['message' => 'Payment failed: ' . $result['message']], 400);
+                // Update booking status to failed
+                $booking->update(['payment_status' => 'failed']);
+
+                return response()->json(['message' => 'Payment failed: '.$result['message']], 400);
             }
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+
+            return response()->json(['message' => 'An error occurred: '.$e->getMessage()], 500);
         }
     }
 }

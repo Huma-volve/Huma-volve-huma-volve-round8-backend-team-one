@@ -43,16 +43,7 @@ class DoctorResource extends JsonResource
             ),
             'availability' => $this->when(
                 $request->include_availability,
-                fn() => AvailabilitySlotResource::collection(
-                    $this->availabilitySlots()
-                        ->where('date', '>=', now()->format('Y-m-d'))
-                        ->where('is_active', true)
-                        ->where('is_booked', false)
-                        ->orderBy('date')
-                        ->orderBy('start_time')
-                        ->take(5)
-                        ->get()
-                )
+                fn() => $this->getUpcomingSlots()
             ),
             'reviews' => $this->when(
                 $request->include_reviews,
