@@ -27,6 +27,16 @@ class SavedCardController extends Controller
     {
         $user = Auth::user();
 
+        // Check for duplicate card (same brand and last four)
+        $existingCard = $user->savedCards()
+            ->where('brand', $request->brand)
+            ->where('last_four', $request->last_four)
+            ->first();
+
+        if ($existingCard) {
+            return response()->json(['message' => 'This card is already saved in your profile.'], 409); // 409 Conflict
+        }
+
         if ($request->is_default) {
             $user->savedCards()->update(['is_default' => false]);
         }

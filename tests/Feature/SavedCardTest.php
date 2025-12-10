@@ -97,4 +97,31 @@ class SavedCardTest extends TestCase
         $response->assertStatus(404)
             ->assertJson(['message' => 'Card not found.']);
     }
+    public function test_cannot_save_duplicate_card()
+    {
+        $user = User::factory()->create();
+
+        // Save first card
+        $this->actingAs($user)->postJson("/api/saved-cards", [
+            'provider_token' => 'tok_visa',
+            'brand' => 'visa',
+            'last_four' => '4242',
+            'exp_month' => 12,
+            'exp_year' => 2030,
+            'is_default' => true,
+        ])->assertStatus(201);
+
+        // Try to save duplicate card
+        $response = $this->actingAs($user)->postJson("/api/saved-cards", [
+            'provider_token' => 'tok_visa_2',
+            'brand' => 'visa',
+            'last_four' => '4242',
+            'exp_month' => 12,
+            'exp_year' => 2030,
+            'is_default' => false,
+        ]);
+
+        $response->assertStatus(409)
+            ->assertJson(['message' => 'This card is already saved in your profile.']);
+    }
 }
