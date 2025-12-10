@@ -14,7 +14,7 @@ Route::middleware(['auth:web'])->prefix('doctor')->name('doctor.')->group(functi
     Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
 });
 
-// الراوت ده للتجربة بس  يا شباب هبقي امسحه بعدين 
+// الراوت ده للتجربة بس  يا شباب علشان اللي حابب يشوف شكل التصميم
 Route::get('test-design', function () {
-    return view('layouts.app');
+    return view('test-design');
 });
