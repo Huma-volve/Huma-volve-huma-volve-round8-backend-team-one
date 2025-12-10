@@ -26,7 +26,7 @@ class BookingFactory extends Factory
             'status' => fake()->randomElement(['pending', 'confirmed', 'completed', 'cancelled']),
             'price_at_booking' => fake()->randomFloat(2, 50, 500),
             'payment_method' => fake()->randomElement(['paypal', 'stripe', 'cash']),
-            'payment_status' => fake()->randomElement(['pending', 'paid']),
+            'payment_status' => fake()->randomElement(['unpaid', 'paid', 'failed', 'refunded']),
             'payment_transaction_id' => fake()->uuid(),
             'notes' => fake()->sentence(),
             'cancellation_reason' => null,

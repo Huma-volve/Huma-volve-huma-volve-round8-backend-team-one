@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\AvailabilitySlot;
+use App\Models\DoctorSchedule;
 use App\Models\DoctorProfile;
 use App\Models\Speciality;
 use App\Models\User;
@@ -94,24 +94,20 @@ class DoctorSeeder extends Seeder
                 ]
             );
 
-            // Slots ثابتة لكل دكتور، استخدمي firstOrCreate عشان تمنعي التكرار
-            $slots = [
-                ['date' => '2025-12-08', 'start_time' => '09:00:00', 'end_time' => '10:00:00'],
-                ['date' => '2025-12-08', 'start_time' => '10:00:00', 'end_time' => '11:00:00'],
-                ['date' => '2025-12-08', 'start_time' => '14:00:00', 'end_time' => '15:00:00'],
-            ];
+            // Create Schedules for the doctor (e.g. Sunday to Thursday)
+            // Days: 0=Sunday, 1=Monday ...
+            $days = [0, 1, 2, 3, 4]; // Sunday to Thursday
 
-            foreach ($slots as $slot) {
-                AvailabilitySlot::firstOrCreate(
+            foreach ($days as $day) {
+                \App\Models\DoctorSchedule::firstOrCreate(
                     [
                         'doctor_profile_id' => $profile->id,
-                        'date' => $slot['date'],
-                        'start_time' => $slot['start_time'],
-                        'end_time' => $slot['end_time'],
+                        'day_of_week' => $day,
                     ],
                     [
-                        'is_active' => true,
-                        'is_booked' => false,
+                        'start_time' => '09:00:00',
+                        'end_time' => '17:00:00',
+                        'avg_consultation_time' => 30,
                     ]
                 );
             }

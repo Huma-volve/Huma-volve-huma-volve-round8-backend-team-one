@@ -8,7 +8,6 @@ use App\Http\Resources\PaymentResource;
 use App\Models\Booking;
 use App\Models\Transaction;
 use App\Services\Payment\PaymentFactory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -31,11 +30,32 @@ class PaymentController extends Controller
         try {
             $gateway = PaymentFactory::create($request->gateway);
 
+            $paymentMethodId = $request->payment_method_id;
+
+            // If no explicit method provided, look for default saved card
+            if (! $paymentMethodId) {
+                $defaultCard = $user->savedCards()->where('is_default', true)->first();
+                if ($defaultCard) {
+                    $paymentMethodId = $defaultCard->provider_token;
+                }
+            }
+
+            // If still no method, check if user has ANY cards to provide a better message?
+            // Or just fail as requested. Ideally we should probably list cards if ambiguous,
+            // but requirements say: "if user doesn't have credit card return friendly message"
+            if (! $paymentMethodId) {
+                 // Check if user has saved cards but none default? Or just none at all?
+                 if ($user->savedCards()->count() === 0) {
+                     return response()->json(['message' => 'Please add a credit card to proceed.'], 400);
+                 }
+                 return response()->json(['message' => 'Please select a payment method.'], 400);
+            }
+
             // Charge the user
             $result = $gateway->charge(
                 $booking->price_at_booking,
                 'usd', // Default currency
-                $request->payment_method_id
+                $paymentMethodId
             );
 
             if ($result['success']) {
@@ -74,12 +94,16 @@ class PaymentController extends Controller
                     'failure_reason' => $result['message'],
                 ]);
 
-                return response()->json(['message' => 'Payment failed: ' . $result['message']], 400);
+                // Update booking status to failed
+                $booking->update(['payment_status' => 'failed']);
+
+                return response()->json(['message' => 'Payment failed: '.$result['message']], 400);
             }
 
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'An error occurred: ' . $e->getMessage()], 500);
+
+            return response()->json(['message' => 'An error occurred: '.$e->getMessage()], 500);
         }
     }
 }

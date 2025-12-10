@@ -1,44 +1,35 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\ChatController;
 // ============================================================================
 // CONTROLLERS
 // ============================================================================
 
-use App\Http\Controllers\Auth\{
-    LoginController,
-    GoogleLoginController,
-    ResetPasswordController,
-    ForgetPasswordController,
-    LogoutController,
-    RegisterController,
-    VerifyOtpController,
-    ResendOtpController,
-    GoogleRegisterController
-};
-use App\Http\Controllers\Profile\{
-    ChangePasswordController,
-    DeleteAccountController,
-    FavoriteController as ProfileFavoriteController,
-    NotificationController as ProfileNotificationController,
-    PaymentMethodController,
-    ProfileAccountController
-};
-
-use App\Http\Controllers\Api\{
-    ChatController,
-    NotificationController as ApiNotificationController,
-    ReviewController,
-    BookingController,
-    PaymentController,
-    SavedCardController,
-    DoctorController,
-    SpecialtyController,
-    GetDoctorAvailabilityController,
-    FavoriteController as ToggleFavoriteController
-};
+use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\FavoriteController as ToggleFavoriteController;
+use App\Http\Controllers\Api\GetDoctorAvailabilityController;
+use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\SavedCardController;
+use App\Http\Controllers\Api\SpecialtyController;
+use App\Http\Controllers\Auth\ForgetPasswordController;
+use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\Auth\GoogleRegisterController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ResendOtpController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\Auth\VerifyOtpController;
+use App\Http\Controllers\Profile\ChangePasswordController;
+use App\Http\Controllers\Profile\DeleteAccountController;
+use App\Http\Controllers\Profile\FavoriteController as ProfileFavoriteController;
+use App\Http\Controllers\Profile\NotificationController as ProfileNotificationController;
+use App\Http\Controllers\Profile\ProfileAccountController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -74,7 +65,6 @@ Route::get('/specialties', [SpecialtyController::class, 'index']);
 Route::apiResource('doctors', DoctorController::class)->only(['index', 'show']);
 Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class);
 
-
 // ============================================================================
 // PROTECTED ROUTES (auth:sanctum)
 // ============================================================================
@@ -103,12 +93,6 @@ Route::middleware('auth:sanctum')->group(function () {
         // Notification Settings
         Route::put('/notifications/toggle', [ProfileNotificationController::class, 'toggle'])->name('notifications.toggle');
 
-        // Payment Methods
-        Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
-            Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
-            Route::post('/', [PaymentMethodController::class, 'store'])->name('store');
-            Route::put('/{id}/default', [PaymentMethodController::class, 'setDefault'])->name('set-default');
-        });
     });
 
     // Toggle Favorite Doctor
@@ -156,5 +140,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/payments/process', [PaymentController::class, 'process']);
 
     // Saved Cards Routes
-    Route::apiResource('saved-cards', SavedCardController::class)->only(['index', 'store', 'destroy']);
+    Route::apiResource('saved-cards', SavedCardController::class)->only(['index', 'store', 'destroy', 'update']);
+    Route::put('/saved-cards/{id}/default', [SavedCardController::class, 'setDefault'])->name('saved-cards.set-default');
 });

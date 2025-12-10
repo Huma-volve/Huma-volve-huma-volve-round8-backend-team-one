@@ -23,7 +23,7 @@ class PaymentRequest extends FormRequest
     {
         return [
             'booking_id' => 'required|exists:bookings,id',
-            'payment_method_id' => 'required|string', // Stripe Payment Method ID (e.g., pm_...)
+            'payment_method_id' => 'nullable|string', // Stripe Payment Method ID (e.g., pm_...)
             'gateway' => 'required|in:stripe',
         ];
     }

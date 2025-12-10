@@ -97,23 +97,6 @@ return new class extends Migration
             $table->index(['doctor_id', 'status', 'appointment_date']);
             $table->index(['patient_id', 'status', 'appointment_date']);
             $table->index(['appointment_date', 'status']);
-
-        });
-        /**
-         * ----------------------------------------------------------
-         * AVAILABILITY_SLOTS TABLE INDEX
-         * ----------------------------------------------------------
-         *
-         * Composite Index: date + is_booked + is_active
-         *
-         * This index is designed to optimize availability searching for doctors.
-         * It significantly speeds up queries that filter slots based on:
-         *   - a specific date
-         *   - whether the slot is booked or not
-         *   - whether the slot is active/visible
-         */
-        Schema::table('availability_slots', function (Blueprint $table) {
-            $table->index(['date', 'is_booked', 'is_active']);
         });
     }
 

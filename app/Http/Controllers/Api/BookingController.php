@@ -62,38 +62,48 @@ class BookingController extends Controller
 
         $doctor = DoctorProfile::findOrFail($request->doctor_id);
 
-        // Check availability
-        // Ideally we should check against AvailabilitySlot model here
+        // Check availability: if there is another booking in the same date and time
+        $existingBooking = Booking::where('doctor_id', $doctor->id)
+            ->whereDate('appointment_date', $request->appointment_date)
+            ->where('appointment_time', $request->appointment_time)
+            ->whereIn('status', ['pending', 'confirmed']) // Assuming these are the active statuses
+            ->exists();
 
-        return DB::transaction(function () use ($request, $user, $patientProfile, $doctor) {
+        if ($existingBooking) {
+            return response()->json(['message' => 'This date and time is already booked. Please choose another slot.'], 400);
+        }
+
+        // Validate that the doctor actually works on this day/time
+        $appointmentDate = Carbon::parse($request->appointment_date);
+        $dayOfWeek = $appointmentDate->dayOfWeek; // 0=Sunday
+        $appointmentTime = \Carbon\Carbon::parse($request->appointment_time);
+
+        $schedule = \App\Models\DoctorSchedule::where('doctor_profile_id', $doctor->id)
+            ->where('day_of_week', $dayOfWeek)
+            ->first();
+
+        if (! $schedule) {
+            return response()->json(['message' => 'The doctor does not work on this day.'], 400);
+        }
+
+        $shiftStart = \Carbon\Carbon::parse($schedule->start_time);
+        $shiftEnd = \Carbon\Carbon::parse($schedule->end_time);
+
+        // Normalize dates for comparison (ignore date part, compare time only)
+        // Note: Carbon comparisons with time strings can be tricky if dates differ.
+        // Easiest is to set all to same date.
+        $checkTime = $appointmentTime->setDate(2000, 1, 1);
+        $start = $shiftStart->setDate(2000, 1, 1);
+        $end = $shiftEnd->setDate(2000, 1, 1);
+
+        if ($checkTime->lt($start) || $checkTime->gte($end)) {
+            return response()->json(['message' => 'The doctor is not available at this time (Outside working hours).'], 400);
+        }
+
+        return DB::transaction(function () use ($request, $patientProfile, $doctor) {
             $amount = $doctor->session_price ?? 0;
-            $currency = 'usd'; // Default currency
 
-            if ($request->payment_method === 'stripe') {
-                // Get saved card
-                $savedCard = $user->savedCards()->where('is_default', true)->first() ?? $user->savedCards()->latest()->first();
-
-                if (! $savedCard) {
-                    abort(400, 'No saved card found for payment.');
-                }
-
-                $paymentGateway = PaymentFactory::create('stripe');
-                $chargeResult = $paymentGateway->charge($amount, $currency, $savedCard->provider_token);
-
-                if (! $chargeResult['success']) {
-                    abort(400, 'Payment failed: '.($chargeResult['message'] ?? 'Unknown error'));
-                }
-
-                $transactionId = $chargeResult['transaction_id'];
-                $paymentData = $chargeResult['data'];
-                $paymentStatus = 'paid';
-            } else {
-                // Handle other payment methods or default behavior
-                $transactionId = null;
-                $paymentData = null;
-                $paymentStatus = 'unpaid';
-            }
-
+            // Create booking with unpaid status
             $booking = Booking::create([
                 'doctor_id' => $doctor->id,
                 'patient_id' => $patientProfile->id,
@@ -101,24 +111,11 @@ class BookingController extends Controller
                 'appointment_time' => $request->appointment_time,
                 'status' => 'pending',
                 'price_at_booking' => $amount,
-                'payment_method' => $request->payment_method,
-                'payment_status' => $paymentStatus,
-                'payment_transaction_id' => $transactionId,
+                'payment_method' => $request->payment_method, // Store the intended method
+                'payment_status' => 'unpaid',                 // Initial status
+                'payment_transaction_id' => null,
                 'notes' => $request->notes,
             ]);
-
-            if ($transactionId) {
-                Transaction::create([
-                    'booking_id' => $booking->id,
-                    'external_id' => $transactionId,
-                    'amount' => $amount,
-                    'type' => 'payment',
-                    'status' => 'success',
-                    'gateway' => $request->payment_method,
-                    'payload' => $paymentData,
-                    'currency' => $currency,
-                ]);
-            }
 
             return new BookingResource($booking->load(['doctor.user', 'patient.user']));
         });
@@ -180,7 +177,7 @@ class BookingController extends Controller
                     $refundResult = $paymentGateway->refund($booking->payment_transaction_id);
 
                     if (! $refundResult['success']) {
-                        abort(400, 'Refund failed: '.($refundResult['message'] ?? 'Unknown error'));
+                        return response()->json(['message' => 'Refund failed: '.($refundResult['message'] ?? 'Unknown error')], 400);
                     }
 
                     // Record refund transaction
