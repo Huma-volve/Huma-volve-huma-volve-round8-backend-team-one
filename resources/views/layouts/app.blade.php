@@ -1,0 +1,385 @@
+@php
+    $locale = request('lang', app()->getLocale());
+    $isRtl = $locale == 'ar';
+    $dir = $isRtl ? 'rtl' : 'ltr';
+@endphp
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $dir }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Huma Volve') }}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['{{ $isRtl ? "Cairo" : "Outfit" }}', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                            950: '#042f2e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
+
+    <!-- Icons (Phosphor Icons - clean & modern) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <style>
+        [x-cloak] { display: none !important; }
+        /* Smooth scrolling */
+        html { scroll-behavior: smooth; }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="font-sans antialiased bg-slate-50 text-slate-800" x-data="{ sidebarOpen: false, darkMode: false }">
+
+    <!-- Mobile Overlay -->
+    <div x-show="sidebarOpen" x-transition.opacity 
+         class="fixed inset-0 z-20 bg-black/50 lg:hidden" 
+         @click="sidebarOpen = false"></div>
+
+    <!-- Sidebar -->
+    <aside class="fixed inset-y-0 start-0 z-30 w-64 bg-white border-r {{ $isRtl ? 'border-l' : 'border-r' }} border-slate-200 transform transition-transform duration-300 lg:translate-x-0"
+           :class="{'translate-x-0': sidebarOpen, '{{ $isRtl ? 'translate-x-full' : '-translate-x-full' }}': !sidebarOpen}">
+        
+        <!-- Logo -->
+        <div class="flex items-center justify-center h-16 border-b border-slate-100">
+            <div class="flex items-center gap-2 text-primary-600 font-bold text-2xl">
+                <i class="ph-fill ph-heartbeat"></i>
+                <span>Huma<span class="text-slate-800">Volve</span></span>
+            </div>
+        </div>
+
+        <!-- Scrollable Navigation -->
+        <nav class="p-4 space-y-1 overflow-y-auto h-[calc(100vh-4rem)]">
+            
+            <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {{ $isRtl ? 'لوحة الطبيب' : 'Doctor Panel' }}
+            </div>
+            
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary-50 text-primary-700 font-medium transition-colors">
+                <i class="ph ph-squares-four text-lg"></i>
+                <span>{{ $isRtl ? 'لوحة التحكم' : 'Dashboard' }}</span>
+            </a>
+            
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
+                <i class="ph ph-chats-circle text-lg group-hover:scale-110 transition-transform"></i>
+                <span>{{ $isRtl ? 'الرسائل' : 'Messages' }}</span>
+                <span class="bg-primary-100 text-primary-700 py-0.5 px-2 rounded-full text-xs font-bold {{ $isRtl ? 'mr-auto' : 'ml-auto' }}">5</span>
+            </a>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
+                <i class="ph ph-calendar-check text-lg group-hover:scale-110 transition-transform"></i>
+                <span>{{ $isRtl ? 'المواعيد' : 'Appointments' }}</span>
+            </a>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
+                <i class="ph ph-users text-lg group-hover:scale-110 transition-transform"></i>
+                <span>{{ $isRtl ? 'مرضاي' : 'My Patients' }}</span>
+            </a>
+
+            <div class="my-4 border-t border-slate-100"></div>
+
+            <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                {{ $isRtl ? 'لوحة المسؤول' : 'Admin Panel' }}
+            </div>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
+                <i class="ph ph-article text-lg group-hover:scale-110 transition-transform"></i>
+                <span>{{ $isRtl ? 'إدارة المحتوى' : 'Content Management' }}</span>
+            </a>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
+                <i class="ph ph-sliders text-lg group-hover:scale-110 transition-transform"></i>
+                <span>{{ $isRtl ? 'إعدادات النظام' : 'System Settings' }}</span>
+            </a>
+
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
+                <i class="ph ph-users-three text-lg group-hover:scale-110 transition-transform"></i>
+                <span>{{ $isRtl ? 'إدارة المستخدمين' : 'User Management' }}</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="lg:{{ $isRtl ? 'mr-64' : 'ml-64' }} flex flex-col min-h-screen transition-all duration-300">
+        
+        <!-- Header -->
+        <header class="h-16 sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-slate-200 px-4 flex items-center justify-between">
+            <!-- Mobile Toggle -->
+            <button @click="sidebarOpen = true" class="lg:hidden p-2 text-slate-600 hover:text-slate-800 rounded-lg hover:bg-slate-100">
+                <i class="ph ph-list text-2xl"></i>
+            </button>
+
+            <!-- Search -->
+            <div class="hidden md:flex items-center w-64 lg:w-96 relative">
+                <i class="ph ph-magnifying-glass absolute {{ $isRtl ? 'right-3' : 'left-3' }} text-slate-400"></i>
+                <input type="text" placeholder="{{ $isRtl ? 'بحث في المرضى والمواعيد...' : 'Search patients, appointments, or policies...' }}" 
+                       class="w-full {{ $isRtl ? 'pr-10 pl-4' : 'pl-10 pr-4' }} py-2 rounded-full border border-slate-200 bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-100 focus:border-primary-400 transition-all text-sm">
+            </div>
+
+            <!-- Right Actions -->
+            <div class="flex items-center gap-3">
+                <!-- Language Toggle -->
+                <a href="?lang={{ $isRtl ? 'en' : 'ar' }}" 
+                   class="hidden sm:flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
+                   title="{{ $isRtl ? 'Switch to English' : 'التبديل للعربية' }}">
+                    <span class="font-bold text-sm">{{ $isRtl ? 'EN' : 'ع' }}</span>
+                </a>
+
+                <!-- Notifications -->
+                <button class="relative w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600 transition-colors flex items-center justify-center">
+                    <i class="ph ph-bell text-xl"></i>
+                    <span class="absolute top-2 {{ $isRtl ? 'left-2' : 'right-2' }} w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+
+                <!-- Profile Dropdown -->
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 {{ $isRtl ? 'pr-2 pl-1' : 'pl-2 pr-1' }} py-1 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
+                        <img src="https://ui-avatars.com/api/?name=Doctor+Smith&background=0d9488&color=fff" alt="Avatar" class="w-8 h-8 rounded-full shadow-sm">
+                        <div class="hidden md:block text-{{ $isRtl ? 'right' : 'left' }}">
+                            <p class="text-sm font-medium text-slate-700 leading-none">{{ $isRtl ? 'د. سميث' : 'Dr. Smith' }}</p>
+                            <p class="text-[10px] text-slate-500 font-medium">{{ $isRtl ? 'طبيب قلب' : 'Cardiologist' }}</p>
+                        </div>
+                        <i class="ph ph-caret-down text-slate-400 hidden md:block"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" x-cloak
+                         class="absolute {{ $isRtl ? 'left-0' : 'right-0' }} mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1"
+                         x-transition.origin.top.{{ $isRtl ? 'left' : 'right' }}>
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary-600 text-{{ $isRtl ? 'right' : 'left' }}">{{ $isRtl ? 'الملف الشخصي' : 'Profile' }}</a>
+                        <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary-600 text-{{ $isRtl ? 'right' : 'left' }}">{{ $isRtl ? 'الإعدادات' : 'Settings' }}</a>
+                        <div class="border-t border-slate-100 my-1"></div>
+                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-{{ $isRtl ? 'right' : 'left' }}">{{ $isRtl ? 'تسجيل الخروج' : 'Sign Out' }}</a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamic Content Area -->
+        <main class="flex-1 p-4 lg:p-8">
+            @hasSection('content')
+                @yield('content')
+            @else
+                <!-- DUMMY CONTENT FOR PREVIEW (If no content yielded) -->
+                
+                <div class="space-y-8">
+                    <!-- Welcome Section -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-bold text-slate-800">{{ $isRtl ? 'صباح الخير، د. سميث! 👋' : 'Good Morning, Dr. Smith! 👋' }}</h1>
+                            <p class="text-slate-500">{{ $isRtl ? 'إليك آخر المستجدات المتعلقة بمرضاك اليوم.' : 'Here\'s what\'s happening with your patients today.' }}</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button class="px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-600 hover:bg-slate-50 font-medium text-sm transition-colors shadow-sm">
+                                {{ $isRtl ? 'عرض السياسات' : 'View Policies' }}
+                            </button>
+                            <button class="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 font-medium text-sm shadow-md shadow-primary-200 transition-colors flex items-center gap-2">
+                                <i class="ph ph-plus-circle text-lg"></i>
+                                {{ $isRtl ? 'موعد جديد' : 'New Appointment' }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Stat Card 1 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl">
+                                    <i class="ph ph-users"></i>
+                                </div>
+                                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+12%</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800">1,234</h3>
+                            <p class="text-slate-500 text-sm">{{ $isRtl ? 'إجمالي المرضى' : 'Total Patients' }}</p>
+                        </div>
+
+                        <!-- Stat Card 2 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center text-2xl">
+                                    <i class="ph ph-calendar-check"></i>
+                                </div>
+                                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+5%</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800">42</h3>
+                            <p class="text-slate-500 text-sm">{{ $isRtl ? 'المواعيد القادمة' : 'Upcoming Appointments' }}</p>
+                        </div>
+
+                        <!-- Stat Card 3 -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl">
+                                    <i class="ph ph-chats-circle"></i>
+                                </div>
+                                <span class="text-xs font-bold text-green-600 bg-green-50 px-2 py-1 rounded-full">+28%</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800">15</h3>
+                            <p class="text-slate-500 text-sm">{{ $isRtl ? 'رسائل غير مقروءة' : 'Unread Messages' }}</p>
+                        </div>
+
+                        <!-- Stat Card 4 (Admin) -->
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl">
+                                    <i class="ph ph-files"></i>
+                                </div>
+                                <span class="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-full">Admin</span>
+                            </div>
+                            <h3 class="text-3xl font-bold text-slate-800">8</h3>
+                            <p class="text-slate-500 text-sm">{{ $isRtl ? 'تحديثات السياسة المعلقة' : 'Pending Policy Updates' }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Split Section: Chat & Recent -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        
+                        <!-- Chat Interface Preview (Doctor Panel Requirement) -->
+                        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[500px]">
+                            <div class="p-4 border-b border-slate-100 flex justify-between items-center">
+                                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                                    <i class="ph ph-chat-circle-text text-primary-600"></i>
+                                    {{ $isRtl ? 'الاستشارة النشطة' : 'Active Consultation' }}
+                                </h3>
+                                <button class="text-sm text-primary-600 hover:underline">{{ $isRtl ? 'عرض الكل' : 'View All' }}</button>
+                            </div>
+                            
+                            <!-- Chat Area -->
+                            <div class="flex-1 p-4 bg-slate-50/50 overflow-y-auto space-y-4">
+                                <!-- Patient Message -->
+                                <div class="flex gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" class="w-8 h-8 rounded-full">
+                                    <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 max-w-[80%]">
+                                        <p class="text-sm text-slate-700">{{ $isRtl ? 'مرحبا دكتور، أشعر بالدوار قليلا بعد تناول الدواء الجديد.' : 'Hello Doctor, I\'ve been feeling a bit dizzy after taking the new medication.' }}</p>
+                                        <span class="text-[10px] text-slate-400 mt-1 block">10:30 AM</span>
+                                    </div>
+                                </div>
+
+                                <!-- Doctor Message -->
+                                <div class="flex gap-3 flex-row-reverse">
+                                    <img src="https://ui-avatars.com/api/?name=Dr+Smith&background=0d9488&color=fff" class="w-8 h-8 rounded-full">
+                                    <div class="bg-primary-600 p-3 rounded-2xl rounded-tr-none shadow-md shadow-primary-100 max-w-[80%]">
+                                        <p class="text-sm text-white">{{ $isRtl ? 'أهلا سارة. هل يحدث هذا مباشرة بعد تناوله؟' : 'Hi Sarah. Does this happen immediately after taking it? Or later in the day?' }}</p>
+                                        <span class="text-[10px] text-primary-200 mt-1 block {{ $isRtl ? 'text-left' : 'text-right' }}">10:32 AM</span>
+                                    </div>
+                                </div>
+
+                                <!-- Patient Photo -->
+                                <div class="flex gap-3">
+                                    <img src="https://ui-avatars.com/api/?name=Sarah+J&background=random" class="w-8 h-8 rounded-full">
+                                    <div class="bg-white p-2 rounded-2xl rounded-tl-none shadow-sm border border-slate-100 max-w-[80%]">
+                                        <div class="w-48 h-32 bg-slate-200 rounded-lg animate-pulse flex items-center justify-center text-slate-400 text-xs">
+                                            [Sent Image]
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Input Area -->
+                            <div class="p-4 border-t border-slate-100 bg-white rounded-b-2xl">
+                                <div class="flex gap-2">
+                                    <button class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors">
+                                        <i class="ph ph-paperclip text-xl"></i>
+                                    </button>
+                                    <input type="text" placeholder="{{ $isRtl ? 'اكتب رسالتك...' : 'Type your message...' }}" class="flex-1 bg-slate-50 border-none rounded-full px-4 text-sm focus:ring-2 focus:ring-primary-100">
+                                    <button class="p-2 text-white bg-primary-600 hover:bg-primary-700 rounded-full shadow-lg shadow-primary-200 transition-colors">
+                                        <i class="ph ph-paper-plane-right {{ $isRtl ? 'transform rotate-180' : '' }} text-xl"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column (Admin / Notifications) -->
+                        <div class="space-y-6">
+                            <!-- Admin: Pending Content -->
+                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+                                <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                    <i class="ph ph-shield-check text-purple-600"></i>
+                                    {{ $isRtl ? 'تحديثات السياسة' : 'Policy Updates' }}
+                                </h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-start gap-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
+                                        <div class="w-8 h-8 rounded-lg bg-yellow-50 text-yellow-600 flex items-center justify-center flex-shrink-0">
+                                            <i class="ph ph-file-text"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-700">{{ $isRtl ? 'سياسة الخصوصية v2.4' : 'Privacy Policy v2.4' }}</p>
+                                            <p class="text-xs text-slate-500">{{ $isRtl ? 'بانتظار الموافقة' : 'Waiting for approval' }}</p>
+                                        </div>
+                                        <button class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 px-2 py-1 rounded-md transition-colors mr-auto {{ $isRtl ? 'mr-auto ml-0' : 'ml-auto' }}">{{ $isRtl ? 'مراجعة' : 'Review' }}</button>
+                                    </div>
+                                    <div class="flex items-start gap-3 pb-3 border-b border-slate-50 last:border-0 last:pb-0">
+                                        <div class="w-8 h-8 rounded-lg bg-green-50 text-green-600 flex items-center justify-center flex-shrink-0">
+                                            <i class="ph ph-check-circle"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-slate-700">{{ $isRtl ? 'شروط الخدمة' : 'Terms of Service' }}</p>
+                                            <p class="text-xs text-slate-500">{{ $isRtl ? 'نشرت أمس' : 'Published yesterday' }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- System Status -->
+                            <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-2xl shadow-lg run-text-white text-white">
+                                <h3 class="font-bold mb-2">{{ $isRtl ? 'حالة النظام' : 'System Status' }}</h3>
+                                <div class="flex items-center gap-2 mb-4">
+                                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                    <span class="text-sm text-slate-300">{{ $isRtl ? 'جميع الخدمات تعمل' : 'All services operational' }}</span>
+                                </div>
+                                <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full w-[98%]"></div>
+                                </div>
+                                <div class="flex justify-between mt-2 text-xs text-slate-400">
+                                    <span>Uptime</span>
+                                    <span>99.9%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            @endif
+        </main>
+
+        <!-- Footer -->
+        <footer class="p-4 text-center text-xs text-slate-400">
+            &copy; {{ date('Y') }} HumaVolve Medical System. All rights reserved.
+        </footer>
+    </div>
+</body>
+</html>
