@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Api\Profile;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ResendOtpRequest extends FormRequest
+class NotificationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class ResendOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','exists:users,phone']
+            'enable' => 'required|boolean'
         ];
     }
 }

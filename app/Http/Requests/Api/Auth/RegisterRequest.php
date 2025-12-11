@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
-
-use Illuminate\Foundation\Http\FormRequest;
+namespace App\Http\Requests\Api\Auth;
 use Illuminate\Validation\Rules\Password;
-class ResetPasswordRequest extends FormRequest
+use Illuminate\Foundation\Http\FormRequest;
+
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,10 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','exists:users,phone'],
-            'new_password' => [
+            'name'      => 'required|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
+            'email'     => 'required|email:rfc,dns|unique:users,email',
+            'phone'     => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','unique:users,phone'],
+            'password'  => [
                         'required',
                         'confirmed',
                         Password::min(8)

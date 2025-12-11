@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Auth;
+namespace App\Http\Requests\Api\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class VerifyOtpRequest extends FormRequest
+class ForgetPasswordRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,8 +22,7 @@ class VerifyOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','exists:users,phone'],
-            'otp'   => ['required' , 'digits:4']
+            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','exists:users,phone']
         ];
     }
 }

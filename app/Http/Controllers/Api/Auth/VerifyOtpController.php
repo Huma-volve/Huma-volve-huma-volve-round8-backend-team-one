@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\VerifyOtpRequest;
+use App\Http\Requests\Api\Auth\VerifyOtpRequest;
 use App\Services\Auth\VerifyOtpService;
 
 class VerifyOtpController extends Controller

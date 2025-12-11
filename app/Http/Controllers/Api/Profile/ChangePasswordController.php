@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Profile;
+namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Http\Requests\Profile\ChangePasswordRequest;
+use App\Http\Requests\Api\Profile\ChangePasswordRequest;
 use App\Traits\ApiResponse;
 use Illuminate\Support\Facades\
 {

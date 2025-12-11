@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\Api\Profile;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class PaymentMethodRequest extends FormRequest
+class ProfileAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +23,10 @@ class PaymentMethodRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'provider_token' => 'required|string',
-            'brand'          => 'required|string',
-            'last_four'      => 'required|string|max_digits:4',
-            'exp_month'      => 'required|string|max_digits:2',
-            'exp_year'       => 'required|string|max_digits:4',
+            'name'      => 'nullable|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
+            'email'     => 'nullable|email|unique:users,email,'.Auth::id(),
+            'phone'     => ['nullable','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','unique:users,phone,'.Auth::id()],
+            'birthdate' => 'nullable|date' ,
         ];
     }
 }

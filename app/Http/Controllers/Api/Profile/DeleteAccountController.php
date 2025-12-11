@@ -1,6 +1,5 @@
 <?php
-
-namespace App\Http\Controllers\Profile;
+namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;

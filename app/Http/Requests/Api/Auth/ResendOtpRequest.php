@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Profile;
+namespace App\Http\Requests\Api\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class ProfileAccountRequest extends FormRequest
+class ResendOtpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,10 +22,7 @@ class ProfileAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'nullable|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
-            'email'     => 'nullable|email|unique:users,email,'.Auth::id(),
-            'phone'     => ['nullable','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','unique:users,phone,'.Auth::id()],
-            'birthdate' => 'nullable|date' ,
+            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','exists:users,phone']
         ];
     }
 }

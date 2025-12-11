@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Profile;
+namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Profile\ProfileAccountRequest;
+use App\Http\Requests\Api\Profile\ProfileAccountRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Traits\ApiResponse;

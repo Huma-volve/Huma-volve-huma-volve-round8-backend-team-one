@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Api\Auth;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\ForgetPasswordRequest;
+use App\Http\Requests\Api\Auth\ForgetPasswordRequest;
 use App\Repositories\VerificationCodeRepository;
 use App\Models\User;
 use App\Traits\ApiResponse;
