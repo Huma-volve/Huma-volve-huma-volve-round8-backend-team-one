@@ -23,7 +23,7 @@ class ProfileAccountRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'nullable|string|min:8|max:255|regex:/^[a-zA-z\s]$/',
+            'name'      => 'nullable|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
             'email'     => 'nullable|email|unique:users,email,'.Auth::id(),
             'phone'     => ['nullable','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','unique:users,phone,'.Auth::id()],
             'birthdate' => 'nullable|date' ,
