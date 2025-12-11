@@ -12,9 +12,6 @@ Route::middleware(['auth:web'])->prefix('doctor')->name('doctor.')->group(functi
     Route::get('/chat/{conversation}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
     Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
-});
-
-// الراوت ده للتجربة بس  يا شباب علشان اللي حابب يشوف شكل التصميم
-Route::get('test-design', function () {
-    return view('test-design');
+    Route::post('/chat/{conversation}/toggle-favorite', [ChatController::class, 'toggleFavorite'])->name('chat.toggle-favorite');
+    Route::post('/chat/{conversation}/toggle-archive', [ChatController::class, 'toggleArchive'])->name('chat.toggle-archive');
 });

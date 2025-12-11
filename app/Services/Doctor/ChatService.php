@@ -98,6 +98,8 @@ class ChatService
             'last_message' => $conversation->lastMessage,
             'unread_count' => $unreadCount,
             'updated_at' => $conversation->updated_at,
+            'is_favorite' => (bool) $currentParticipant?->is_favorite,
+            'is_archived' => (bool) $currentParticipant?->is_archived,
         ];
     }
 
@@ -117,6 +119,38 @@ class ChatService
             'is_mine' => $message->sender_id === $doctorId,
             'created_at' => $message->created_at->format('h:i A'),
             'date' => $message->created_at->format('M d, Y'),
+        ];
+    }
+
+    public function toggleFavorite(Conversation $conversation, int $doctorId): array
+    {
+        $participant = $this->chatRepository->findParticipant($conversation->id, $doctorId);
+
+        if (!$participant) {
+            throw new AccessDeniedHttpException('Unauthorized');
+        }
+
+        $this->chatRepository->toggleParticipantFavorite($participant);
+
+        return [
+            'success' => true,
+            'is_favorite' => $participant->fresh()->is_favorite,
+        ];
+    }
+
+    public function toggleArchive(Conversation $conversation, int $doctorId): array
+    {
+        $participant = $this->chatRepository->findParticipant($conversation->id, $doctorId);
+
+        if (!$participant) {
+            throw new AccessDeniedHttpException('Unauthorized');
+        }
+
+        $this->chatRepository->toggleParticipantArchive($participant);
+
+        return [
+            'success' => true,
+            'is_archived' => $participant->fresh()->is_archived,
         ];
     }
 }

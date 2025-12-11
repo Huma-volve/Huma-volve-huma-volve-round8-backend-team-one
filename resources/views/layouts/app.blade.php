@@ -7,6 +7,7 @@
 <html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $dir }}">
 <head>
     @include('layouts.partials.head')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 <body class="font-sans antialiased bg-slate-50 text-slate-800" x-data="{ sidebarOpen: false, darkMode: false }">
 
@@ -29,5 +30,6 @@
 
         @include('layouts.partials.footer')
     </div>
+@stack('scripts')
 </body>
 </html>
