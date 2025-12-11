@@ -32,6 +32,9 @@
             <button class="filter-tab flex-1 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-500 hover:bg-slate-50" data-filter="favorites">
                 {{ $isRtl ? 'المفضلة' : 'Favorites' }}
             </button>
+            <button class="filter-tab flex-1 px-3 py-1.5 text-xs font-medium rounded-lg text-slate-500 hover:bg-slate-50" data-filter="archived">
+                {{ $isRtl ? 'الأرشيف' : 'Archived' }}
+            </button>
         </div>
 
         {{-- Conversations List --}}
@@ -40,7 +43,8 @@
                 <div class="conversation-item p-3 border-b border-slate-50 hover:bg-slate-50 cursor-pointer transition-colors"
                      data-conversation-id="{{ $conversation['id'] }}"
                      data-unread="{{ $conversation['unread_count'] > 0 ? 'true' : 'false' }}"
-                     data-favorite="false">
+                     data-favorite="{{ $conversation['is_favorite'] ? 'true' : 'false' }}"
+                     data-archived="{{ $conversation['is_archived'] ? 'true' : 'false' }}">
                     <div class="flex items-center gap-3">
                         <div class="relative">
                             <img src="{{ $conversation['patient']?->profile_photo_path 

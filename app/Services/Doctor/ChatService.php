@@ -98,6 +98,8 @@ class ChatService
             'last_message' => $conversation->lastMessage,
             'unread_count' => $unreadCount,
             'updated_at' => $conversation->updated_at,
+            'is_favorite' => (bool) $currentParticipant?->is_favorite,
+            'is_archived' => (bool) $currentParticipant?->is_archived,
         ];
     }
 
