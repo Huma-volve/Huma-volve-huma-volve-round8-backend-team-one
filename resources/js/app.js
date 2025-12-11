@@ -1,5 +1,7 @@
 import './bootstrap';
 
-import { initDoctorChat } from './doctor-chat.js';
+import Alpine from 'alpinejs';
 
-window.initDoctorChat = initDoctorChat;
+window.Alpine = Alpine;
+
+Alpine.start();
