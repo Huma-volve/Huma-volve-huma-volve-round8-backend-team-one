@@ -30,8 +30,8 @@
     document.addEventListener('DOMContentLoaded', function() {
         if (window.initDoctorChat) {
             window.initDoctorChat({
-                baseUrl: '{{ request()->is("test-chat*") ? "/test-chat" : "/doctor/chat" }}',
-                doctorId: {{ auth()->id() ?? 2 }},
+                baseUrl: '/doctor/chat',
+                doctorId: {{ auth()->id() }},
                 isRtl: {{ $isRtl ? 'true' : 'false' }}
             });
         }

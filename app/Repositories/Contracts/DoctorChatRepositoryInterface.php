@@ -20,4 +20,8 @@ interface DoctorChatRepositoryInterface
     public function updateConversationTimestamp(Conversation $conversation): void;
 
     public function updateParticipantLastRead(ChatParticipant $participant): void;
+
+    public function toggleParticipantFavorite(ChatParticipant $participant): void;
+
+    public function toggleParticipantArchive(ChatParticipant $participant): void;
 }

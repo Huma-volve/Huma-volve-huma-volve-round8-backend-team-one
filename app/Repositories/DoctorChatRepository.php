@@ -49,4 +49,14 @@ class DoctorChatRepository implements DoctorChatRepositoryInterface
     {
         $participant->update(['last_read_at' => now()]);
     }
+
+    public function toggleParticipantFavorite(ChatParticipant $participant): void
+    {
+        $participant->update(['is_favorite' => !$participant->is_favorite]);
+    }
+
+    public function toggleParticipantArchive(ChatParticipant $participant): void
+    {
+        $participant->update(['is_archived' => !$participant->is_archived]);
+    }
 }

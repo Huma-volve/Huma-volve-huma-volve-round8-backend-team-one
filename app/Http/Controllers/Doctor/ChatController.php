@@ -47,4 +47,18 @@ class ChatController extends Controller
 
         return response()->json(['success' => true]);
     }
+
+    public function toggleFavorite(Conversation $conversation): JsonResponse
+    {
+        $result = $this->chatService->toggleFavorite($conversation, Auth::id());
+
+        return response()->json($result);
+    }
+
+    public function toggleArchive(Conversation $conversation): JsonResponse
+    {
+        $result = $this->chatService->toggleArchive($conversation, Auth::id());
+
+        return response()->json($result);
+    }
 }

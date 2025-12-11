@@ -121,4 +121,36 @@ class ChatService
             'date' => $message->created_at->format('M d, Y'),
         ];
     }
+
+    public function toggleFavorite(Conversation $conversation, int $doctorId): array
+    {
+        $participant = $this->chatRepository->findParticipant($conversation->id, $doctorId);
+
+        if (!$participant) {
+            throw new AccessDeniedHttpException('Unauthorized');
+        }
+
+        $this->chatRepository->toggleParticipantFavorite($participant);
+
+        return [
+            'success' => true,
+            'is_favorite' => $participant->fresh()->is_favorite,
+        ];
+    }
+
+    public function toggleArchive(Conversation $conversation, int $doctorId): array
+    {
+        $participant = $this->chatRepository->findParticipant($conversation->id, $doctorId);
+
+        if (!$participant) {
+            throw new AccessDeniedHttpException('Unauthorized');
+        }
+
+        $this->chatRepository->toggleParticipantArchive($participant);
+
+        return [
+            'success' => true,
+            'is_archived' => $participant->fresh()->is_archived,
+        ];
+    }
 }
