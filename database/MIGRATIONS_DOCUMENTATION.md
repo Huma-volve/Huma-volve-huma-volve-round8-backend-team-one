@@ -336,7 +336,7 @@ This document provides a comprehensive overview of all database migrations for t
 -   `status`: Enum (success, failed, pending)
 -   `gateway`: Enum (stripe, paypal, cash)
 -   `payload`: JSON response from payment gateway
--   `currency`: Currency code (default: USD)
+-   `currency`: Currency code (default: EGP)
 -   `failure_reason`: Reason if payment failed
 
 **Relationships**:

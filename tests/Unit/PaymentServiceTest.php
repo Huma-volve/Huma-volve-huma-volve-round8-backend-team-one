@@ -23,7 +23,7 @@ class PaymentServiceTest extends TestCase
         $paymentIntent = PaymentIntent::constructFrom([
             'id' => 'pi_123456',
             'amount' => 10000,
-            'currency' => 'usd',
+            'currency' => 'egp',
             'status' => 'succeeded',
         ]);
 
@@ -32,7 +32,7 @@ class PaymentServiceTest extends TestCase
             ->once()
             ->with(Mockery::on(function ($args) {
                 return $args['amount'] === 10000 &&
-                       $args['currency'] === 'usd' &&
+                       $args['currency'] === 'egp' &&
                        $args['payment_method'] === 'pm_card_visa';
             }))
             ->andReturn($paymentIntent);
@@ -43,7 +43,7 @@ class PaymentServiceTest extends TestCase
         // Inject Mock
         $gateway = new StripePaymentGateway($stripeClientMock);
 
-        $result = $gateway->charge(100.00, 'usd', 'pm_card_visa', ['return_url' => 'http://test.com']);
+        $result = $gateway->charge(100.00, 'egp', 'pm_card_visa', ['return_url' => 'http://test.com']);
 
         $this->assertTrue($result['success']);
         $this->assertEquals('pi_123456', $result['transaction_id']);
