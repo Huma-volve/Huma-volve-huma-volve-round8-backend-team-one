@@ -24,9 +24,9 @@ class PaymentMethodRequest extends FormRequest
         return [
             'provider_token' => 'required|string',
             'brand'          => 'required|string',
-            'last_four'      => 'required|string|max:4',
-            'exp_month'      => 'required|string|max:2',
-            'exp_year'       => 'required|string|max:4',
+            'last_four'      => 'required|string|max_digits:4',
+            'exp_month'      => 'required|string|max_digits:2',
+            'exp_year'       => 'required|string|max_digits:4',
         ];
     }
 }
