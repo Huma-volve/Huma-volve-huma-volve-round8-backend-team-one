@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Requests\Auth;
-
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -22,10 +22,19 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'phone'     => ['required','regex:/^(?:\+?20|0)?1[0-2,5][0-9]{8}$/','unique:users,phone'],
-            'password'  => 'required|string|min:8|confirmed'
+            'name'      => 'required|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
+            'email'     => 'required|email:rfc,dns|unique:users,email',
+            'phone'     => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','unique:users,phone'],
+            'password'  => [
+                        'required',
+                        'confirmed',
+                        Password::min(8)
+                                ->max(255)
+                                ->letters()
+                                ->mixedCase()
+                                ->numbers()
+                                ->symbols()
+            ]
         ];
     }
 }
