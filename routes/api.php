@@ -14,20 +14,20 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ReviewController;
 use App\Http\Controllers\Api\SavedCardController;
 use App\Http\Controllers\Api\SpecialtyController;
-use App\Http\Controllers\Auth\ForgetPasswordController;
-use App\Http\Controllers\Auth\GoogleLoginController;
-use App\Http\Controllers\Auth\GoogleRegisterController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\RegisterController;
-use App\Http\Controllers\Auth\ResendOtpController;
-use App\Http\Controllers\Auth\ResetPasswordController;
-use App\Http\Controllers\Auth\VerifyOtpController;
-use App\Http\Controllers\Profile\ChangePasswordController;
-use App\Http\Controllers\Profile\DeleteAccountController;
-use App\Http\Controllers\Profile\FavoriteController as ProfileFavoriteController;
-use App\Http\Controllers\Profile\NotificationController as ProfileNotificationController;
-use App\Http\Controllers\Profile\ProfileAccountController;
+use App\Http\Controllers\Api\Auth\ForgetPasswordController;
+use App\Http\Controllers\Api\Auth\GoogleLoginController;
+use App\Http\Controllers\Api\Auth\GoogleRegisterController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\LogoutController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\Auth\ResendOtpController;
+use App\Http\Controllers\Api\Auth\ResetPasswordController;
+use App\Http\Controllers\Api\Auth\VerifyOtpController;
+use App\Http\Controllers\Api\Profile\ChangePasswordController;
+use App\Http\Controllers\Api\Profile\DeleteAccountController;
+use App\Http\Controllers\Api\Profile\FavoriteController as ProfileFavoriteController;
+use App\Http\Controllers\Api\Profile\NotificationController as ProfileNotificationController;
+use App\Http\Controllers\Api\Profile\ProfileAccountController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -83,7 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Account Management
         Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
-        Route::put('/edit', [ProfileAccountController::class, 'editProfile'])->name('edit');
+        Route::put('/edit', [ProfileAccountController::class, 'editProfile']);
         Route::put('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
         Route::delete('/delete', [DeleteAccountController::class, 'deleteAccount'])->name('delete');
 
