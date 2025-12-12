@@ -3,7 +3,7 @@
     $isRtl = $locale === 'ar';
 @endphp
 
-@extends('layouts.app')
+@extends('layouts.doctor')
 
 @section('content')
 <div class="flex h-[calc(100vh-theme(spacing.32))] bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
