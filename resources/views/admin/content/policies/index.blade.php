@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
 
-    <div class="py-12" x-data="{ activeTab: '{{ $policies->first()?->slug }}', activeLang: 'en' }">
+    <div class="py-12" x-data="{ activeTab: '{{ $policies->first()?->slug }}' }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
             @if (session('success'))
@@ -49,20 +49,9 @@
                                 @csrf
                                 @method('PUT')
 
-                                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4">
-                                    <div>
-                                        <h3 class="text-lg font-medium text-gray-900">Edit Content</h3>
-                                        <p class="text-sm text-gray-500">Update the {{ $policy->slug }} page details.</p>
-                                    </div>
-                                    
-                                    <div class="flex bg-gray-100 p-1 rounded-lg mt-4 sm:mt-0">
-                                        <button type="button" @click="activeLang = 'en'" :class="{ 'bg-white shadow text-gray-900': activeLang === 'en', 'text-gray-500 hover:text-gray-700': activeLang !== 'en' }" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all">
-                                            English
-                                        </button>
-                                        <button type="button" @click="activeLang = 'ar'" :class="{ 'bg-white shadow text-gray-900': activeLang === 'ar', 'text-gray-500 hover:text-gray-700': activeLang !== 'ar' }" class="px-4 py-1.5 rounded-md text-sm font-medium transition-all">
-                                            العربية
-                                        </button>
-                                    </div>
+                                <div class="mb-6 border-b pb-4">
+                                    <h3 class="text-lg font-medium text-gray-900">Edit Content</h3>
+                                    <p class="text-sm text-gray-500">Update the {{ $policy->slug }} page details.</p>
                                 </div>
 
                                 <div class="mb-6">
@@ -74,31 +63,17 @@
                                     </label>
                                 </div>
 
-                                <div x-show="activeLang === 'en'" class="space-y-4">
+                                <div class="space-y-4">
                                     <div>
-                                        <x-input-label for="title_en_{{ $policy->id }}" value="Page Title (English)" />
+                                        <x-input-label for="title_en_{{ $policy->id }}" value="Page Title" />
                                         <x-text-input id="title_en_{{ $policy->id }}" name="title[en]" type="text" class="mt-1 block w-full" :value="old('title.en', $policy->title['en'] ?? '')" required />
                                         <x-input-error class="mt-2" :messages="$errors->get('title.en')" />
                                     </div>
 
                                     <div>
-                                        <x-input-label for="content_en_{{ $policy->id }}" value="Content (English)" />
+                                        <x-input-label for="content_en_{{ $policy->id }}" value="Content" />
                                         <textarea id="content_en_{{ $policy->id }}" name="content[en]" rows="10" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>{{ old('content.en', $policy->content['en'] ?? '') }}</textarea>
                                         <x-input-error class="mt-2" :messages="$errors->get('content.en')" />
-                                    </div>
-                                </div>
-
-                                <div x-show="activeLang === 'ar'" class="space-y-4" dir="rtl">
-                                    <div>
-                                        <x-input-label for="title_ar_{{ $policy->id }}" value="عنوان الصفحة (العربية)" />
-                                        <x-text-input id="title_ar_{{ $policy->id }}" name="title[ar]" type="text" class="mt-1 block w-full" :value="old('title.ar', $policy->title['ar'] ?? '')" required />
-                                        <x-input-error class="mt-2" :messages="$errors->get('title.ar')" />
-                                    </div>
-
-                                    <div>
-                                        <x-input-label for="content_ar_{{ $policy->id }}" value="المحتوى (العربية)" />
-                                        <textarea id="content_ar_{{ $policy->id }}" name="content[ar]" rows="10" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>{{ old('content.ar', $policy->content['ar'] ?? '') }}</textarea>
-                                        <x-input-error class="mt-2" :messages="$errors->get('content.ar')" />
                                     </div>
                                 </div>
 
