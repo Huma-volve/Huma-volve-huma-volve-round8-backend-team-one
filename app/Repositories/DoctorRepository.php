@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Repositories;
 
 use App\Models\DoctorProfile;
@@ -16,38 +15,38 @@ class DoctorRepository
             ->approved();
 
         // Search by name or specialty
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->search($filters['search']);
+        }
+        // filter By location
+
+        if (! empty($filters['location_query'])) {
+            $query->where('clinic_address', 'LIKE', '%' . $filters['location_query'] . '%');
         }
 
         // Filter by specialty
-        if (!empty($filters['specialty_id'])) {
+        if (! empty($filters['specialty_id'])) {
             $query->bySpecialty($filters['specialty_id']);
         }
 
         // Filter by minimum rating
-        if (!empty($filters['min_rating'])) {
+        if (! empty($filters['min_rating'])) {
             $query->minRating($filters['min_rating']);
         }
 
         // Filter by price range
-        if (!empty($filters['min_price']) || !empty($filters['max_price'])) {
+        if (! empty($filters['min_price']) || ! empty($filters['max_price'])) {
             $query->priceRange($filters['min_price'] ?? null, $filters['max_price'] ?? null);
         }
 
-        // Filter by location (radius search)
-        if (!empty($filters['latitude']) && !empty($filters['longitude'])) {
-            $radius = $filters['radius'] ?? 10; // Default 10km
-            $query->withinRadius($filters['latitude'], $filters['longitude'], $radius);
-        }
+
 
         // Filter by available date
-        if (!empty($filters['available_date'])) {
+        if (! empty($filters['available_date'])) {
             $query->availableOn($filters['available_date']);
         }
-
         // Sorting
-        $sortBy = $filters['sort_by'] ?? 'rating';
+        $sortBy    = $filters['sort_by'] ?? 'rating';
         $sortOrder = $filters['sort_order'] ?? 'desc';
 
         switch ($sortBy) {
@@ -61,7 +60,7 @@ class DoctorRepository
                 $query->orderBy('experience_length', $sortOrder);
                 break;
             case 'distance':
-                if (!empty($filters['latitude']) && !empty($filters['longitude'])) {
+                if (! empty($filters['latitude']) && ! empty($filters['longitude'])) {
                     $query->orderBy('distance', $sortOrder);
                 }
                 break;
