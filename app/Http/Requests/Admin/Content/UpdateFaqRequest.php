@@ -16,13 +16,13 @@ class UpdateFaqRequest extends FormRequest
         return [
             'question' => ['sometimes', 'array'],
             'question.en' => ['required_with:question', 'string', 'max:255'],
-            'question.ar' => ['required_with:question', 'string', 'max:255'],
+            'question.ar' => ['nullable', 'string', 'max:255'],
 
             'answer' => ['sometimes', 'array'],
             'answer.en' => ['required_with:answer', 'string'],
-            'answer.ar' => ['required_with:answer', 'string'],
+            'answer.ar' => ['nullable', 'string'],
 
-            'is_active' => ['boolean'],
+            'is_active' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
     }
