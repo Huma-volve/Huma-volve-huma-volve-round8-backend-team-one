@@ -8,20 +8,19 @@
     <div class="py-12" x-data="{
         isModalOpen: false,
         isEditMode: false,
-        activeLang: 'en',
         formAction: '{{ route('admin.faqs.store') }}',
         reorderStatus: '',
         formData: {
-            question: { en: '', ar: '' },
-            answer: { en: '', ar: '' },
+            question: { en: '' },
+            answer: { en: '' },
             is_active: true
         },
         editFaq(faq) {
             this.isEditMode = true;
             this.formAction = '{{ url('admin/faqs') }}/' + faq.id;
             this.formData = {
-                question: { en: faq.question?.en || '', ar: faq.question?.ar || '' },
-                answer: { en: faq.answer?.en || '', ar: faq.answer?.ar || '' },
+                question: { en: faq.question?.en || '' },
+                answer: { en: faq.answer?.en || '' },
                 is_active: Boolean(faq.is_active)
             };
             this.isModalOpen = true;
@@ -29,7 +28,7 @@
         openCreateModal() {
             this.isEditMode = false;
             this.formAction = '{{ route('admin.faqs.store') }}';
-            this.formData = { question: { en: '', ar: '' }, answer: { en: '', ar: '' }, is_active: true };
+            this.formData = { question: { en: '' }, answer: { en: '' }, is_active: true };
             this.isModalOpen = true;
         },
         closeModal() { this.isModalOpen = false; },
@@ -70,6 +69,18 @@
                 <div class="mb-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">{{ session('success') }}</div>
             @endif
 
+            @if ($errors->any())
+                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+                    <strong class="font-bold">Whoops!</strong>
+                    <span class="block sm:inline">Something went wrong:</span>
+                    <ul class="mt-2 list-disc list-inside text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     @if($faqs->isEmpty())
@@ -86,8 +97,12 @@
                                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16"></path></svg>
                                         </div>
                                         <div>
-                                            <h3 class="font-bold text-gray-800">{{ $faq->question['en'] ?? 'N/A' }}</h3>
-                                            <p class="text-sm text-gray-500 truncate max-w-md">{{ $faq->answer['en'] ?? 'N/A' }}</p>
+                                            <h3 class="font-bold text-gray-800">
+                                                {{ $faq->question['en'] ?? 'N/A' }}
+                                            </h3>
+                                            <p class="text-sm text-gray-500 truncate max-w-md">
+                                                {{ $faq->answer['en'] ?? 'N/A' }}
+                                            </p>
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -112,25 +127,27 @@
                     <form :action="formAction" method="POST" class="p-6">
                         @csrf
                         <input type="hidden" name="_method" :value="isEditMode ? 'PUT' : 'POST'">
+                        
                         <div class="flex justify-between items-center mb-4 border-b pb-2">
                             <h3 class="text-lg font-medium" x-text="isEditMode ? 'Edit FAQ' : 'Add New FAQ'"></h3>
-                            <div class="flex bg-gray-100 p-1 rounded-lg">
-                                <button type="button" @click="activeLang = 'en'" :class="activeLang === 'en' ? 'bg-white shadow' : ''" class="px-3 py-1 rounded text-sm">EN</button>
-                                <button type="button" @click="activeLang = 'ar'" :class="activeLang === 'ar' ? 'bg-white shadow' : ''" class="px-3 py-1 rounded text-sm">AR</button>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Question</label>
+                                <input type="text" name="question[en]" x-model="formData.question.en" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">Answer</label>
+                                <textarea name="answer[en]" x-model="formData.answer.en" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea>
                             </div>
                         </div>
-                        <div x-show="activeLang === 'en'" class="space-y-4">
-                            <div><label class="block text-sm font-medium text-gray-700">Question (English)</label><input type="text" name="question[en]" x-model="formData.question.en" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required></div>
-                            <div><label class="block text-sm font-medium text-gray-700">Answer (English)</label><textarea name="answer[en]" x-model="formData.answer.en" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500" required></textarea></div>
-                        </div>
-                        <div x-show="activeLang === 'ar'" class="space-y-4" dir="rtl">
-                            <div><label class="block text-sm font-medium text-gray-700">السؤال (العربية)</label><input type="text" name="question[ar]" x-model="formData.question.ar" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></div>
-                            <div><label class="block text-sm font-medium text-gray-700">الإجابة (العربية)</label><textarea name="answer[ar]" x-model="formData.answer.ar" rows="4" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"></textarea></div>
-                        </div>
+
                         <div class="mt-4 flex items-center">
                             <input type="checkbox" name="is_active" value="1" x-model="formData.is_active" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
                             <label class="ml-2 text-sm text-gray-600">Active</label>
                         </div>
+                        
                         <div class="mt-6 flex justify-end gap-3">
                             <button type="button" @click="closeModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200">Cancel</button>
                             <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">Save</button>

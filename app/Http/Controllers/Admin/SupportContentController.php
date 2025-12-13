@@ -47,7 +47,10 @@ class SupportContentController extends Controller
 
     public function storeFaq(StoreFaqRequest $request): RedirectResponse
     {
-        $this->service->createFaq($request->validated());
+        $data = $request->validated();
+        $data['is_active'] = $request->has('is_active');
+
+        $this->service->createFaq($data);
 
         return redirect()
             ->route('admin.faqs.index')
@@ -56,7 +59,10 @@ class SupportContentController extends Controller
 
     public function updateFaq(UpdateFaqRequest $request, int $id): RedirectResponse
     {
-        $this->service->updateFaq($id, $request->validated());
+        $data = $request->validated();
+        $data['is_active'] = $request->has('is_active');
+
+        $this->service->updateFaq($id, $data);
 
         return redirect()
             ->route('admin.faqs.index')
