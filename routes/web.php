@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])
+Route::middleware(['auth', 'doctor'])
     ->prefix('doctor')
     ->name('doctor.')
     ->group(function () {
