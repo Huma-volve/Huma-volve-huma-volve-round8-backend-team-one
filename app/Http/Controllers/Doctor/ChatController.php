@@ -35,7 +35,8 @@ class ChatController extends Controller
         $message = $this->chatService->sendMessage(
             $conversation,
             Auth::id(),
-            $request->validated('body')
+            $request->input('body'),
+            $request->file('attachment')
         );
 
         return response()->json(['message' => $message]);
