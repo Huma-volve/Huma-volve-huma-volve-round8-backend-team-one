@@ -1,5 +1,5 @@
     {{-- Chat Area --}}
-    <main class="flex-1 flex flex-col" id="chatArea">
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative" id="chatArea">
 
         {{-- Empty State --}}
         <div class="flex-1 flex flex-col items-center justify-center text-slate-400" id="emptyState">
@@ -13,10 +13,10 @@
         </div>
 
         {{-- Chat Container --}}
-        <div class="flex-1 flex flex-col hidden" id="chatContainer">
+        <div class="flex flex-col hidden h-full relative overflow-hidden bg-slate-50" id="chatContainer">
 
             {{-- Chat Header --}}
-            <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white z-10">
                 <div class="flex items-center gap-3">
                     <img src="" id="chatPatientAvatar" class="w-10 h-10 rounded-full object-cover">
                     <div>
@@ -44,7 +44,7 @@
             <div class="flex-1 p-4 bg-slate-50/50 overflow-y-auto space-y-4" id="messagesContainer"></div>
 
             {{-- Input Area --}}
-            <div class="p-4 border-t border-slate-100 bg-white">
+            <div class="p-4 border-t border-slate-100 bg-white shrink-0 z-10">
                 <form id="messageForm" class="flex items-center gap-2">
                     <input type="hidden" id="currentConversationId" value="">
                     <button type="button" id="attachmentBtn" class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors">

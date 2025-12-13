@@ -40,12 +40,25 @@
                     
                     <!-- Dropdown Menu -->
                     <div x-show="open" x-cloak
-                         class="absolute {{ $isRtl ? 'left-0' : 'right-0' }} mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1"
-                         x-transition.origin.top.{{ $isRtl ? 'left' : 'right' }}>
-                        <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary-600 text-{{ $isRtl ? 'right' : 'left' }}">{{ $isRtl ? 'الملف الشخصي' : 'Profile' }}</a>
-                        <a href="#" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary-600 text-{{ $isRtl ? 'right' : 'left' }}">{{ $isRtl ? 'الإعدادات' : 'Settings' }}</a>
-                        <div class="border-t border-slate-100 my-1"></div>
-                        <a href="#" class="block px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-{{ $isRtl ? 'right' : 'left' }}">{{ $isRtl ? 'تسجيل الخروج' : 'Sign Out' }}</a>
+                    class="absolute {{ $isRtl ? 'left-0' : 'right-0' }} mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 py-1"
+                    x-transition.origin.top.{{ $isRtl ? 'left' : 'right' }}>
+                    
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary-600 text-{{ $isRtl ? 'right' : 'left' }}">
+                        {{ $isRtl ? 'الملف الشخصي' : 'Profile' }}
+                    </a>
+
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm text-slate-600 hover:bg-slate-50 hover:text-primary-600 text-{{ $isRtl ? 'right' : 'left' }}">
+                        {{ $isRtl ? 'الإعدادات' : 'Settings' }}
+                    </a>
+
+                    <div class="border-t border-slate-100 my-1"></div>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="block w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 text-{{ $isRtl ? 'right' : 'left' }} text-start">
+                            {{ $isRtl ? 'تسجيل الخروج' : 'Sign Out' }}
+                        </button>
+                    </form>
                     </div>
                 </div>
             </div>
