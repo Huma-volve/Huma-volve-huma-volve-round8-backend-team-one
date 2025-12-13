@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\Doctor\ChatController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,9 +18,9 @@ Route::get('/', function () {
 
 Route::get('/legal/{slug}', [SupportContentController::class, 'showPolicy'])->name('policy.show');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 /*
 |--------------------------------------------------------------------------
