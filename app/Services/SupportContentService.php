@@ -100,6 +100,7 @@ class SupportContentService
 
     protected function clearFaqCache(): void
     {
-        Cache::tags(['content_faqs'])->flush();
+        Cache::forget('faqs_admin');
+        Cache::forget('faqs_public');
     }
 }

@@ -16,13 +16,13 @@ class StoreFaqRequest extends FormRequest
         return [
             'question' => ['required', 'array'],
             'question.en' => ['required', 'string', 'max:255'],
-            'question.ar' => ['required', 'string', 'max:255'],
+            'question.ar' => ['nullable', 'string', 'max:255'],
 
             'answer' => ['required', 'array'],
             'answer.en' => ['required', 'string'],
-            'answer.ar' => ['required', 'string'],
+            'answer.ar' => ['nullable', 'string'],
 
-            'is_active' => ['boolean'],
+            'is_active' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
     }
