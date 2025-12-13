@@ -1,8 +1,8 @@
 <?php
-
 namespace App\Services;
 
 use App\Models\DoctorProfile;
+use App\Models\SearchHistory;
 use App\Repositories\DoctorRepository;
 use App\Repositories\FavoriteRepository;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -11,13 +11,16 @@ class DoctorService
 {
     protected $doctorRepository;
     protected $favoriteRepository;
+    protected $geocodingService;
 
     public function __construct(
         DoctorRepository $doctorRepository,
-        FavoriteRepository $favoriteRepository
+        FavoriteRepository $favoriteRepository,
+        Geocoding $geocoding
     ) {
-        $this->doctorRepository = $doctorRepository;
+        $this->doctorRepository   = $doctorRepository;
         $this->favoriteRepository = $favoriteRepository;
+        $this->geocodingService   = $geocoding;
     }
 
     /**
@@ -25,7 +28,22 @@ class DoctorService
      */
     public function getDoctors(array $filters): LengthAwarePaginator
     {
+
+
+// if user authenticated save search
+        if (auth('sanctum')->check()) {
+            $user = auth('sanctum')->user();
+            if (! empty($filters['search'] || ! empty($filters['specialty_id']) || ! empty('location_query'))) {
+                SearchHistory::create([
+                    'user_id' => $user->id,
+                    'keyword' => $filters['search'] ?? null,
+                    'filters' => $filters,
+                ]);
+            }
+
+        }
         return $this->doctorRepository->getFiltered($filters);
+
     }
 
     /**
@@ -45,9 +63,9 @@ class DoctorService
 
         return [
             'is_favorite' => $isFavorite,
-            'message' => $isFavorite
+            'message'     => $isFavorite
                 ? 'Doctor added to favorites'
-                : 'Doctor removed from favorites'
+                : 'Doctor removed from favorites',
         ];
     }
 }
