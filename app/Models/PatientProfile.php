@@ -40,6 +40,6 @@ class PatientProfile extends Model
 
     public function searchHistories()
     {
-        return $this->hasMany(SearchHistory::class, 'patient_id'); 
+        return $this->hasMany(SearchHistory::class, 'patient_id');
     }
 }
