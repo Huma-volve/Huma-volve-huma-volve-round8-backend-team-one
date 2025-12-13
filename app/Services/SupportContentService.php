@@ -35,12 +35,7 @@ class SupportContentService
             abort(404, 'Policy not found');
         }
 
-        $updatedPolicy = $this->repository->updatePolicy($policy, $data);
-
-        Cache::forget("policy_{$slug}"); 
-        Cache::tags(['content_policies'])->flush();
-
-        return $updatedPolicy;
+        return $this->repository->updatePolicy($policy, $data);
     }
 
     // ========================================================================

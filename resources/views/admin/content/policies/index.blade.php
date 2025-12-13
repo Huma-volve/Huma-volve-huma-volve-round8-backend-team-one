@@ -3,6 +3,16 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Policies Management') }}
         </h2>
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.8/dist/trix.css">
+        <script type="text/javascript" src="https://unpkg.com/trix@2.0.8/dist/trix.umd.min.js"></script>
+        <style>
+            trix-toolbar [data-trix-button-group="file-tools"] { display: none; }
+            trix-editor { min-height: 350px; background-color: white; border-radius: 0.375rem; }
+            .trix-content h1 { font-size: 1.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+            .trix-content h2 { font-size: 1.25rem; font-weight: bold; margin-bottom: 0.5rem; }
+            .trix-content ul { list-style-type: disc; margin-left: 1rem; }
+            .trix-content ol { list-style-type: decimal; margin-left: 1rem; }
+        </style>
     </x-slot>
 
     <div class="py-12" x-data="{ activeTab: '{{ $policies->first()?->slug }}' }">
@@ -30,7 +40,6 @@
                                         class="w-full text-left px-4 py-3 transition duration-150 ease-in-out flex items-center justify-between"
                                     >
                                         <span>{{ $policy->title['en'] ?? $policy->slug }}</span>
-                                        
                                         <span class="h-2.5 w-2.5 rounded-full {{ $policy->is_active ? 'bg-green-400' : 'bg-red-400' }}"></span>
                                     </button>
                                 </li>
@@ -63,7 +72,7 @@
                                     </label>
                                 </div>
 
-                                <div class="space-y-4">
+                                <div class="space-y-6">
                                     <div>
                                         <x-input-label for="title_en_{{ $policy->id }}" value="Page Title" />
                                         <x-text-input id="title_en_{{ $policy->id }}" name="title[en]" type="text" class="mt-1 block w-full" :value="old('title.en', $policy->title['en'] ?? '')" required />
@@ -72,7 +81,11 @@
 
                                     <div>
                                         <x-input-label for="content_en_{{ $policy->id }}" value="Content" />
-                                        <textarea id="content_en_{{ $policy->id }}" name="content[en]" rows="10" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" required>{{ old('content.en', $policy->content['en'] ?? '') }}</textarea>
+                                        
+                                        <input id="content_en_{{ $policy->id }}" type="hidden" name="content[en]" value="{{ old('content.en', $policy->content['en'] ?? '') }}">
+                                        
+                                        <trix-editor input="content_en_{{ $policy->id }}" class="prose max-w-none block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"></trix-editor>
+                                        
                                         <x-input-error class="mt-2" :messages="$errors->get('content.en')" />
                                     </div>
                                 </div>

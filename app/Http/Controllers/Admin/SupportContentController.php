@@ -12,6 +12,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\JsonResponse;
+use App\Models\Policy;
 
 class SupportContentController extends Controller
 {
@@ -34,7 +35,7 @@ class SupportContentController extends Controller
         $this->service->updatePolicyBySlug($slug, $request->validated());
 
         return redirect()
-            ->route('admin.policies.index')
+            ->route('policy.show', $slug)
             ->with('success', 'Policy updated successfully.');
     }
 
@@ -86,5 +87,11 @@ class SupportContentController extends Controller
             'status' => 'success',
             'message' => 'FAQs reordered successfully'
         ]);
+    }
+
+    public function showPolicy(string $slug): View
+    {
+        $policy = Policy::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        return view('admin.content.policies.show', compact('policy'));
     }
 }
