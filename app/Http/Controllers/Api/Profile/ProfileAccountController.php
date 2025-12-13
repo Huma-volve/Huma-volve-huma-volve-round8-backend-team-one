@@ -12,13 +12,14 @@ class ProfileAccountController extends Controller
 {
     use ApiResponse;
     public function editProfile(ProfileAccountRequest $request){
-
+        
         $user = User::with('patientProfile')->find(Auth::id());
-        $user->update($request->only(['name','email','phone']));
+        $data = array_filter($request->only(['name','email','phone']), fn($value) => !is_null($value) && $value !== '' );
+        $user->update($data);
 
         $user->patientProfile()->updateOrCreate(
-                ['user_id'   => $user->id],
-                ['birthdate' => $request->birthdate]
+            ['user_id' => $user->id],
+            ['birthdate' => $request->birthdate]
         );
 
         $user = User::with('patientProfile')->find(Auth::id());
@@ -26,7 +27,7 @@ class ProfileAccountController extends Controller
             'name' => $user->name,
             'email' => $user->email,
             'phone' => $user->phone,
-            'birthdate' => $user->patientProfile->birthdate->format('d-m-Y'),
+            'birthdate' => $request->birthdate ? $user->patientProfile->birthdate->format('d-m-Y') : null,
         ];
         return $this->success($data,'Profile updated successfully');
     }
