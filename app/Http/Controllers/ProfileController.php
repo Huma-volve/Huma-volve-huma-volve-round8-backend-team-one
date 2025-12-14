@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -16,8 +18,9 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = User::with('doctorProfile.speciality')->find(Auth::id());
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
         ]);
     }
 
@@ -26,13 +29,23 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = User::find(Auth::id());
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->hasFile('photo')) {
+
+            $path = $request->file('photo')->store('profile-photos', 'public');
+
+            if ($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+
+            $user->update([
+                'profile_photo_path' => $path,
+            ]);
         }
-
-        $request->user()->save();
+        
+        $user->update($request->only(['name','email']));
+        $user->doctorProfile()->update($request->only(['bio','clinic_address','experience_length','session_price','license_number']));
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
