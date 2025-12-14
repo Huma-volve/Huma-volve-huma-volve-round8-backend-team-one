@@ -141,7 +141,7 @@ class PaymentTest extends TestCase
         $mockGateway = Mockery::mock(PaymentGatewayInterface::class);
         $mockGateway->shouldReceive('charge')
             ->once()
-            ->with(100.00, 'usd', 'pm_default_card') // Expect default card token
+            ->with(100.00, 'egp', 'pm_default_card') // Expect default card token
             ->andReturn([
                 'success' => true,
                 'transaction_id' => 'txn_default',

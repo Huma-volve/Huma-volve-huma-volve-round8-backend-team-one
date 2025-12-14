@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if ($request->user()->user_type === 'doctor') {
-            return redirect()->intended(route('doctor.chat.index'));
+            return redirect()->intended(route('dashboard'));
         }
 
         return redirect()->intended(route('dashboard', absolute: false));
