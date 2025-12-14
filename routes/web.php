@@ -3,7 +3,6 @@
 use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Doctor\ChatController;
-use App\Http\Controllers\Doctor\DoctorBookingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -53,23 +52,8 @@ Route::middleware(['auth', 'doctor'])
         Route::post('/chat/{conversation}/toggle-archive', [ChatController::class, 'toggleArchive'])->name('chat.toggle-archive');
     });
 
-/*
-|--------------------------------------------------------------------------
-| Doctor Routes (Booking System)
-|--------------------------------------------------------------------------
-*/
 
-Route::middleware(['auth', 'doctor'])
-    ->prefix('doctor')
-    ->name('doctor.')
-    ->group(function () {
-        // Booking Routes
-        Route::get('/bookings', [DoctorBookingController::class, 'index'])->name('bookings.index');
-        Route::get('/bookings/{booking}', [DoctorBookingController::class, 'show'])->name('bookings.show');
-        Route::post('/bookings/{booking}/cancel', [DoctorBookingController::class, 'cancel'])->name('bookings.cancel');
-        Route::post('/bookings/{booking}/reschedule', [DoctorBookingController::class, 'reschedule'])->name('bookings.reschedule');
-    });
-    
+
 /*
 |--------------------------------------------------------------------------
 | Admin Content Management Routes (Policies & FAQs)
