@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 
 class DoctorBookingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $doctor = Auth::user()->doctorProfile;
 
@@ -17,11 +17,56 @@ class DoctorBookingController extends Controller
             abort(403, 'Unauthorized access.');
         }
 
-        $bookings = Booking::where('doctor_id', $doctor->id)
-            ->with('patient.user')
-            ->orderBy('appointment_date', 'desc')
+        $query = Booking::where('doctor_id', $doctor->id)
+            ->with('patient.user');
+
+        // Search by patient name or date
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->whereHas('patient.user', function($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%");
+                })
+                ->orWhere('appointment_date', 'like', "%{$search}%");
+            });
+        }
+
+        // Filter by Status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter by Payment Status
+        if ($request->filled('payment_status')) {
+            $query->where('payment_status', $request->payment_status);
+        }
+
+        // Filter by Date Range
+        if ($request->filled('date_filter')) {
+            switch ($request->date_filter) {
+                case 'today':
+                    $query->whereDate('appointment_date', now());
+                    break;
+                case 'week':
+                    $query->whereBetween('appointment_date', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'month':
+                    $query->whereMonth('appointment_date', now()->month)
+                          ->whereYear('appointment_date', now()->year);
+                    break;
+                case 'upcoming':
+                    $query->where('appointment_date', '>=', now()->toDateString());
+                    break;
+                case 'past':
+                    $query->where('appointment_date', '<', now()->toDateString());
+                    break;
+            }
+        }
+
+        $bookings = $query->orderBy('appointment_date', 'desc')
             ->orderBy('appointment_time', 'desc')
-            ->paginate(10);
+            ->paginate(10)
+            ->withQueryString();
 
         return view('doctor.bookings.index', compact('bookings'));
     }

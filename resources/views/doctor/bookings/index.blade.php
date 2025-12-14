@@ -4,6 +4,64 @@
     <div class="container mx-auto px-4 py-8">
         <h1 class="text-3xl font-bold text-slate-800 mb-6">{{ __('My Bookings') }}</h1>
 
+        <!-- Search and Filter Form -->
+        <div class="mb-6 bg-white p-4 rounded-lg shadow-sm border border-slate-100">
+            <form action="{{ route('doctor.bookings.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <!-- Search -->
+                <div class="md:col-span-2">
+                    <label for="search" class="block text-sm font-medium text-slate-700 mb-1">{{ __('Search') }}</label>
+                    <input type="text" name="search" id="search" value="{{ request('search') }}" placeholder="{{ __('Patient name or date...') }}" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                </div>
+
+                <!-- Status Filter -->
+                <div>
+                    <label for="status" class="block text-sm font-medium text-slate-700 mb-1">{{ __('Status') }}</label>
+                    <select name="status" id="status" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option value="">{{ __('All Statuses') }}</option>
+                        <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>{{ __('Pending') }}</option>
+                        <option value="confirmed" {{ request('status') == 'confirmed' ? 'selected' : '' }}>{{ __('Confirmed') }}</option>
+                        <option value="completed" {{ request('status') == 'completed' ? 'selected' : '' }}>{{ __('Completed') }}</option>
+                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>{{ __('Cancelled') }}</option>
+                        <option value="rescheduled" {{ request('status') == 'rescheduled' ? 'selected' : '' }}>{{ __('Rescheduled') }}</option>
+                    </select>
+                </div>
+
+                <!-- Payment Status Filter -->
+                <div>
+                    <label for="payment_status" class="block text-sm font-medium text-slate-700 mb-1">{{ __('Payment Status') }}</label>
+                    <select name="payment_status" id="payment_status" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option value="">{{ __('All Payments') }}</option>
+                        <option value="paid" {{ request('payment_status') == 'paid' ? 'selected' : '' }}>{{ __('Paid') }}</option>
+                        <option value="unpaid" {{ request('payment_status') == 'unpaid' ? 'selected' : '' }}>{{ __('Unpaid') }}</option>
+                        <option value="refunded" {{ request('payment_status') == 'refunded' ? 'selected' : '' }}>{{ __('Refunded') }}</option>
+                    </select>
+                </div>
+
+                <!-- Date Filter -->
+                <div>
+                    <label for="date_filter" class="block text-sm font-medium text-slate-700 mb-1">{{ __('Date Range') }}</label>
+                    <select name="date_filter" id="date_filter" class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
+                        <option value="">{{ __('All Dates') }}</option>
+                        <option value="today" {{ request('date_filter') == 'today' ? 'selected' : '' }}>{{ __('Today') }}</option>
+                        <option value="week" {{ request('date_filter') == 'week' ? 'selected' : '' }}>{{ __('This Week') }}</option>
+                        <option value="month" {{ request('date_filter') == 'month' ? 'selected' : '' }}>{{ __('This Month') }}</option>
+                        <option value="upcoming" {{ request('date_filter') == 'upcoming' ? 'selected' : '' }}>{{ __('Upcoming') }}</option>
+                        <option value="past" {{ request('date_filter') == 'past' ? 'selected' : '' }}>{{ __('Past') }}</option>
+                    </select>
+                </div>
+
+                <!-- Buttons -->
+                <div class="md:col-span-4 flex justify-end space-x-2 mt-2">
+                    <a href="{{ route('doctor.bookings.index') }}" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors text-sm font-medium">
+                        {{ __('Reset') }}
+                    </a>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium">
+                        {{ __('Filter') }}
+                    </button>
+                </div>
+            </form>
+        </div>
+
         @if($bookings->isEmpty())
             <div class="bg-white rounded-lg shadow p-6 text-center text-slate-500">
                 <p>{{ __('No bookings found.') }}</p>
