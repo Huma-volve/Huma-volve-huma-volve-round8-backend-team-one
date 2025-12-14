@@ -94,6 +94,8 @@ export function initDoctorChat(config) {
         elements.emptyState.classList.add('hidden');
         elements.chatContainer.classList.remove('hidden');
 
+        window.dispatchEvent(new CustomEvent('open-chat'));
+
         loadMessages(conversationId);
         subscribeToChannel(conversationId);
 

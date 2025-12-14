@@ -10,10 +10,12 @@ use Illuminate\Support\Facades\RateLimiter;
 // Interfaces
 use App\Repositories\Contracts\ChatRepositoryInterface;
 use App\Repositories\Contracts\DoctorChatRepositoryInterface;
+use App\Repositories\Contracts\SupportContentRepositoryInterface;
 
 // Implementations
 use App\Repositories\Eloquent\ChatRepository;
 use App\Repositories\DoctorChatRepository;
+use App\Repositories\SupportContentRepository;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,6 +34,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             DoctorChatRepositoryInterface::class,
             DoctorChatRepository::class
+        );
+
+        // Bind Support Content Repository
+        $this->app->bind(
+            SupportContentRepositoryInterface::class,
+            SupportContentRepository::class
         );
     }
 

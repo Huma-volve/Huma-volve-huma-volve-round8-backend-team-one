@@ -8,6 +8,8 @@ use App\Models\Message;
 use App\Repositories\Contracts\DoctorChatRepositoryInterface;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ChatService
 {
@@ -35,15 +37,35 @@ class ChatService
         });
     }
 
-    public function sendMessage(Conversation $conversation, int $doctorId, string $body): array
+    public function sendMessage(Conversation $conversation, int $doctorId, ?string $body, ?UploadedFile $attachment = null): array
     {
         $this->authorizeParticipant($conversation->id, $doctorId);
+
+        $messageBody = $body;
+        $type = 'text';
+
+        if ($attachment) {
+            $path = $attachment->store('chat-attachments', 'public');
+            $messageBody = $path;
+            
+            $mime = $attachment->getMimeType();
+
+            if (str_contains($mime, 'image')) {
+                $type = 'image';
+            } elseif (str_contains($mime, 'video')) {
+                $type = 'video';
+            } elseif (str_contains($mime, 'audio')) {
+                $type = 'audio';
+            } else {
+                $type = 'file';
+            }
+        }
 
         $message = $this->chatRepository->createMessage([
             'conversation_id' => $conversation->id,
             'sender_id' => $doctorId,
-            'body' => $body,
-            'type' => 'text',
+            'body' => $messageBody, 
+            'type' => $type,
         ]);
 
         $this->chatRepository->updateConversationTimestamp($conversation);
