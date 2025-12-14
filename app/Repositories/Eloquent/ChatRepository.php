@@ -11,12 +11,19 @@ class ChatRepository implements ChatRepositoryInterface
 {
     public function getUserConversations(int $userId, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
-        $isArchivedRequest = ($filters['type'] ?? '') === 'archived';
+        $type = $filters['type'] ?? '';
+        $isArchivedRequest = $type === 'archived';
 
         return Conversation::query()
-            ->whereHas('participants', function ($q) use ($userId, $isArchivedRequest) {
+            ->whereHas('participants', function ($q) use ($userId, $isArchivedRequest, $type) {
                 $q->where('user_id', $userId)
-                ->where('is_archived', $isArchivedRequest);
+                  ->where('is_archived', $isArchivedRequest)
+                  ->when($type === 'favorites', function ($subQ) {
+                      $subQ->where('is_favorite', true);
+                  })
+                  ->when($type === 'unread', function ($subQ) {
+                      $subQ->whereColumn('last_read_at', '<', 'conversations.updated_at');
+                  });
             })
             ->when(!empty($filters['search']), function ($q) use ($filters, $userId) {
                 $q->whereHas('participants', function ($subQ) use ($filters, $userId) {
@@ -24,18 +31,6 @@ class ChatRepository implements ChatRepositoryInterface
                         ->whereHas('user', function ($userQ) use ($filters) {
                             $userQ->where('name', 'like', '%' . $filters['search'] . '%');
                         });
-                });
-            })
-            ->when(($filters['type'] ?? '') === 'favorites', function ($q) use ($userId) {
-                $q->whereHas('participants', function ($subQ) use ($userId) {
-                    $subQ->where('user_id', $userId)
-                        ->where('is_favorite', true);
-                });
-            })
-            ->when(($filters['type'] ?? '') === 'unread', function ($q) use ($userId) {
-                $q->whereHas('participants', function ($subQ) use ($userId) {
-                    $subQ->where('user_id', $userId)
-                        ->whereColumn('last_read_at', '<', 'conversations.updated_at');
                 });
             })
             ->with(['lastMessage.sender', 'participants.user'])
