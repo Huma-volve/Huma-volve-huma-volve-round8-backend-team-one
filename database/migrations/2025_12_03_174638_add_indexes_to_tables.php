@@ -60,12 +60,12 @@ return new class extends Migration
          *         SELECT * FROM doctor_profiles
          *         WHERE is_approved = 1 AND session_price <= 300;
          */
-        Schema::table('doctor_profiles', function (Blueprint $table) {
+        // Schema::table('doctor_profiles', function (Blueprint $table) {
 
-            $table->index(['is_approved', 'specialty_id']);
-            $table->index(['is_approved', 'rating_avg']);
-            $table->index(['is_approved', 'session_price']);
-        });
+        //     $table->index(['is_approved', 'specialty_id']);
+        //     $table->index(['is_approved', 'rating_avg']);
+        //     $table->index(['is_approved', 'session_price']);
+        // });
         /**
          * ----------------------------------------------------------
          * BOOKINGS TABLE INDEXES
