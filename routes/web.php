@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Doctor\ChatController;
+use App\Http\Controllers\Doctor\DoctorBookingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,9 +51,15 @@ Route::middleware(['auth', 'doctor'])
         Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
         Route::post('/chat/{conversation}/toggle-favorite', [ChatController::class, 'toggleFavorite'])->name('chat.toggle-favorite');
         Route::post('/chat/{conversation}/toggle-archive', [ChatController::class, 'toggleArchive'])->name('chat.toggle-archive');
+
+        // Booking Management
+        Route::prefix('bookings')->name('bookings.')->controller(DoctorBookingController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{booking}', 'show')->name('show');
+            Route::post('/{booking}/cancel', 'cancel')->name('cancel');
+            Route::post('/{booking}/reschedule', 'reschedule')->name('reschedule');
+        });
     });
-
-
 
 /*
 |--------------------------------------------------------------------------

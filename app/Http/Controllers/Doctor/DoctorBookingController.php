@@ -80,7 +80,9 @@ class DoctorBookingController extends Controller
 
         $booking->load(['patient.user', 'transactions', 'cancelledBy']);
 
-        return view('doctor.bookings.show', compact('booking'));
+        $slots = Auth::user()->doctorProfile->getUpcomingSlots();
+
+        return view('doctor.bookings.show', compact('booking', 'slots'));
     }
 
     public function cancel(Request $request, Booking $booking)
