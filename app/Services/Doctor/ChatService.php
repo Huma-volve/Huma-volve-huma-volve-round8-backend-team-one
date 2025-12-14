@@ -8,6 +8,8 @@ use App\Models\Message;
 use App\Repositories\Contracts\DoctorChatRepositoryInterface;
 use Illuminate\Support\Collection;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class ChatService
 {
@@ -35,15 +37,35 @@ class ChatService
         });
     }
 
-    public function sendMessage(Conversation $conversation, int $doctorId, string $body): array
+    public function sendMessage(Conversation $conversation, int $doctorId, ?string $body, ?UploadedFile $attachment = null): array
     {
         $this->authorizeParticipant($conversation->id, $doctorId);
+
+        $messageBody = $body;
+        $type = 'text';
+
+        if ($attachment) {
+            $path = $attachment->store('chat-attachments', 'public');
+            $messageBody = $path;
+            
+            $mime = $attachment->getMimeType();
+
+            if (str_contains($mime, 'image')) {
+                $type = 'image';
+            } elseif (str_contains($mime, 'video')) {
+                $type = 'video';
+            } elseif (str_contains($mime, 'audio')) {
+                $type = 'audio';
+            } else {
+                $type = 'file';
+            }
+        }
 
         $message = $this->chatRepository->createMessage([
             'conversation_id' => $conversation->id,
             'sender_id' => $doctorId,
-            'body' => $body,
-            'type' => 'text',
+            'body' => $messageBody, 
+            'type' => $type,
         ]);
 
         $this->chatRepository->updateConversationTimestamp($conversation);
@@ -98,6 +120,8 @@ class ChatService
             'last_message' => $conversation->lastMessage,
             'unread_count' => $unreadCount,
             'updated_at' => $conversation->updated_at,
+            'is_favorite' => (bool) $currentParticipant?->is_favorite,
+            'is_archived' => (bool) $currentParticipant?->is_archived,
         ];
     }
 
@@ -117,6 +141,38 @@ class ChatService
             'is_mine' => $message->sender_id === $doctorId,
             'created_at' => $message->created_at->format('h:i A'),
             'date' => $message->created_at->format('M d, Y'),
+        ];
+    }
+
+    public function toggleFavorite(Conversation $conversation, int $doctorId): array
+    {
+        $participant = $this->chatRepository->findParticipant($conversation->id, $doctorId);
+
+        if (!$participant) {
+            throw new AccessDeniedHttpException('Unauthorized');
+        }
+
+        $this->chatRepository->toggleParticipantFavorite($participant);
+
+        return [
+            'success' => true,
+            'is_favorite' => $participant->fresh()->is_favorite,
+        ];
+    }
+
+    public function toggleArchive(Conversation $conversation, int $doctorId): array
+    {
+        $participant = $this->chatRepository->findParticipant($conversation->id, $doctorId);
+
+        if (!$participant) {
+            throw new AccessDeniedHttpException('Unauthorized');
+        }
+
+        $this->chatRepository->toggleParticipantArchive($participant);
+
+        return [
+            'success' => true,
+            'is_archived' => $participant->fresh()->is_archived,
         ];
     }
 }

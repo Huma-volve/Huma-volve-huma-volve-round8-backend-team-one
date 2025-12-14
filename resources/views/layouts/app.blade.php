@@ -1,33 +1,36 @@
-@php
-    $locale = request('lang', app()->getLocale());
-    $isRtl = $locale == 'ar';
-    $dir = $isRtl ? 'rtl' : 'ltr';
-@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', $locale) }}" dir="{{ $dir }}">
-<head>
-    @include('layouts.partials.head')
-</head>
-<body class="font-sans antialiased bg-slate-50 text-slate-800" x-data="{ sidebarOpen: false, darkMode: false }">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <!-- Mobile Overlay -->
-    <div x-show="sidebarOpen" x-transition.opacity 
-         class="fixed inset-0 z-20 bg-black/50 lg:hidden" 
-         @click="sidebarOpen = false"></div>
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-    @include('layouts.partials.sidebar')
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-    <!-- Main Content -->
-    <div class="lg:{{ $isRtl ? 'mr-64' : 'ml-64' }} flex flex-col min-h-screen transition-all duration-300">
-        
-        @include('layouts.partials.header')
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    </head>
+    <body class="font-sans antialiased">
+        <div class="min-h-screen bg-gray-100">
+            @include('layouts.navigation')
 
-        <!-- Dynamic Content Area -->
-        <main class="flex-1 p-4 lg:p-8">
-            @yield('content')
-        </main>
+            <!-- Page Heading -->
+            @isset($header)
+                <header class="bg-white shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
 
-        @include('layouts.partials.footer')
-    </div>
-</body>
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
+        </div>
+    </body>
 </html>

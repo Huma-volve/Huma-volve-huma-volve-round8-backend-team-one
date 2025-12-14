@@ -35,7 +35,8 @@ class ChatController extends Controller
         $message = $this->chatService->sendMessage(
             $conversation,
             Auth::id(),
-            $request->validated('body')
+            $request->input('body'),
+            $request->file('attachment')
         );
 
         return response()->json(['message' => $message]);
@@ -46,5 +47,19 @@ class ChatController extends Controller
         $this->chatService->markConversationAsRead($conversation, Auth::id());
 
         return response()->json(['success' => true]);
+    }
+
+    public function toggleFavorite(Conversation $conversation): JsonResponse
+    {
+        $result = $this->chatService->toggleFavorite($conversation, Auth::id());
+
+        return response()->json($result);
+    }
+
+    public function toggleArchive(Conversation $conversation): JsonResponse
+    {
+        $result = $this->chatService->toggleArchive($conversation, Auth::id());
+
+        return response()->json($result);
     }
 }
