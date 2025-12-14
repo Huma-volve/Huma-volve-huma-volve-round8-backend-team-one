@@ -60,6 +60,7 @@ Route::prefix('auth')->name('auth.')->group(function () {
 });
 
 Route::get('/policies', [SupportContentController::class, 'index']);
+Route::get('/faqs', [SupportContentController::class, 'indexFaqs']);
 
 // Specialties
 Route::get('/specialties', [SpecialtyController::class, 'index']);

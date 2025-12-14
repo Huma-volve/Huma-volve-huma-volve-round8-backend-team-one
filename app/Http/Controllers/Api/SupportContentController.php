@@ -24,4 +24,11 @@ class SupportContentController extends Controller
 
         return $this->successResponse($policies, 'Policies retrieved successfully');
     }
+
+    public function indexFaqs(): JsonResponse
+    {
+        $faqs = $this->service->getActiveFaqsForApi();
+
+        return $this->successResponse($faqs, 'FAQs retrieved successfully');
+    }
 }

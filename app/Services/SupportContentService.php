@@ -103,4 +103,9 @@ class SupportContentService
     {
         return $this->repository->getActivePolicies();
     }
+
+    public function getActiveFaqsForApi(): Collection
+    {
+        return $this->repository->getActiveFaqs();
+    }
 }
