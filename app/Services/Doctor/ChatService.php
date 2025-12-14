@@ -139,7 +139,7 @@ class ChatService
                 ? asset('storage/' . $message->sender->profile_photo_path)
                 : null,
             'is_mine' => $message->sender_id === $doctorId,
-            'created_at' => $message->created_at->format('h:i A'),
+            'created_at' => $message->created_at->toIso8601String(),
             'date' => $message->created_at->format('M d, Y'),
         ];
     }
