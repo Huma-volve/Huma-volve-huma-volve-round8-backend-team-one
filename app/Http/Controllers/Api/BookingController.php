@@ -189,7 +189,7 @@ class BookingController extends Controller
                         'status' => 'success',
                         'gateway' => $booking->payment_method,
                         'payload' => $refundResult['data'],
-                        'currency' => 'usd',
+                        'currency' => 'egp',
                     ]);
 
                     $booking->payment_status = 'refunded';

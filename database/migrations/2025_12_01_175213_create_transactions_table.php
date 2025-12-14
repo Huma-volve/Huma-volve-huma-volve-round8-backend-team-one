@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('status', ['success', 'failed', 'pending']);
             $table->enum('gateway', ['stripe', 'paypal', 'cash']);
             $table->json('payload')->nullable(); // Full response from payment gateway
-            $table->string('currency', 3)->default('USD');
+            $table->string('currency', 3)->default('EGP');
             $table->text('failure_reason')->nullable(); // Reason if payment failed
             $table->timestamps();
 

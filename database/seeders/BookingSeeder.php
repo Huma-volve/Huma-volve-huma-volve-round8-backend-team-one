@@ -147,7 +147,7 @@ class BookingSeeder extends Seeder
                     'type' => 'payment',
                     'status' => 'success',
                     'gateway' => $data['payment_method'],
-                    'currency' => 'USD',
+                    'currency' => 'EGP',
                     'payload' => json_encode(['transaction_id' => $data['payment_transaction_id']]),
                 ]);
             }

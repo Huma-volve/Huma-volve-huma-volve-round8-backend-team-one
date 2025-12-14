@@ -54,7 +54,7 @@ class PaymentController extends Controller
             // Charge the user
             $result = $gateway->charge(
                 $booking->price_at_booking,
-                'usd', // Default currency
+                'egp', // Default currency
                 $paymentMethodId
             );
 
@@ -77,7 +77,7 @@ class PaymentController extends Controller
                     'status' => 'success',
                     'gateway' => $request->gateway,
                     'payload' => $result['data'],
-                    'currency' => 'usd',
+                    'currency' => 'egp',
                 ]);
 
                 DB::commit();
