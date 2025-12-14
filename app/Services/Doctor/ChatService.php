@@ -117,7 +117,7 @@ class ChatService
         return [
             'id' => $conversation->id,
             'patient' => $otherParticipant?->user,
-            'last_message' => $conversation->lastMessage,
+            'last_message' => $this->formatLastMessagePreview($conversation->lastMessage),
             'unread_count' => $unreadCount,
             'updated_at' => $conversation->updated_at,
             'is_favorite' => (bool) $currentParticipant?->is_favorite,
@@ -174,5 +174,20 @@ class ChatService
             'success' => true,
             'is_archived' => $participant->fresh()->is_archived,
         ];
+    }
+
+    protected function formatLastMessagePreview(?Message $message): ?string
+    {
+        if (!$message) {
+            return null;
+        }
+
+        return match ($message->type) {
+            'image' => '📷 Image',
+            'video' => '🎥 Video', 
+            'audio' => '🎵 Audio',
+            'file' => '📎 File',
+            default => $message->body,
+        };
     }
 }
