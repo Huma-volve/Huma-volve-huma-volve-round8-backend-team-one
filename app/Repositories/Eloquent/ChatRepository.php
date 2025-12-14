@@ -11,9 +11,12 @@ class ChatRepository implements ChatRepositoryInterface
 {
     public function getUserConversations(int $userId, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
+        $isArchivedRequest = ($filters['type'] ?? '') === 'archived';
+
         return Conversation::query()
-            ->whereHas('participants', function ($q) use ($userId) {
-                $q->where('user_id', $userId);
+            ->whereHas('participants', function ($q) use ($userId, $isArchivedRequest) {
+                $q->where('user_id', $userId)
+                ->where('is_archived', $isArchivedRequest);
             })
             ->when(!empty($filters['search']), function ($q) use ($filters, $userId) {
                 $q->whereHas('participants', function ($subQ) use ($filters, $userId) {
@@ -33,12 +36,6 @@ class ChatRepository implements ChatRepositoryInterface
                 $q->whereHas('participants', function ($subQ) use ($userId) {
                     $subQ->where('user_id', $userId)
                         ->whereColumn('last_read_at', '<', 'conversations.updated_at');
-                });
-            })
-            ->when(($filters['type'] ?? '') === 'archived', function ($q) use ($userId) {
-                $q->whereHas('participants', function ($subQ) use ($userId) {
-                    $subQ->where('user_id', $userId)
-                        ->where('is_archived', true);
                 });
             })
             ->with(['lastMessage.sender', 'participants.user'])
