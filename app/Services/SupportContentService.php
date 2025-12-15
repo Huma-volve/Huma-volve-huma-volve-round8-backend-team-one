@@ -114,7 +114,7 @@ class SupportContentService
         Cache::forget('faqs_admin');
         Cache::forget('faqs_public');
     }
-}
+
 
     public function getActivePoliciesForApi(): Collection
     {

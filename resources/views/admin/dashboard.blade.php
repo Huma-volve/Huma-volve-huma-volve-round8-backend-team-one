@@ -1,164 +1,110 @@
-@extends('layouts.admin')
-
-@section('content')
-<div class="container mx-auto px-4 py-8">
-
-    <!-- Welcome Section -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-800">
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Admin Dashboard') }}
-        </h1>
-        <p class="text-slate-500 mt-2">{{ __('Overview of the platform performance and activities.') }}</p>
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 text-gray-900 grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Total Patients Card -->
+                    <div class="bg-indigo-50 overflow-hidden shadow-sm sm:rounded-lg p-6 border-b-4 border-indigo-500">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-indigo-200 text-indigo-600 mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Total Patients</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ number_format($totalPatients) }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Doctors Card -->
+                    <div class="bg-green-50 overflow-hidden shadow-sm sm:rounded-lg p-6 border-b-4 border-green-500">
+                        <div class="flex items-center">
+                            <div class="p-3 rounded-full bg-green-200 text-green-600 mr-4">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none"
+                                    viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-500">Total Doctors</p>
+                                <p class="text-3xl font-bold text-gray-900">{{ number_format($totalDoctors) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 text-gray-900">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Monthly Overview</h3>
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Month / Year</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Bookings</th>
+                                    <th scope="col"
+                                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Net Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @forelse($monthlyStats as $stat)
+                                    <tr>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                            {{ \Carbon\Carbon::create()->month($stat->month)->format('F') }}
+                                            {{ $stat->year }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ number_format($stat->total_bookings) }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
+                                            ${{ number_format($stat->net_profit, 2) }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="3"
+                                            class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                                            No bookings found.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div
+                    class="p-6 text-gray-900 flex items-center justify-between flex-wrap gap-4 border-t border-gray-200 mt-6 pt-6">
+                    <span class="text-lg font-medium">{{ __('Quick Actions') }}</span>
+
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('admin.faqs.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            FAQs
+                        </a>
+
+                        <a href="{{ route('admin.policies.index') }}"
+                            class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                            Policies
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-
-        <!-- Doctors Stat -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                    <i class="ph-fill ph-stethoscope text-2xl"></i>
-                </div>
-                {{-- <span class="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-full">+5%</span> --}}
-            </div>
-            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ $doctorsCount }}</h3>
-            <p class="text-slate-500 font-medium">{{ __('Total Doctors') }}</p>
-        </div>
-
-        <!-- Patients Stat -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-lg bg-green-50 flex items-center justify-center text-green-600">
-                    <i class="ph-fill ph-users text-2xl"></i>
-                </div>
-            </div>
-            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ $patientsCount }}</h3>
-            <p class="text-slate-500 font-medium">{{ __('Total Patients') }}</p>
-        </div>
-
-        <!-- Bookings Stat -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
-                    <i class="ph-fill ph-calendar-check text-2xl"></i>
-                </div>
-            </div>
-            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ $bookingsCount }}</h3>
-            <p class="text-slate-500 font-medium">{{ __('Total Bookings') }}</p>
-        </div>
-
-        <!-- Revenue Stat -->
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-            <div class="flex items-center justify-between mb-4">
-                <div class="w-12 h-12 rounded-lg bg-yellow-50 flex items-center justify-center text-yellow-600">
-                    <i class="ph-fill ph-currency-dollar text-2xl"></i>
-                </div>
-            </div>
-            <h3 class="text-3xl font-bold text-slate-800 mb-1">${{ number_format($revenue, 2) }}</h3>
-            <p class="text-slate-500 font-medium">{{ __('Total Revenue') }}</p>
-        </div>
-    </div>
-
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-
-        <!-- Recent Doctors -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-slate-800">{{ __('New Doctors') }}</h3>
-                <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">{{ __('View All') }}</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-slate-50 text-slate-500">
-                        <tr>
-                            <th class="px-6 py-3 font-medium">{{ __('Name') }}</th>
-                            <th class="px-6 py-3 font-medium">{{ __('Speciality') }}</th>
-                            <th class="px-6 py-3 font-medium">{{ __('Joined Date') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse($newDoctors as $doctor)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-slate-800 flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-slate-200 overflow-hidden">
-                                    @if($doctor->profile_photo_path)
-                                    <img src="{{ Storage::url($doctor->profile_photo_path) }}" class="w-full h-full object-cover">
-                                    @else
-                                    <div class="w-full h-full flex items-center justify-center bg-primary-100 text-primary-600 font-bold text-xs">
-                                        {{ substr($doctor->name, 0, 1) }}
-                                    </div>
-                                    @endif
-                                </div>
-                                {{ $doctor->name }}
-                            </td>
-                            <td class="px-6 py-4 text-slate-500">
-                                {{ $doctor->doctorProfile?->speciality?->name ?? 'N/A' }}
-                            </td>
-                            <td class="px-6 py-4 text-slate-500">
-                                {{ $doctor->created_at->format('M d, Y') }}
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="3" class="px-6 py-4 text-center text-slate-500">{{ __('No new doctors found.') }}</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Recent Bookings -->
-        <div class="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
-            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-slate-800">{{ __('Recent Bookings') }}</h3>
-                <a href="#" class="text-primary-600 hover:text-primary-700 text-sm font-medium">{{ __('View All') }}</a>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-slate-50 text-slate-500">
-                        <tr>
-                            <th class="px-6 py-3 font-medium">{{ __('Date') }}</th>
-                            <th class="px-6 py-3 font-medium">{{ __('Doctor') }}</th>
-                            <th class="px-6 py-3 font-medium">{{ __('Patient') }}</th>
-                            <th class="px-6 py-3 font-medium">{{ __('Status') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        @forelse($recentBookings as $booking)
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-6 py-4 text-slate-500">
-                                {{ \Carbon\Carbon::parse($booking->date)->format('M d') }} - {{ $booking->start_time }}
-                            </td>
-                            <td class="px-6 py-4 font-medium text-slate-800">
-                                {{ $booking->doctor->user->name ?? 'Unknown' }}
-                            </td>
-                            <td class="px-6 py-4 text-slate-500">
-                                {{ $booking->patient->user->name ?? 'Unknown' }}
-                            </td>
-                            <td class="px-6 py-4">
-                                <span class="px-2 py-1 rounded-full text-xs font-semibold
-                                        @if($booking->status == 'confirmed') bg-green-100 text-green-700
-                                        @elseif($booking->status == 'pending') bg-yellow-100 text-yellow-700
-                                        @elseif($booking->status == 'cancelled') bg-red-100 text-red-700
-                                        @else bg-slate-100 text-slate-700 @endif">
-                                    {{ ucfirst($booking->status) }}
-                                </span>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-slate-500">{{ __('No bookings found.') }}</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-
-</div>
-@endsection
+</x-app-layout>
