@@ -7,10 +7,10 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\RedirectResponse
     {
         if ($request->user()->user_type === 'admin') {
-            return view('admin.dashboard');
+            return redirect()->route('admin.dashboard');
         }
 
         if ($request->user()->user_type === 'doctor') {
