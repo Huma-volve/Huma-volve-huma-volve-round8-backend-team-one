@@ -7,7 +7,7 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\RedirectResponse
     {
         if ($request->user()->user_type === 'admin') {
             // 1. Total Patients & Doctors
