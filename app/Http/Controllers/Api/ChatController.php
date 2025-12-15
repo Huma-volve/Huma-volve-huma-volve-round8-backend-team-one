@@ -22,18 +22,18 @@ class ChatController extends Controller
 
     public function index(Request $request)
     {
-        // Log search history if a search term is present
         if ($request->filled('search')) {
             SearchHistory::create([
                 'user_id' => $request->user()->id,
-                'keyword' => $request->search, 
-                'filters' => $request->type ? ['type' => $request->type] : null, // Save type filter if it exists
+                'keyword' => $request->search,
+                'filters' => $request->type ? ['type' => $request->type] : null,
             ]);
         }
 
         $conversations = $this->chatRepository->getUserConversations(
             $request->user()->id,
-            $request->only(['search', 'type'])
+            $request->only(['search', 'type']),
+            $request->input('per_page', 15)
         );
 
         return ConversationResource::collection($conversations);

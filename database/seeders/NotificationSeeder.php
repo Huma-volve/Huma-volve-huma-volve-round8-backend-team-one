@@ -11,68 +11,104 @@ class NotificationSeeder extends Seeder
 {
     public function run(): void
     {
-        $notificationsData = [
-            [
-                'notifiable_id' => 1,
-                'notifiable_type' => User::class,
-                'type' => 'info',
-                'data' => [
-                    'title' => 'Welcome Admin',
-                    'body' => 'Your admin account has been successfully created.',
+        $notifications = [
+            1 => [ // Admin
+                [
+                    'type' => 'Welcome Admin',
+                    'message'  => 'Your admin account has been successfully created.',
+                    'read'  => true,
                 ],
-                'read_at' => null,
+                [
+                    'type' => 'System Update',
+                    'message'  => 'The system will undergo maintenance tonight.',
+                    'read'  => true,
+                ],
+                [
+                    'type' => 'New User Registered',
+                    'message'  => 'A new user has registered and needs approval.',
+                    'read'  => false,
+                ],
+                [
+                    'type' => 'Policy Change',
+                    'message'  => 'There is an update in the company policy.',
+                    'read'  => false,
+                ],
+                [
+                    'type' => 'Reminder',
+                    'message'  => 'Don’t forget to review pending tasks.',
+                    'read'  => false,
+                ],
             ],
-            [
-                'notifiable_id' => 2,
-                'notifiable_type' => User::class,
-                'type' => 'info',
-                'data' => [
-                    'title' => 'New Appointment',
-                    'body' => 'You have a new appointment scheduled.',
+            2 => [ // Doctor
+                [
+                    'type' => 'New Appointment',
+                    'message'  => 'You have a new appointment scheduled.',
+                    'read'  => true,
                 ],
-                'read_at' => null,
+                [
+                    'type' => 'Patient Review',
+                    'message'  => 'You received a new review from a patient.',
+                    'read'  => true,
+                ],
+                [
+                    'type' => 'Profile Approved',
+                    'message'  => 'Your doctor profile has been approved.',
+                    'read'  => false,
+                ],
+                [
+                    'type' => 'Reminder',
+                    'message'  => 'You have an upcoming appointment tomorrow.',
+                    'read'  => false,
+                ],
+                [
+                    'type' => 'Payment Received',
+                    'message'  => 'Your payment for the last appointment has been confirmed.',
+                    'read'  => false,
+                ],
             ],
-            [
-                'notifiable_id' => 3,
-                'notifiable_type' => User::class,
-                'type' => 'info',
-                'data' => [
-                    'title' => 'Profile Approved',
-                    'body' => 'Your doctor profile has been approved.',
+            7 => [ // Patient
+                [
+                    'type' => 'Appointment Confirmed',
+                    'message'  => 'Your appointment with Dr. Ahmed is confirmed.',
+                    'read'  => true,
                 ],
-                'read_at' => null,
-            ],
-            [
-                'notifiable_id' => 4,
-                'notifiable_type' => User::class,
-                'type' => 'info',
-                'data' => [
-                    'title' => 'Reminder',
-                    'body' => 'You have an upcoming appointment tomorrow.',
+                [
+                    'type' => 'New Prescription',
+                    'message'  => 'Your doctor has added a new prescription.',
+                    'read'  => true,
                 ],
-                'read_at' => null,
-            ],
-            [
-                'notifiable_id' => 5,
-                'notifiable_type' => User::class,
-                'type' => 'info',
-                'data' => [
-                    'title' => 'Payment Received',
-                    'body' => 'Your payment for the last appointment has been confirmed.',
+                [
+                    'type' => 'Test Results',
+                    'message'  => 'Your recent test results are available.',
+                    'read'  => false,
                 ],
-                'read_at' => null,
+                [
+                    'type' => 'Reminder',
+                    'message'  => 'Your next appointment is tomorrow at 10 AM.',
+                    'read'  => false,
+                ],
+                [
+                    'type' => 'Feedback Request',
+                    'message'  => 'Please provide feedback for your last visit.',
+                    'read'  => false,
+                ],
             ],
         ];
 
-        foreach ($notificationsData as $data) {
-            Notification::create([
-                'id' => Str::uuid(),
-                'notifiable_id' => $data['notifiable_id'],
-                'notifiable_type' => $data['notifiable_type'],
-                'type' => $data['type'],
-                'data' => json_encode($data['data']),
-                'read_at' => $data['read_at'],
-            ]);
+        foreach ($notifications as $userId => $userNotifications) {
+            foreach ($userNotifications as $notif) {
+                Notification::create([
+                    'id' => Str::uuid(),
+                    'notifiable_id' => $userId,
+                    'notifiable_type' => User::class,
+                    'type' => 'info',
+                    'data' => json_encode([
+                        'type' => $notif['type'],
+                        'message'  => $notif['message'],
+                    ]),
+                    'read_at' => $notif['read'] ? now() : null,
+                ]);
+            }
         }
     }
 }

@@ -5,58 +5,45 @@ namespace App\Repositories\Eloquent;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Repositories\Contracts\ChatRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ChatRepository implements ChatRepositoryInterface
 {
-    public function getUserConversations(int $userId, array $filters = []): Collection
+    public function getUserConversations(int $userId, array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
+        $type = $filters['type'] ?? '';
+        $isArchivedRequest = $type === 'archived';
+
         return Conversation::query()
-            // user must be participant
-            ->whereHas('participants', function ($q) use ($userId) {
-                $q->where('user_id', $userId);
+            ->whereHas('participants', function ($q) use ($userId, $isArchivedRequest, $type) {
+                $q->where('user_id', $userId)
+                  ->where('is_archived', $isArchivedRequest)
+                  ->when($type === 'favorites', function ($subQ) {
+                      $subQ->where('is_favorite', true);
+                  })
+                  ->when($type === 'unread', function ($subQ) {
+                      $subQ->whereColumn('last_read_at', '<', 'conversations.updated_at');
+                  });
             })
-            // search by other participant's name
             ->when(!empty($filters['search']), function ($q) use ($filters, $userId) {
                 $q->whereHas('participants', function ($subQ) use ($filters, $userId) {
                     $subQ->where('user_id', '!=', $userId)
-                         ->whereHas('user', function ($userQ) use ($filters) {
-                             $userQ->where('name', 'like', '%' . $filters['search'] . '%');
-                         });
-                });
-            })
-            // filter by favorites
-            ->when(($filters['type'] ?? '') === 'favorites', function ($q) use ($userId) {
-                $q->whereHas('participants', function ($subQ) use ($userId) {
-                    $subQ->where('user_id', $userId)
-                         ->where('is_favorite', true);
-                });
-            })
-            // filter by unread
-            ->when(($filters['type'] ?? '') === 'unread', function ($q) use ($userId) {
-                $q->whereHas('participants', function ($subQ) use ($userId) {
-                    $subQ->where('user_id', $userId)
-                         ->whereColumn('last_read_at', '<', 'conversations.updated_at');
-                });
-            })
-            // filter archived
-            ->when(($filters['type'] ?? '') === 'archived', function ($q) use ($userId) {
-                $q->whereHas('participants', function ($subQ) use ($userId) {
-                    $subQ->where('user_id', $userId)
-                         ->where('is_archived', true);
+                        ->whereHas('user', function ($userQ) use ($filters) {
+                            $userQ->where('name', 'like', '%' . $filters['search'] . '%');
+                        });
                 });
             })
             ->with(['lastMessage.sender', 'participants.user'])
             ->latest('updated_at')
-            ->get();
+            ->paginate($perPage);
     }
 
-    public function getConversationMessages(int $conversationId): Collection
+    public function getConversationMessages(int $conversationId, int $perPage = 50): LengthAwarePaginator
     {
         return Message::where('conversation_id', $conversationId)
             ->with('sender')
-            ->orderBy('created_at', 'asc')
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
     public function createMessage(array $data): Message

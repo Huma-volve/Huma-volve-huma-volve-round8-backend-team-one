@@ -101,6 +101,18 @@ Route::middleware(['auth', 'verified', 'admin'])
             // AJAX Route for Drag & Drop
             Route::post('/reorder', [SupportContentController::class, 'reorderFaqs'])->name('reorder');
         });
+    // 3. Patient Management
+        Route::prefix('patients')->name('patients.')->controller(\App\Http\Controllers\Admin\AdminPatientController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{patient}', 'show')->name('show');
+            Route::post('/{patient}/toggle-block', 'toggleBlock')->name('toggle-block');
+        });
+
+        // 4. Booking Management
+        Route::prefix('bookings')->name('bookings.')->controller(\App\Http\Controllers\Admin\AdminBookingController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{booking}', 'show')->name('show');
+        });
     });
 
 require __DIR__ . '/auth.php';
