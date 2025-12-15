@@ -69,6 +69,15 @@ Route::middleware(['auth', 'doctor'])
             Route::delete('/{schedule}', 'destroy')->name('destroy');
         });
 
+        // Patient Management
+        Route::resource('patients', \App\Http\Controllers\Doctor\DoctorPatientController::class);
+
+        // Reports & Earnings
+        Route::get('/reports', [\App\Http\Controllers\Doctor\DoctorReportController::class, 'index'])->name('reports.index');
+
+        // Settings
+        Route::get('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'edit'])->name('settings.edit');
+        Route::put('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'update'])->name('settings.update');
     });
 
 /*
@@ -81,6 +90,9 @@ Route::middleware(['auth', 'verified', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+
+        // Dashboard
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
 
         // 1. Policies Management
         Route::prefix('policies')->name('policies.')->group(function () {

@@ -8,6 +8,8 @@ use App\Models\Message;
 use App\Models\User;
 use App\Repositories\Contracts\ChatRepositoryInterface;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class ChatService
 {
@@ -15,26 +17,20 @@ class ChatService
         protected ChatRepositoryInterface $chatRepository
     ) {}
 
-
-    // get existing conversation or create new one between patient and doctor
     public function getOrCreateConversation(int $patientId, int $doctorId): Conversation
     {
-        // check if conversation already exists between these two users
         $conversation = Conversation::whereHas('participants', function ($q) use ($patientId) {
             $q->where('user_id', $patientId);
         })->whereHas('participants', function ($q) use ($doctorId) {
             $q->where('user_id', $doctorId);
         })->first();
 
-        // if exists return it
         if ($conversation) {
             return $conversation->load(['participants.user', 'lastMessage']);
         }
 
-        // create new conversation
         $conversation = Conversation::create();
 
-        // add both users as participants
         $conversation->participants()->createMany([
             ['user_id' => $patientId],
             ['user_id' => $doctorId],
@@ -43,7 +39,6 @@ class ChatService
         return $conversation->load(['participants.user', 'lastMessage']);
     }
 
-    // send a new message in a conversation
     public function sendMessage(User $sender, Conversation $conversation, array $data): Message
     {
         $messageData = [
@@ -54,9 +49,29 @@ class ChatService
         ];
 
         if (isset($data['attachment']) && $data['attachment'] instanceof UploadedFile) {
-            $path = $data['attachment']->store('chat_media', 'public');
-            $messageData['body'] = $path;
-            $messageData['type'] = $this->getMediaType($data['attachment']);
+            try {
+                if (!$data['attachment']->isValid()) {
+                    throw ValidationException::withMessages([
+                        'attachment' => 'The file was not uploaded correctly.'
+                    ]);
+                }
+
+                $path = $data['attachment']->store('chat_media', 'public');
+                
+                if (!$path) {
+                    throw new \Exception('Failed to store file path.');
+                }
+
+                $messageData['body'] = $path;
+                $messageData['type'] = $this->getMediaType($data['attachment']);
+
+            } catch (\Exception $e) {
+                Log::error('File Upload Error: ' . $e->getMessage());
+
+                throw ValidationException::withMessages([
+                    'attachment' => 'Failed to upload attachment. Please try again or check file size/type.'
+                ]);
+            }
         }
 
         $message = $this->chatRepository->createMessage($messageData);
@@ -67,7 +82,6 @@ class ChatService
         return $message->load('sender');
     }
 
-    // determine the media type based on file MIME type
     protected function getMediaType(UploadedFile $file): string
     {
         $mime = $file->getMimeType();
