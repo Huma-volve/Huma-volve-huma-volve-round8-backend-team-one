@@ -36,15 +36,15 @@
 
             <a href="{{ route('doctor.bookings.index') }}"
                 class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.bookings.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
-                <i
-                    class="ph ph-calendar-check text-lg {{ request()->routeIs('doctor.bookings.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
+                <i class="ph ph-calendar-check text-lg {{ request()->routeIs('doctor.bookings.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
                 <span>{{ $isRtl ? 'المواعيد' : 'Appointments' }}</span>
             </a>
 
-            {{-- <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-slate-50 text-slate-600 hover:text-primary-600 transition-colors group">
-                <i class="ph ph-users text-lg group-hover:scale-110 transition-transform"></i>
-                <span>{{ $isRtl ? 'مرضاي' : 'My Patients' }}</span>
-            </a> --}}
+            <a href="{{route('doctor.availability.index')}}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.availability.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
+                <i class="ph ph-calendar-check text-lg {{ request()->routeIs('doctor.availability.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
+                <span>{{ $isRtl ? 'المواعيد المتاحة' : 'Availability' }}</span>
+            </a>
 
             {{-- <div class="my-4 border-t border-slate-100"></div>
 
