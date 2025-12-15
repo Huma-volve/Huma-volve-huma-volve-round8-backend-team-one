@@ -13,7 +13,9 @@ interface SupportContentRepositoryInterface
     public function getPolicies(array $filters = []): Collection;
     public function getActivePolicies(): Collection;
     public function findPolicyBySlug(string $slug): ?Policy;
+    public function createPolicy(array $data): Policy;
     public function updatePolicy(Policy $policy, array $data): Policy;
+    public function deletePolicy(Policy $policy): bool;
 
     // FAQs
     public function getFaqs(array $filters = [], int $perPage = 15): LengthAwarePaginator;

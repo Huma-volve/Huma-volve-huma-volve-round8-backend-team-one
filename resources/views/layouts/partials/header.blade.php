@@ -30,7 +30,13 @@
                 <!-- Profile Dropdown -->
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 {{ $isRtl ? 'pr-2 pl-1' : 'pl-2 pr-1' }} py-1 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
-                        <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="Avatar" class="w-8 h-8 rounded-full shadow-sm">
+                        @if(Auth::user()->profile_photo_path)
+                        <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-full shadow-sm">
+                    @else
+                        <div class="w-8 h-8 rounded-full shadow-sm bg-indigo-100 flex items-center justify-center text-indigo-500 text-4xl font-bold uppercase">
+                            {{ substr(Auth::user()->name, 0, 1) }}
+                        </div>
+                    @endif
                         <div class="hidden md:block text-{{ $isRtl ? 'right' : 'left' }}">
                             <p class="text-sm font-medium text-slate-700 leading-none">{{ Auth::user()->name }}</p>
                             <p class="text-[10px] text-slate-500 font-medium">{{ Auth::user()->doctorProfile?->speciality?->name ?? ($isRtl ? 'طبيب' : 'Doctor') }}</p>

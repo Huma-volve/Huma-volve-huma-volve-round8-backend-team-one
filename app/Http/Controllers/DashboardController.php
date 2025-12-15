@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -11,12 +13,12 @@ class DashboardController extends Controller
     {
         if ($request->user()->user_type === 'admin') {
             // 1. Total Patients & Doctors
-            $totalPatients = \App\Models\User::where('user_type', 'patient')->count();
-            $totalDoctors = \App\Models\User::where('user_type', 'doctor')->count();
+            $totalPatients = User::where('user_type', 'patient')->count();
+            $totalDoctors = User::where('user_type', 'doctor')->count();
 
             // 2. Monthly Stats (Bookings & Profit)
             // Group by year and month
-            $monthlyStats = \App\Models\Booking::selectRaw('
+            $monthlyStats = Booking::selectRaw('
                     YEAR(appointment_date) as year,
                     MONTH(appointment_date) as month,
                     COUNT(*) as total_bookings,

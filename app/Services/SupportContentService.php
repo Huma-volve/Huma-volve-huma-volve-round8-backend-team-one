@@ -27,6 +27,11 @@ class SupportContentService
         return $this->repository->getPolicies();
     }
 
+    public function createPolicy(array $data): Policy
+    {
+        return $this->repository->createPolicy($data);
+    }
+
     public function updatePolicyBySlug(string $slug, array $data): Policy
     {
         $policy = $this->repository->findPolicyBySlug($slug);
@@ -38,21 +43,32 @@ class SupportContentService
         return $this->repository->updatePolicy($policy, $data);
     }
 
+    public function deletePolicy(string $slug): bool
+    {
+        $policy = $this->repository->findPolicyBySlug($slug);
+
+        if (!$policy) {
+            abort(404, 'Policy not found');
+        }
+
+        return $this->repository->deletePolicy($policy);
+    }
+
     // ========================================================================
     // FAQ MANAGEMENT
     // ========================================================================
 
     public function getFaqsForAdmin(array $filters = []): LengthAwarePaginator
     {
-        return $this->repository->getFaqs($filters, 15); 
+        return $this->repository->getFaqs($filters, 15);
     }
 
     public function createFaq(array $data): Faq
     {
         $faq = $this->repository->createFaq($data);
-        
+
         $this->clearFaqCache();
-        
+
         return $faq;
     }
 
@@ -89,7 +105,7 @@ class SupportContentService
     public function reorderFaqs(array $order): void
     {
         $this->repository->updateFaqOrder($order);
-        
+
         $this->clearFaqCache();
     }
 

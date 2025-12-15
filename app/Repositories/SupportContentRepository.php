@@ -11,12 +11,12 @@ use Illuminate\Support\Facades\DB;
 
 class SupportContentRepository implements SupportContentRepositoryInterface
 {
-    public function getPolicies(array $filters = []): Collection // get all policies only Admin use 
+    public function getPolicies(array $filters = []): Collection // get all policies only Admin use
     {
         return Policy::query()
             ->when(isset($filters['search']), function ($query) use ($filters) {
-                $query->where('title->en', 'like', '%' . $filters['search'] . '%')
-                      ->orWhere('title->ar', 'like', '%' . $filters['search'] . '%');
+                $query->where('title->en', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('title->ar', 'like', '%'.$filters['search'].'%');
             })->get();
     }
 
@@ -31,10 +31,21 @@ class SupportContentRepository implements SupportContentRepositoryInterface
         return Policy::where('slug', $slug)->first();
     }
 
+    public function createPolicy(array $data): Policy
+    {
+        return Policy::create($data);
+    }
+
     public function updatePolicy(Policy $policy, array $data): Policy // update policy content
     {
         $policy->update($data);
+
         return $policy->refresh();
+    }
+
+    public function deletePolicy(Policy $policy): bool
+    {
+        return $policy->delete();
     }
 
     // ========================================================================
@@ -44,10 +55,10 @@ class SupportContentRepository implements SupportContentRepositoryInterface
     public function getFaqs(array $filters = [], int $perPage = 15): LengthAwarePaginator // get paginated FAQs for Admin Table
     {
         return Faq::query()
-            ->sorted() 
+            ->sorted()
             ->when(isset($filters['search']), function ($query) use ($filters) {
-                $query->where('question->en', 'like', '%' . $filters['search'] . '%')
-                      ->orWhere('question->ar', 'like', '%' . $filters['search'] . '%');
+                $query->where('question->en', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('question->ar', 'like', '%'.$filters['search'].'%');
             })->paginate($perPage);
     }
 
@@ -71,6 +82,7 @@ class SupportContentRepository implements SupportContentRepositoryInterface
     public function updateFaq(Faq $faq, array $data): Faq
     {
         $faq->update($data);
+
         return $faq->refresh();
     }
 
