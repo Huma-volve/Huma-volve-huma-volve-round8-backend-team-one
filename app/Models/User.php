@@ -131,4 +131,9 @@ class User extends Authenticatable
             ->withPivot(['last_read_at'])
             ->withTimestamps();
     }
+
+    public function bookings()
+    {
+        return $this->hasManyThrough(Booking::class, PatientProfile::class, 'user_id', 'patient_id');
+    }
 }

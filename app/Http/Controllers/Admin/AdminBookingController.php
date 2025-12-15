@@ -18,7 +18,7 @@ class AdminBookingController extends Controller
         // Search by Patient Name
         if ($request->filled('search')) {
             $query->whereHas('patient', function ($q) use ($request) {
-                $q->where('name', 'like', '%' . $request->search . '%');
+                $q->where('name', 'like', '%'.$request->search.'%');
             });
         }
 
@@ -38,7 +38,7 @@ class AdminBookingController extends Controller
                     break;
                 case 'month':
                     $query->whereMonth('appointment_date', Carbon::now()->month)
-                          ->whereYear('appointment_date', Carbon::now()->year);
+                        ->whereYear('appointment_date', Carbon::now()->year);
                     break;
             }
         }
@@ -58,7 +58,7 @@ class AdminBookingController extends Controller
 
     public function show(Booking $booking): View
     {
-        $booking->load(['patient.patientProfile', 'doctor.user', 'transaction']);
+        $booking->load(['patient.user', 'doctor.user', 'transactions']);
 
         return view('admin.bookings.show', compact('booking'));
     }

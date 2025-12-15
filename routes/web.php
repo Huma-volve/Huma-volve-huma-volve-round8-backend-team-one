@@ -39,7 +39,7 @@ Route::middleware('auth')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Doctor Routes (Chat System)
+| Doctor Routes (Chat System & Booking System)
 |--------------------------------------------------------------------------
 */
 
@@ -97,7 +97,9 @@ Route::middleware(['auth', 'verified', 'admin'])
         // 1. Policies Management
         Route::prefix('policies')->name('policies.')->group(function () {
             Route::get('/', [SupportContentController::class, 'indexPolicies'])->name('index');
+            Route::post('/', [SupportContentController::class, 'storePolicy'])->name('store');
             Route::put('/{slug}', [SupportContentController::class, 'updatePolicy'])->name('update');
+            Route::delete('/{slug}', [SupportContentController::class, 'destroyPolicy'])->name('destroy');
         });
 
         // 2. FAQs Management

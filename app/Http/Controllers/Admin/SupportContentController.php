@@ -3,16 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Services\SupportContentService;
-use App\Http\Requests\Admin\Content\UpdatePolicyRequest;
-use App\Http\Requests\Admin\Content\StoreFaqRequest;
-use App\Http\Requests\Admin\Content\UpdateFaqRequest;
 use App\Http\Requests\Admin\Content\ReorderFaqsRequest;
+use App\Http\Requests\Admin\Content\StoreFaqRequest;
+use App\Http\Requests\Admin\Content\StorePolicyRequest;
+use App\Http\Requests\Admin\Content\UpdateFaqRequest;
+use App\Http\Requests\Admin\Content\UpdatePolicyRequest;
+use App\Models\Policy;
+use App\Services\SupportContentService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Illuminate\Http\JsonResponse;
-use App\Models\Policy;
 
 class SupportContentController extends Controller
 {
@@ -26,17 +27,36 @@ class SupportContentController extends Controller
     public function indexPolicies(): View
     {
         $policies = $this->service->getAllPolicies();
-        
+
         return view('admin.content.policies.index', compact('policies'));
+    }
+
+    public function storePolicy(StorePolicyRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
+        $this->service->createPolicy($data);
+
+        return redirect()
+            ->route('admin.policies.index')
+            ->with('success', 'Policy created successfully.');
     }
 
     public function updatePolicy(UpdatePolicyRequest $request, string $slug): RedirectResponse
     {
-        $this->service->updatePolicyBySlug($slug, $request->validated());
+        $policy = $this->service->updatePolicyBySlug($slug, $request->validated());
 
         return redirect()
-            ->route('policy.show', $slug)
+            ->route('policy.show', $policy->slug)
             ->with('success', 'Policy updated successfully.');
+    }
+
+    public function destroyPolicy(string $slug): RedirectResponse
+    {
+        $this->service->deletePolicy($slug);
+
+        return redirect()
+            ->route('admin.policies.index')
+            ->with('success', 'Policy deleted successfully.');
     }
 
     public function indexFaqs(Request $request): View
@@ -85,13 +105,21 @@ class SupportContentController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'FAQs reordered successfully'
+            'message' => 'FAQs reordered successfully',
         ]);
     }
 
     public function showPolicy(string $slug): View
     {
-        $policy = Policy::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $query = Policy::where('slug', $slug);
+
+        // Allow admins to view inactive policies
+        if (! auth()->check() || auth()->user()->user_type !== 'admin') {
+            $query->where('is_active', true);
+        }
+
+        $policy = $query->firstOrFail();
+
         return view('admin.content.policies.show', compact('policy'));
     }
 }
