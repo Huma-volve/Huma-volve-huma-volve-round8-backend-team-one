@@ -115,3 +115,14 @@ class SupportContentService
         Cache::forget('faqs_public');
     }
 }
+
+    public function getActivePoliciesForApi(): Collection
+    {
+        return $this->repository->getActivePolicies();
+    }
+
+    public function getActiveFaqsForApi(): Collection
+    {
+        return $this->repository->getActiveFaqs();
+    }
+}

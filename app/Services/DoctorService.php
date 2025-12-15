@@ -16,11 +16,9 @@ class DoctorService
     public function __construct(
         DoctorRepository $doctorRepository,
         FavoriteRepository $favoriteRepository,
-        Geocoding $geocoding
     ) {
         $this->doctorRepository   = $doctorRepository;
         $this->favoriteRepository = $favoriteRepository;
-        $this->geocodingService   = $geocoding;
     }
 
     /**

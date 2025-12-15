@@ -22,7 +22,7 @@ class ResendOtpRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/','exists:users,phone']
+            'phone' => ['required','regex:/^(\+2)?01[0-2,5][0-9]{8}$/']
         ];
     }
 }

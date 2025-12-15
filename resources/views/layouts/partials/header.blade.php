@@ -22,10 +22,7 @@
                 </a>
 
                 <!-- Notifications -->
-                <button class="relative w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600 transition-colors flex items-center justify-center">
-                    <i class="ph ph-bell text-xl"></i>
-                    <span class="absolute top-2 {{ $isRtl ? 'left-2' : 'right-2' }} w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white"></span>
-                </button>
+                <livewire:notifications-doctor />
 
                 <!-- Profile Dropdown -->
                 <div class="relative" x-data="{ open: false }">

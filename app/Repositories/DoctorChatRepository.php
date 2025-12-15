@@ -42,7 +42,7 @@ class DoctorChatRepository implements DoctorChatRepositoryInterface
 
     public function updateConversationTimestamp(Conversation $conversation): void
     {
-        $conversation->update(['updated_at' => now()]);
+        $conversation->touch();
     }
 
     public function updateParticipantLastRead(ChatParticipant $participant): void
