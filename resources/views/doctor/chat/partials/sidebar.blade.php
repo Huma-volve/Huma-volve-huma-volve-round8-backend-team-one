@@ -65,7 +65,7 @@
                                 </span>
                             </div>
                             <p class="text-sm text-slate-500 truncate last-message">
-                                {{ $conversation['last_message']?->body ?? ($isRtl ? 'لا توجد رسائل' : 'No messages yet') }}
+                                {{ $conversation['last_message'] ?? ($isRtl ? 'لا توجد رسائل' : 'No messages yet') }}
                             </p>
                         </div>
                     </div>

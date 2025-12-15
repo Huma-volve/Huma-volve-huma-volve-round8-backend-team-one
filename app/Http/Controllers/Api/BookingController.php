@@ -13,6 +13,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Notifications\DoctorNotification;
+use App\Notifications\PatientNotification;
 
 class BookingController extends Controller
 {
@@ -117,6 +119,15 @@ class BookingController extends Controller
                 'notes' => $request->notes,
             ]);
 
+            // Notification 
+            $doctorUser = $doctor->user;
+
+            $doctorUser->notify(new DoctorNotification([
+                'type' => 'New Booking',
+                'message' => "You have a new booking from {$patientProfile->user->name}.",
+                'booking_id' => $booking->id,
+            ]));
+
             return new BookingResource($booking->load(['doctor.user', 'patient.user']));
         });
     }
@@ -203,6 +214,31 @@ class BookingController extends Controller
                 'cancelled_by' => Auth::id(),
                 'payment_status' => $booking->payment_status,
             ]);
+            
+        // Notification
+        $user = Auth::user();
+
+        if ($user->user_type === 'patient') {
+
+            $doctorUser = $booking->doctor->user;
+
+            $doctorUser->notify(new DoctorNotification([
+                'type' => 'Booking Cancelled',
+                'message' => "The patient {$booking->patient->user->name} cancelled the booking.",
+                'booking_id' => $booking->id,
+            ]));
+        }
+
+        if ($user->user_type === 'doctor') {
+
+            $patientUser = $booking->patient->user;
+
+            $patientUser->notify(new PatientNotification([
+                'type' => 'Booking Cancelled',
+                'message' => "Dr. {$booking->doctor->user->name} cancelled your booking.",
+                'booking_id' => $booking->id,
+            ]));
+        }
 
             return new BookingResource($booking->load(['doctor.user', 'patient.user']));
         });

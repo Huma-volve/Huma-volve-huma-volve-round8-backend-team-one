@@ -30,7 +30,9 @@ class SendMessageRequest extends FormRequest
         return [
             'body.required_without' => 'Either message text or attachment is required.',
             'attachment.required_without' => 'Either message text or attachment is required.',
-            'attachment.max' => 'File size must not exceed 50MB.',
+            'attachment.max' => 'The file size is too large. Maximum allowed size is 50MB.',
+            'attachment.mimes' => 'The file type is not supported. Allowed types: Images, Audio, and Video files.',
+            'attachment.uploaded' => 'The file failed to upload. The file size might exceed the server configuration.', 
         ];
     }
 }

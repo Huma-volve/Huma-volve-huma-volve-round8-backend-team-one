@@ -15,7 +15,7 @@ class SendMessageRequest extends FormRequest
     {
         return [
             'body' => ['nullable', 'string', 'max:5000', 'required_without:attachment'],
-            'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,pdf,doc,docx,mp4,mp3,wav', 'max:10240'],
+            'attachment' => ['nullable', 'file', 'mimes:jpg,jpeg,png,gif,pdf,doc,docx,mp4,mp3,wav', 'max:51200'],
         ];
     }
 

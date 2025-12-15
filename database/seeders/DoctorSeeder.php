@@ -28,8 +28,6 @@ class DoctorSeeder extends Seeder
                 'clinic_address' => 'Clinic 1, Cairo',
                 'latitude' => 30.0444,
                 'longitude' => 31.2357,
-                'rating_avg' => 4.5,
-                'total_reviews' => 25,
                 'experience_length' => 10,
             ],
             [
@@ -43,8 +41,6 @@ class DoctorSeeder extends Seeder
                 'clinic_address' => 'Clinic 2, Cairo',
                 'latitude' => 30.0450,
                 'longitude' => 31.2360,
-                'rating_avg' => 4.7,
-                'total_reviews' => 30,
                 'experience_length' => 8,
             ],
             [
@@ -58,8 +54,6 @@ class DoctorSeeder extends Seeder
                 'clinic_address' => 'Clinic 3, Cairo',
                 'latitude' => 30.0460,
                 'longitude' => 31.2370,
-                'rating_avg' => 4.8,
-                'total_reviews' => 40,
                 'experience_length' => 15,
             ],
         ];
@@ -87,9 +81,6 @@ class DoctorSeeder extends Seeder
                     'clinic_address' => $data['clinic_address'],
                     'latitude' => $data['latitude'],
                     'longitude' => $data['longitude'],
-                    'rating_avg' => $data['rating_avg'],
-                    'total_reviews' => $data['total_reviews'],
-                    'is_approved' => true,
                     'experience_length' => $data['experience_length'],
                 ]
             );

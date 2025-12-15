@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Models\DoctorProfile;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class ProfileUpdateRequest extends FormRequest
 {
@@ -16,15 +18,19 @@ class ProfileUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
+            'bio' => ['nullable','string', 'max:255'],
+            'photo' => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'name' => ['required', 'string','min:8','max:255','regex:/^[A-Za-z\s]+$/'],
+            'email' => 'required|regex:/^(?!.*\.com\.com$).*/|email:rfc,dns|unique:users,email,'.Auth::id(),
+            'clinic_address' => ['required','string'],
+            'experience' => ['required','integer','min:0'],
+            'session_price' => ['required','numeric','min:0'],
+            'license_number' => [
                 'required',
                 'string',
-                'lowercase',
-                'email',
-                'max:255',
-                Rule::unique(User::class)->ignore($this->user()->id),
-            ],
+                'max:20',
+                'unique:doctor_profiles,license_number,'.Auth::id() .',user_id',
+            ]
         ];
     }
 }

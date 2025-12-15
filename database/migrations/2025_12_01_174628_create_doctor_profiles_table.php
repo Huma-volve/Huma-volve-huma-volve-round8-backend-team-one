@@ -21,17 +21,17 @@ return new class extends Migration
             $table->string('clinic_address', 255);
             $table->decimal('latitude', 10, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
-            $table->decimal('rating_avg', 3, 2)->default(0);
-            $table->integer('total_reviews')->default(0);
-            $table->boolean('is_approved')->default(false);
-            $table->tinyInteger('experience_length')->default(0);
-            $table->string('temporary_password')->nullable(); // For admin-created accounts
-            $table->boolean('password_changed')->default(false); // Track if temp password was changed
+            // $table->decimal('rating_avg', 3, 2)->default(0);
+            // $table->integer('total_reviews')->default(0);
+            // $table->boolean('is_approved')->default(false);
+            $table->tinyInteger('experience_length')->unsigned()->default(0);
+            // $table->string('temporary_password')->nullable(); // For admin-created accounts
+            // $table->boolean('password_changed')->default(false); // Track if temp password was changed
             $table->timestamps();
         });
     }
 
-   
+    
     public function down(): void
     {
         Schema::dropIfExists('doctors');

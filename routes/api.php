@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\Profile\DeleteAccountController;
 use App\Http\Controllers\Api\Profile\FavoriteController as ProfileFavoriteController;
 use App\Http\Controllers\Api\Profile\NotificationController as ProfileNotificationController;
 use App\Http\Controllers\Api\Profile\ProfileAccountController;
+use App\Http\Controllers\Api\SupportContentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -57,6 +58,9 @@ Route::prefix('auth')->name('auth.')->group(function () {
     Route::post('/forget-password', [ForgetPasswordController::class, 'forgetPassword'])->name('forget-password');
     Route::put('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('reset-password');
 });
+
+Route::get('/policies', [SupportContentController::class, 'index']);
+Route::get('/faqs', [SupportContentController::class, 'indexFaqs']);
 
 // Specialties
 Route::get('/specialties', [SpecialtyController::class, 'index']);

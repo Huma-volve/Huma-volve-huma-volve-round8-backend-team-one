@@ -23,6 +23,7 @@ class Booking extends Model
         'cancellation_reason',
         'cancelled_at',
         'cancelled_by',
+        'reminder_sent',
     ];
 
     protected $casts = [
