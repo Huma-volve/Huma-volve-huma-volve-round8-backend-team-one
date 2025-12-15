@@ -13,6 +13,7 @@
 
         <!-- Scrollable Navigation -->
         <nav class="p-4 space-y-1 overflow-y-auto h-[calc(100vh-4rem)]">
+            @if(Auth::user()->user_type === 'doctor')
             <div class="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
                 {{ $isRtl ? 'لوحة الطبيب' : 'Doctor Panel' }}
             </div>
@@ -34,6 +35,19 @@
                 <i class="ph ph-calendar-check text-lg {{ request()->routeIs('doctor.bookings.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
                 <span>{{ $isRtl ? 'المواعيد' : 'Appointments' }}</span>
             </a>
+
+            <a href="{{route('doctor.availability.index')}}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.availability.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
+                <i class="ph ph-calendar-check text-lg {{ request()->routeIs('doctor.availability.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
+                <span>{{ $isRtl ? 'المواعيد المتاحة' : 'Availability' }}</span>
+            </a>
+
+            {{-- <a href="{{ route('doctor.settings.edit') }}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.settings.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
+                <i class="ph ph-gear text-lg {{ request()->routeIs('doctor.settings.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
+                <span>{{ $isRtl ? 'الإعدادات' : 'Settings' }}</span>
+            </a> --}}
+            @endif
 
         </nav>
     </aside>

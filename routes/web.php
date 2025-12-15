@@ -75,9 +75,9 @@ Route::middleware(['auth', 'doctor'])
         // Reports & Earnings
         Route::get('/reports', [\App\Http\Controllers\Doctor\DoctorReportController::class, 'index'])->name('reports.index');
 
-        // Settings
-        Route::get('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'edit'])->name('settings.edit');
-        Route::put('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'update'])->name('settings.update');
+        // // Settings
+        // Route::get('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'edit'])->name('settings.edit');
+        // Route::put('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'update'])->name('settings.update');
     });
 
 /*
