@@ -21,6 +21,10 @@ class ResendOtpController extends Controller
         $user = User::where('phone',$request->phone)->first();
         $otp = 1234;
 
+        if(!$user){
+            return $this->fail('Invalid Credential!',404);
+        }
+        
         if(!$user->phone_verified_at){
             $this->repo->deleteOld($request->phone);
             $this->repo->createOtp($request->phone,$otp);

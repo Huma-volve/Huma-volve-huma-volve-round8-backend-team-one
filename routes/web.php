@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Doctor\AvailabilityController;
 use App\Http\Controllers\Doctor\ChatController;
 use App\Http\Controllers\Doctor\DoctorBookingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\DoctorController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,6 +62,13 @@ Route::middleware(['auth', 'doctor'])
             Route::post('/{booking}/reschedule', 'reschedule')->name('reschedule');
         });
 
+        // Availability Management
+        Route::prefix('availability')->name('availability.')->controller(AvailabilityController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::post('/', 'store')->name('store');
+            Route::delete('/{schedule}', 'destroy')->name('destroy');
+        });
+
         // Patient Management
         Route::resource('patients', \App\Http\Controllers\Doctor\DoctorPatientController::class);
 
@@ -101,7 +110,7 @@ Route::middleware(['auth', 'verified', 'admin'])
             // AJAX Route for Drag & Drop
             Route::post('/reorder', [SupportContentController::class, 'reorderFaqs'])->name('reorder');
         });
-    // 3. Patient Management
+        // 3. Patient Management
         Route::prefix('patients')->name('patients.')->controller(\App\Http\Controllers\Admin\AdminPatientController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{patient}', 'show')->name('show');
@@ -112,6 +121,16 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::prefix('bookings')->name('bookings.')->controller(\App\Http\Controllers\Admin\AdminBookingController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::get('/{booking}', 'show')->name('show');
+        });
+
+        // Doctors Management
+        Route::prefix('doctors')->name('doctors.')->controller(DoctorController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/create', 'create')->name('create');
+            Route::post('/', 'store')->name('store');
+            Route::get('/{id}/edit', 'edit')->name('edit'); // Added edit route
+            Route::put('/{id}', 'update')->name('update'); // Added update route
+            Route::delete('/{id}', 'destroy')->name('destroy');
         });
     });
 

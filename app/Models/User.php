@@ -11,7 +11,43 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasApiTokens, HasFactory , Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
+
+    const ROLE_ADMIN = 'admin';
+    const ROLE_DOCTOR = 'doctor';
+    const ROLE_PATIENT = 'patient';
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->user_type === self::ROLE_ADMIN;
+    }
+
+    /**
+     * Check if the user is a doctor.
+     */
+    public function isDoctor(): bool
+    {
+        return $this->user_type === self::ROLE_DOCTOR;
+    }
+
+    /**
+     * Check if the user is a patient.
+     */
+    public function isPatient(): bool
+    {
+        return $this->user_type === self::ROLE_PATIENT;
+    }
+
+    /**
+     * Check if the user has a specific role.
+     */
+    public function hasRole(string $role): bool
+    {
+        return $this->user_type === $role;
+    }
 
     /**
      * The attributes that are mass assignable.

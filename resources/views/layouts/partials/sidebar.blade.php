@@ -37,16 +37,10 @@
                 <span>{{ $isRtl ? 'المواعيد' : 'Appointments' }}</span>
             </a>
 
-            <a href="{{ route('doctor.patients.index') }}"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.patients.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
-                <i class="ph ph-users text-lg {{ request()->routeIs('doctor.patients.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
-                <span>{{ $isRtl ? 'مرضاي' : 'My Patients' }}</span>
-            </a>
-
-            <a href="{{ route('doctor.reports.index') }}"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.reports.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
-                <i class="ph ph-chart-line-up text-lg {{ request()->routeIs('doctor.reports.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
-                <span>{{ $isRtl ? 'التقارير' : 'Reports & Earnings' }}</span>
+            <a href="{{route('doctor.availability.index')}}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.availability.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
+                <i class="ph ph-calendar-check text-lg {{ request()->routeIs('doctor.availability.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
+                <span>{{ $isRtl ? 'المواعيد المتاحة' : 'Availability' }}</span>
             </a>
 
             <a href="{{ route('doctor.settings.edit') }}"
