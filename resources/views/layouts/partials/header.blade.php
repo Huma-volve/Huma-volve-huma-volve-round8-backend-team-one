@@ -15,11 +15,11 @@
             <!-- Right Actions -->
             <div class="flex items-center gap-3">
                 <!-- Language Toggle -->
-                <a href="?lang={{ $isRtl ? 'en' : 'ar' }}"
+                {{-- <a href="?lang={{ $isRtl ? 'en' : 'ar' }}"
                    class="hidden sm:flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
                    title="{{ $isRtl ? 'Switch to English' : 'التبديل للعربية' }}">
                     <span class="font-bold text-sm">{{ $isRtl ? 'EN' : 'ع' }}</span>
-                </a>
+                </a> --}}
 
                 <!-- Notifications -->
                 <livewire:notifications-doctor />
@@ -28,7 +28,7 @@
                 <div class="relative" x-data="{ open: false }">
                     <button @click="open = !open" @click.away="open = false" class="flex items-center gap-2 {{ $isRtl ? 'pr-2 pl-1' : 'pl-2 pr-1' }} py-1 rounded-full hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100">
                         @if(Auth::user()->profile_photo_path)
-                        <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-full shadow-sm">
+                        <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-full shadow-sm">
                     @else
                         <div class="w-8 h-8 rounded-full shadow-sm bg-indigo-100 flex items-center justify-center text-indigo-500 text-4xl font-bold uppercase">
                             {{ substr(Auth::user()->name, 0, 1) }}

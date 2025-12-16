@@ -52,7 +52,7 @@
                             <h4 class="font-medium text-gray-700 mb-2">Doctor Information</h4>
                             <div class="bg-gray-50 p-4 rounded-md flex items-center space-x-4">
                                 @if ($booking->doctor->user->profile_photo_path)
-                                    <img src="{{ Storage::url($booking->doctor->user->profile_photo_path) }}"
+                                    <img src="{{ asset('storage/' . $booking->doctor->user->profile_photo_path) }}"
                                         class="h-12 w-12 rounded-full object-cover">
                                 @else
                                     <div
@@ -92,7 +92,7 @@
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Patient Information</h3>
                     <div class="flex items-center mb-6">
                         @if ($booking->patient->profile_photo_path)
-                            <img src="{{ Storage::url($booking->patient->profile_photo_path) }}"
+                            <img src="{{ asset('storage/' . $booking->patient->profile_photo_path) }}"
                                 class="h-16 w-16 rounded-full object-cover mr-4">
                         @else
                             <div

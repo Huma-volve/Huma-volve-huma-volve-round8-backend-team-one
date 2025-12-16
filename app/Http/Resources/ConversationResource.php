@@ -32,7 +32,7 @@ class ConversationResource extends JsonResource
                 'id' => $otherParticipant->user->id,
                 'name' => $otherParticipant->user->name,
                 'avatar' => $otherParticipant->user->profile_photo_path 
-                    ? Storage::url($otherParticipant->user->profile_photo_path) 
+                    ? asset('storage/' . $otherParticipant->user->profile_photo_path) 
                     : null,
             ] : null,
             'last_message' => $this->lastMessage 

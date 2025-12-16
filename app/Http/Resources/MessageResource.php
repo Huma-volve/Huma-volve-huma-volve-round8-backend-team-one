@@ -16,11 +16,11 @@ class MessageResource extends JsonResource
             'sender_id' => $this->sender_id,
             'sender_name' => $this->sender->name,
             'sender_avatar' => $this->sender->profile_photo_path 
-                ? Storage::url($this->sender->profile_photo_path) 
+                ? asset('storage/' . $this->sender->profile_photo_path) 
                 : null,
             'body' => $this->type === 'text' 
                 ? $this->body 
-                : Storage::url($this->body),
+                : asset('storage/' . $this->body),
             'type' => $this->type,
             'created_at' => $this->created_at->toIso8601String(),
         ];

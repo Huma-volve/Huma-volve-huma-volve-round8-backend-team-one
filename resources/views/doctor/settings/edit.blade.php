@@ -26,7 +26,7 @@
                         <label class="block text-sm font-medium text-slate-700 mb-2">{{ __('Profile Photo') }}</label>
                         <div class="relative group w-32 h-32 rounded-full overflow-hidden border-4 border-slate-100 bg-slate-50">
                             @if($user->profile_photo_path)
-                            <img id="preview-photo" src="{{ Storage::url($user->profile_photo_path) }}" class="w-full h-full object-cover">
+                            <img id="preview-photo" src="{{ asset('storage/' . $user->profile_photo_path) }}" class="w-full h-full object-cover">
                             @else
                             <div id="preview-placeholder" class="w-full h-full flex items-center justify-center text-slate-400">
                                 <i class="ph ph-user text-4xl"></i>
