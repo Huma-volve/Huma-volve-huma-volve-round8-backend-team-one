@@ -31,12 +31,9 @@ class DoctorResource extends JsonResource
                 'latitude' => (float) $this->latitude,
                 'longitude' => (float) $this->longitude,
             ],
-            'rating' => [
-                'average' => (float) $this->rating_avg,
-                'total_reviews' => $this->total_reviews,
-            ],
+
             'experience_years' => $this->experience_length,
-            'is_approved' => (bool) $this->is_approved,
+
             'is_favorite' => $this->when(
                 auth()->check(),
                 fn() => $this->isFavoritedBy(auth()->id())

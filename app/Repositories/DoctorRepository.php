@@ -11,8 +11,7 @@ class DoctorRepository
      */
     public function getFiltered(array $filters): LengthAwarePaginator
     {
-        $query = DoctorProfile::with(['user', 'speciality', 'reviews'])
-            ->approved();
+        $query = DoctorProfile::with(['user', 'speciality', 'reviews']);
 
         // Search by name or specialty
         if (! empty($filters['search'])) {
@@ -29,10 +28,7 @@ class DoctorRepository
             $query->bySpecialty($filters['specialty_id']);
         }
 
-        // Filter by minimum rating
-        if (! empty($filters['min_rating'])) {
-            $query->minRating($filters['min_rating']);
-        }
+
 
         // Filter by price range
         if (! empty($filters['min_price']) || ! empty($filters['max_price'])) {
@@ -50,9 +46,7 @@ class DoctorRepository
         $sortOrder = $filters['sort_order'] ?? 'desc';
 
         switch ($sortBy) {
-            case 'rating':
-                $query->orderBy('rating_avg', $sortOrder);
-                break;
+
             case 'price':
                 $query->orderBy('session_price', $sortOrder);
                 break;
@@ -65,7 +59,7 @@ class DoctorRepository
                 }
                 break;
             default:
-                $query->orderBy('rating_avg', 'desc');
+                $query->orderBy('created_at', 'desc');
         }
 
         $perPage = $filters['per_page'] ?? 15;

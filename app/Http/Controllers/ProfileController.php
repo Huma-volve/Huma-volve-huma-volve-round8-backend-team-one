@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
-use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
@@ -19,6 +19,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $user = User::with('doctorProfile.speciality')->find(Auth::id());
+
         return view('profile.edit', [
             'user' => $user,
         ]);
@@ -43,9 +44,18 @@ class ProfileController extends Controller
                 'profile_photo_path' => $path,
             ]);
         }
-        
-        $user->update($request->only(['name','email']));
-        $user->doctorProfile()->update($request->only(['bio','clinic_address','experience_length','session_price','license_number']));
+
+        $user->fill($request->only(['name', 'email']));
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
+
+        if ($user->user_type === 'doctor') {
+            $user->doctorProfile()->update($request->only(['bio', 'clinic_address', 'experience_length', 'session_price', 'license_number']));
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

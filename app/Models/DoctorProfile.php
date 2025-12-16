@@ -18,19 +18,10 @@ class DoctorProfile extends Model
         'clinic_address',
         'latitude',
         'longitude',
-        'rating_avg',
-        'total_reviews',
-        'is_approved',
         'experience_length',
-        'temporary_password',
-        'password_changed',
     ];
 
     protected $casts = [
-        'rating_avg' => 'float',
-        'total_reviews' => 'integer',
-        'is_approved' => 'boolean',
-        'password_changed' => 'boolean',
         'session_price' => 'float',
         'latitude' => 'float',
         'longitude' => 'float',
@@ -129,10 +120,7 @@ class DoctorProfile extends Model
     }
 
     // Query Scopes
-    public function scopeApproved($query)
-    {
-        return $query->where('is_approved', true);
-    }
+
 
     public function scopeSearch($query, $search)
     {
@@ -151,10 +139,7 @@ class DoctorProfile extends Model
         return $query->where('specialty_id', $specialtyId);
     }
 
-    public function scopeMinRating($query, $rating)
-    {
-        return $query->where('rating_avg', '>=', $rating);
-    }
+
 
     public function scopePriceRange($query, $minPrice = null, $maxPrice = null)
     {
