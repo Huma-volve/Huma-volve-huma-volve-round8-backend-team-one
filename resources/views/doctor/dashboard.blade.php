@@ -11,7 +11,7 @@
             <div class="relative group">
                 <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-50 shadow-md">
                     @if(Auth::user()->profile_photo_path)
-                    <img src="{{ Storage::url(Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
+                    <img src="{{ asset('storage/' . Auth::user()->profile_photo_path) }}" alt="{{ Auth::user()->name }}" class="w-full h-full object-cover">
                     @else
                     <div class="w-full h-full bg-indigo-100 flex items-center justify-center text-indigo-500 text-4xl font-bold uppercase">
                         {{ substr(Auth::user()->name, 0, 1) }}

@@ -31,7 +31,7 @@
                         <div class="p-6">
                             <div class="flex items-center mb-4">
                                 @if ($patient->profile_photo_path)
-                                    <img src="{{ Storage::url($patient->profile_photo_path) }}"
+                                    <img src="{{ asset('storage/' . $patient->profile_photo_path) }}"
                                         alt="{{ $patient->name }}" class="h-12 w-12 rounded-full object-cover mr-4">
                                 @else
                                     <div

@@ -21,7 +21,7 @@
                     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
                         <div class="flex items-center">
                             @if ($patient->profile_photo_path)
-                                <img src="{{ Storage::url($patient->profile_photo_path) }}" alt="{{ $patient->name }}"
+                                <img src="{{ asset('storage/' . $patient->profile_photo_path) }}" alt="{{ $patient->name }}"
                                     class="h-20 w-20 rounded-full object-cover mr-6">
                             @else
                                 <div

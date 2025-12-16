@@ -85,7 +85,7 @@ class SendMessageTest extends TestCase
         $response->assertJson([
             'data' => [
                 'type' => 'image',
-                'body' => Storage::url($message->body),
+                'body' => asset('storage/' . $message->body),
             ],
         ]);
 
@@ -126,7 +126,7 @@ class SendMessageTest extends TestCase
         $response->assertJson([
             'data' => [
                 'type' => 'video',
-                'body' => Storage::url($message->body),
+                'body' => asset('storage/' . $message->body),
             ],
         ]);
 
@@ -167,7 +167,7 @@ class SendMessageTest extends TestCase
         $response->assertJson([
             'data' => [
                 'type' => 'audio',
-                'body' => Storage::url($message->body),
+                'body' => asset('storage/' . $message->body),
             ],
         ]);
 
