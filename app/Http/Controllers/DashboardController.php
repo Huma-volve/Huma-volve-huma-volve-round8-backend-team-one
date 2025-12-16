@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -34,7 +35,11 @@ class DashboardController extends Controller
 
         $doctorProfile = $request->user()->doctorProfile;
         $bookingsCount = $doctorProfile ? $doctorProfile->bookings()->count() : 0;
+        $ratingAvg = $doctorProfile
+            ? Review::where('doctor_id', $doctorProfile->id)
+                    ->avg('rating')
+            : null;
 
-        return view('doctor.dashboard', compact('bookingsCount'));
+        return view('doctor.dashboard', compact('bookingsCount', 'ratingAvg'));
     }
 }

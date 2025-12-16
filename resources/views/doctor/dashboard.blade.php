@@ -65,7 +65,7 @@
         </div>
 
         <!-- Placeholder Stats (Can be real later) -->
-        {{-- <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
+        <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between mb-4">
                 <div class="w-12 h-12 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,9 +73,11 @@
                     </svg>
                 </div>
             </div>
-            <h3 class="text-3xl font-bold text-slate-800 mb-1">{{ Auth::user()->doctorProfile->rating_avg ?? 'N/A' }}</h3>
+            <h3 class="text-3xl font-bold text-slate-800 mb-1">
+                {{ $ratingAvg ? number_format($ratingAvg, 1) : 'N/A' }}
+            </h3>
             <p class="text-slate-500 font-medium">{{ __('Average Rating') }}</p>
-        </div> --}}
+        </div>
 
         <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
             <div class="flex items-center justify-between mb-4">

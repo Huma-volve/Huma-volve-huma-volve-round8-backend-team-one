@@ -129,8 +129,16 @@ class ReviewController extends Controller
 
     }
 
-    public function doctorsWithAvg()
+    public function doctorsWithAvg(Request $request)
     {
+        $user = $request->user(); 
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         $doctors = DoctorProfile::with('reviews') 
             ->withAvg('reviews', 'rating')            
             ->get();
@@ -149,8 +157,17 @@ class ReviewController extends Controller
         ]);
     }
 
-    public function allReviews()
+
+    public function allReviews(Request $request)
     {
+        $user = $request->user(); // هيتحقق من التوكن
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
         $reviews = Review::with(['doctor.user', 'patient.user'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -160,7 +177,6 @@ class ReviewController extends Controller
             'data' => ReviewResource::collection($reviews),
         ]);
     }
-
 
 }
 

@@ -7,6 +7,7 @@ use App\Http\Controllers\Doctor\ChatController;
 use App\Http\Controllers\Doctor\DoctorBookingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DoctorController;
+use App\Http\Controllers\Doctor\ReviewController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -74,6 +75,11 @@ Route::middleware(['auth', 'doctor'])
 
         // Reports & Earnings
         Route::get('/reports', [\App\Http\Controllers\Doctor\DoctorReportController::class, 'index'])->name('reports.index');
+
+        //Reviews
+        Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
+        Route::get('/reviews/{review}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
+        Route::post('/reviews/{review}/reply', [ReviewController::class, 'saveReply'])->name('reviews.saveReply');
 
         // // Settings
         // Route::get('/settings', [\App\Http\Controllers\Doctor\DoctorSettingController::class, 'edit'])->name('settings.edit');
