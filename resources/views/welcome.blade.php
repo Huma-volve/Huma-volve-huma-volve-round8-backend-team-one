@@ -8,11 +8,24 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700" rel="stylesheet" />
-    @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
+    {{-- @if (file_exists(public_path('build/manifest.json')) || file_exists(public_path('hot')))
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     @else
         <script src="https://cdn.tailwindcss.com"></script>
-    @endif
+    @endif --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    {{-- <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        // يمكنك إضافة ألوانك المخصصة هنا لو كنت تستخدم ألوان خاصة في breeze
+                    }
+                }
+            }
+        }
+    </script> --}}
 </head>
 
 <body class="font-sans antialiased text-gray-900 bg-white dark:bg-gray-900 dark:text-gray-100">
@@ -66,7 +79,8 @@
         <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
             <div class="text-center">
                 <h1 class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">Your Health,
-                    <br /> Our Priority</h1>
+                    <br /> Our Priority
+                </h1>
                 <p class="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
                     Experience the future of healthcare with Huma-volve. Book appointments, manage doctors, and access
                     your medical history seamlessly.
@@ -105,8 +119,8 @@
                             <dt class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                                 <div
                                     class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
-                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                                     </svg>
@@ -121,8 +135,8 @@
                             <dt class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                                 <div
                                     class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
-                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                                     </svg>
@@ -137,8 +151,8 @@
                             <dt class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                                 <div
                                     class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
-                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -153,8 +167,8 @@
                             <dt class="text-base font-semibold leading-7 text-gray-900 dark:text-white">
                                 <div
                                     class="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
-                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor">
+                                    <svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
                                             d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
@@ -176,7 +190,8 @@
                     <!-- Social Icons could go here -->
                 </div>
                 <div class="mt-8 md:order-1 md:mt-0">
-                    <p class="text-center text-xs leading-5 text-gray-500 dark:text-gray-400">&copy; {{ date('Y') }}
+                    <p class="text-center text-xs leading-5 text-gray-500 dark:text-gray-400">&copy;
+                        {{ date('Y') }}
                         Huma-volve. All rights reserved.</p>
                 </div>
             </div>
