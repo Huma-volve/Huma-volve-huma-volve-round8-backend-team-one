@@ -24,40 +24,55 @@
                 </form>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($patients as $patient)
-                    <a href="{{ route('admin.patients.show', $patient) }}"
-                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow duration-200">
-                        <div class="p-6">
-                            <div class="flex items-center mb-4">
-                                @if ($patient->profile_photo_path)
-                                    <img src="{{ asset('storage/' . $patient->profile_photo_path) }}"
-                                        alt="{{ $patient->name }}" class="h-12 w-12 rounded-full object-cover mr-4">
-                                @else
-                                    <div
-                                        class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center mr-4 text-gray-500 uppercase font-bold">
-                                        {{ substr($patient->name, 0, 1) }}
+            @if ($patients->isNotEmpty())
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach ($patients as $patient)
+                        <a href="{{ route('admin.patients.show', $patient) }}"
+                            class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow duration-200">
+                            <div class="p-6">
+                                <div class="flex items-center mb-4">
+                                    @if ($patient->profile_photo_path)
+                                        <img src="{{ asset('storage/' . $patient->profile_photo_path) }}"
+                                            alt="{{ $patient->name }}" class="h-12 w-12 rounded-full object-cover mr-4">
+                                    @else
+                                        <div
+                                            class="h-12 w-12 rounded-full bg-gray-200 flex items-center justify-center mr-4 text-gray-500 uppercase font-bold">
+                                            {{ substr($patient->name, 0, 1) }}
+                                        </div>
+                                    @endif
+                                    <div>
+                                        <h3 class="text-lg font-medium text-gray-900">{{ $patient->name }}</h3>
+                                        <p class="text-sm text-gray-500">{{ $patient->email }}</p>
                                     </div>
-                                @endif
-                                <div>
-                                    <h3 class="text-lg font-medium text-gray-900">{{ $patient->name }}</h3>
-                                    <p class="text-sm text-gray-500">{{ $patient->email }}</p>
+                                </div>
+                                <div class="text-sm text-gray-600 space-y-1">
+                                    <p><span class="font-medium">Phone:</span> {{ $patient->phone ?? 'N/A' }}</p>
+                                    <p><span class="font-medium">Status:</span>
+                                        @if ($patient->is_blocked)
+                                            <span class="text-red-600 font-semibold">Blocked</span>
+                                        @else
+                                            <span class="text-green-600 font-semibold">Active</span>
+                                        @endif
+                                    </p>
                                 </div>
                             </div>
-                            <div class="text-sm text-gray-600 space-y-1">
-                                <p><span class="font-medium">Phone:</span> {{ $patient->phone ?? 'N/A' }}</p>
-                                <p><span class="font-medium">Status:</span>
-                                    @if ($patient->is_blocked)
-                                        <span class="text-red-600 font-semibold">Blocked</span>
-                                    @else
-                                        <span class="text-green-600 font-semibold">Active</span>
-                                    @endif
-                                </p>
-                            </div>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-12 bg-white rounded-lg shadow-sm border border-slate-200">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-slate-900">No Patients Found</h3>
+                    <p class="mt-1 text-slate-500">There are no patients registered in the system matching your search.
+                    </p>
+                </div>
+            @endif
 
             <div class="mt-6">
                 {{ $patients->links() }}

@@ -77,36 +77,50 @@
                 </form>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @foreach ($bookings as $booking)
-                    <a href="{{ route('admin.bookings.show', $booking) }}"
-                        class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow duration-200">
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-lg font-medium text-gray-900">{{ $booking->patient->name }}</h3>
-                                <span
-                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+            @if ($bookings->isNotEmpty())
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    @foreach ($bookings as $booking)
+                        <a href="{{ route('admin.bookings.show', $booking) }}"
+                            class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow duration-200">
+                            <div class="p-6">
+                                <div class="flex justify-between items-start mb-4">
+                                    <h3 class="text-lg font-medium text-gray-900">{{ $booking->patient->name }}</h3>
+                                    <span
+                                        class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     @if ($booking->status === 'completed') bg-green-100 text-green-800
                                     @elseif($booking->status === 'cancelled') bg-red-100 text-red-800
                                     @elseif($booking->status === 'confirmed') bg-blue-100 text-blue-800
                                     @else bg-yellow-100 text-yellow-800 @endif">
-                                    {{ ucfirst($booking->status) }}
-                                </span>
+                                        {{ ucfirst($booking->status) }}
+                                    </span>
+                                </div>
+                                <div class="text-sm text-gray-600 space-y-1">
+                                    <p><span class="font-medium">Date:</span>
+                                        {{ \Carbon\Carbon::parse($booking->appointment_date)->format('M d, Y') }}</p>
+                                    <p><span class="font-medium">Time:</span>
+                                        {{ \Carbon\Carbon::parse($booking->appointment_time)->format('h:i A') }}</p>
+                                    <p><span class="font-medium">Doctor:</span>
+                                        {{ $booking->doctor->user->name ?? 'Unknown' }}</p>
+                                    <p><span class="font-medium">Price:</span>
+                                        ${{ number_format($booking->price_at_booking, 2) }}</p>
+                                </div>
                             </div>
-                            <div class="text-sm text-gray-600 space-y-1">
-                                <p><span class="font-medium">Date:</span>
-                                    {{ \Carbon\Carbon::parse($booking->appointment_date)->format('M d, Y') }}</p>
-                                <p><span class="font-medium">Time:</span>
-                                    {{ \Carbon\Carbon::parse($booking->appointment_time)->format('h:i A') }}</p>
-                                <p><span class="font-medium">Doctor:</span>
-                                    {{ $booking->doctor->user->name ?? 'Unknown' }}</p>
-                                <p><span class="font-medium">Price:</span>
-                                    ${{ number_format($booking->price_at_booking, 2) }}</p>
-                            </div>
-                        </div>
-                    </a>
-                @endforeach
-            </div>
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <div class="text-center py-12 bg-white rounded-lg shadow-sm border border-slate-200">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-100 mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-slate-900">No Bookings Found</h3>
+                    <p class="mt-1 text-slate-500">There are no bookings matching your criteria.</p>
+                </div>
+            @endif
 
             <div class="mt-6">
                 {{ $bookings->links() }}

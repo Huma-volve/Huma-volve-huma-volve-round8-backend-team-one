@@ -15,11 +15,11 @@
             <!-- Right Actions -->
             <div class="flex items-center gap-3">
                 <!-- Language Toggle -->
-                <a href="?lang={{ $isRtl ? 'en' : 'ar' }}"
+                {{-- <a href="?lang={{ $isRtl ? 'en' : 'ar' }}"
                    class="hidden sm:flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 text-slate-600 transition-colors"
                    title="{{ $isRtl ? 'Switch to English' : 'التبديل للعربية' }}">
                     <span class="font-bold text-sm">{{ $isRtl ? 'EN' : 'ع' }}</span>
-                </a>
+                </a> --}}
 
                 <!-- Notifications -->
                 <livewire:notifications-doctor />
