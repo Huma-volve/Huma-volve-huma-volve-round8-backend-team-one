@@ -7,15 +7,19 @@ use App\Http\Requests\DoctorResponseRequest;
 use App\Http\Requests\ReviewRequest;
 use App\Http\Resources\ReviewResource;
 use App\Models\Booking;
+use App\Models\DoctorProfile;
 use App\Models\Review;
+use App\Models\User;
+use App\Notifications\AdminNotification;
 use App\Notifications\DoctorNotification;
 use App\Notifications\PatientNotification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
 
 class ReviewController extends Controller
 {
-     public function store(ReviewRequest $request)
+    public function store(ReviewRequest $request)
     {
         $booking = Booking::findOrFail($request->booking_id);
 
@@ -50,6 +54,16 @@ class ReviewController extends Controller
             'message' => "You received a new review from {$booking->patient->user->name}.",
             'review_id' => $review->id,
         ]));
+
+        $admins = User::where('user_type', 'admin')->get();
+
+        Notification::send($admins, new AdminNotification([
+            'type' => 'New Review',
+            'message' => "{$booking->patient->user->name} submitted a review for Dr. {$booking->doctor->user->name}.",
+            'review_id' => $review->id,
+            'doctor_id' => $booking->doctor_id,
+        ]));
+
 
         return response()->json([
             'success' => true,
@@ -99,12 +113,54 @@ class ReviewController extends Controller
             'review_id' => $review->id,
         ]));
 
+        $admins = User::where('user_type', 'admin')->get();
+
+        Notification::send($admins, new AdminNotification([
+            'type' => 'Review Replied',
+            'message' => "Dr. {$review->doctor->user->name} replied to a review by {$review->patient->user->name}.",
+            'review_id' => $review->id,
+            'doctor_id' => $review->doctor_id,
+        ]));
+
         return response()->json([
             'success' => true,
             'message' => 'Review successfully replied',
         ], 200);
 
     }
+
+    public function doctorsWithAvg()
+    {
+        $doctors = DoctorProfile::with('reviews') 
+            ->withAvg('reviews', 'rating')            
+            ->get();
+
+        $data = $doctors->map(function($doctor) {
+            return [
+                'id' => $doctor->id,
+                'name' => optional($doctor->user)->name,
+                'average_rating' => round($doctor->reviews_avg_rating ?? 0, 1)
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+
+    public function allReviews()
+    {
+        $reviews = Review::with(['doctor.user', 'patient.user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => ReviewResource::collection($reviews),
+        ]);
+    }
+
 
 }
 

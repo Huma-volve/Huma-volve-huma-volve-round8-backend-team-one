@@ -9,6 +9,9 @@ $dir = $isRtl ? 'rtl' : 'ltr';
 <head>
     @include('layouts.partials.head')
     <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    @livewireStyles
+    
     @stack('styles')
 </head>
 
@@ -32,6 +35,8 @@ $dir = $isRtl ? 'rtl' : 'ltr';
     </div>
 
     @stack('scripts')
+    
+    @livewireScripts
 </body>
 
 </html>
