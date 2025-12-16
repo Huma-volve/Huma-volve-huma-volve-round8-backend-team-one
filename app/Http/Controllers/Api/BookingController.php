@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\DoctorNotification;
 use App\Notifications\PatientNotification;
+use App\Notifications\AdminNotification;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
+
 
 class BookingController extends Controller
 {
@@ -128,6 +132,15 @@ class BookingController extends Controller
                 'booking_id' => $booking->id,
             ]));
 
+            $admins = User::where('user_type', 'admin')->get();
+
+            Notification::send($admins, new AdminNotification([
+                'type' => 'Booking Created',
+                'message' => "{$patientProfile->user->name} booked an appointment with Dr. {$doctor->user->name}.",
+                'booking_id' => $booking->id,
+                'doctor_id' => $doctor->id,
+            ]));
+
             return new BookingResource($booking->load(['doctor.user', 'patient.user']));
         });
     }
@@ -227,6 +240,15 @@ class BookingController extends Controller
                 'message' => "The patient {$booking->patient->user->name} cancelled the booking.",
                 'booking_id' => $booking->id,
             ]));
+
+            $admins = User::where('user_type', 'admin')->get();
+
+            Notification::send($admins, new AdminNotification([
+                'type' => 'Booking Cancelled',
+                'message' => "Patient {$booking->patient->user->name} cancelled a booking with Dr. {$booking->doctor->user->name}.",
+                'booking_id' => $booking->id,
+                'cancelled_by' => 'patient',
+            ]));
         }
 
         if ($user->user_type === 'doctor') {
@@ -237,6 +259,15 @@ class BookingController extends Controller
                 'type' => 'Booking Cancelled',
                 'message' => "Dr. {$booking->doctor->user->name} cancelled your booking.",
                 'booking_id' => $booking->id,
+            ]));
+
+            $admins = User::where('user_type', 'admin')->get();
+
+            Notification::send($admins, new AdminNotification([
+                'type' => 'Booking Cancelled',
+                'message' => "Dr. {$booking->doctor->user->name} cancelled a booking for patient {$booking->patient->user->name}.",
+                'booking_id' => $booking->id,
+                'cancelled_by' => 'doctor',
             ]));
         }
 
