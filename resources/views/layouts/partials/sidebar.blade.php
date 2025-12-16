@@ -42,11 +42,13 @@
                 <span>{{ $isRtl ? 'المواعيد المتاحة' : 'Availability' }}</span>
             </a>
 
-            {{-- <a href="{{ route('doctor.settings.edit') }}"
-                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.settings.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
-                <i class="ph ph-gear text-lg {{ request()->routeIs('doctor.settings.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
-                <span>{{ $isRtl ? 'الإعدادات' : 'Settings' }}</span>
-            </a> --}}
+            <a href="{{ route('doctor.reviews.index') }}"
+                class="flex items-center gap-3 px-3 py-2.5 rounded-lg {{ request()->routeIs('doctor.reviews.*') ? 'bg-primary-50 text-primary-700 font-medium' : 'hover:bg-slate-50 text-slate-600 hover:text-primary-600' }} transition-colors group">
+                <i class="ph ph-star text-lg {{ request()->routeIs('doctor.reviews.*') ? '' : 'group-hover:scale-110' }} transition-transform"></i>
+                <span>{{ $isRtl ? 'التقييمات' : 'Reviews' }}</span>
+            </a>
+
+
             @endif
 
         </nav>

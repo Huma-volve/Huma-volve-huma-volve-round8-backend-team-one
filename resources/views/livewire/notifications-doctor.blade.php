@@ -1,7 +1,9 @@
 <div>
 <div x-data="{ open: false }" class="relative">
     <!-- زر النوتيفيكيشن -->
-    <button @click="open = !open" class="relative flex items-center p-2 rounded-full hover:bg-slate-100 transition">
+    <button 
+    @click="open = !open" 
+    class="relative flex items-center p-2 rounded-full hover:bg-slate-100 transition">
         <i class="ph ph-bell text-xl text-slate-600"></i>
         @if($notifications->whereNull('read_at')->count() > 0)
             <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse"></span>
