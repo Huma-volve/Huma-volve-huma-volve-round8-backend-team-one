@@ -27,12 +27,7 @@ class DoctorProfileFactory extends Factory
             'clinic_address' => fake()->address(),
             'latitude' => fake()->latitude(),
             'longitude' => fake()->longitude(),
-            'rating_avg' => fake()->randomFloat(1, 0, 5),
-            'total_reviews' => fake()->numberBetween(0, 100),
-            'is_approved' => fake()->boolean(80),
             'experience_length' => fake()->numberBetween(1, 30),
-            'temporary_password' => null,
-            'password_changed' => true,
         ];
     }
 }
