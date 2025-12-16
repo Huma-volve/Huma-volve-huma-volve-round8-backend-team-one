@@ -13,7 +13,7 @@
 /.zed
 /auth.json
 /node_modules
-/public/build
+# /public/build
 /public/hot
 /public/storage
 /storage/*.key
@@ -29,4 +29,4 @@ main_routes_utf8.php
 temp_main_routes.php
 API_ENDPOINTS.md
 API_URLS.md
- POSTMAN_GUIDE.md
+POSTMAN_GUIDE.md
