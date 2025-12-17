@@ -87,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Account Management
         Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+        Route::get('/show', [ProfileAccountController::class, 'showProfile']);
         Route::put('/edit', [ProfileAccountController::class, 'editProfile']);
         Route::put('/change-password', [ChangePasswordController::class, 'changePassword'])->name('change-password');
         Route::delete('/delete', [DeleteAccountController::class, 'deleteAccount'])->name('delete');

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Profile;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Profile\ProfileAccountRequest;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Traits\ApiResponse;
@@ -11,8 +12,14 @@ use App\Traits\ApiResponse;
 class ProfileAccountController extends Controller
 {
     use ApiResponse;
+
+    public function showProfile(){
+        $user = User::with('patientProfile')->find(Auth::id());
+        return $this->success( new UserResource($user),'Success');
+    }
+
     public function editProfile(ProfileAccountRequest $request){
-        
+
         $user = User::with('patientProfile')->find(Auth::id());
         $data = array_filter($request->only(['name','email','phone']), fn($value) => !is_null($value) && $value !== '' );
         $user->update($data);
