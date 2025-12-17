@@ -73,6 +73,10 @@ class ProfileController extends Controller
 
         Auth::logout();
 
+        if ($user->profile_photo_path) {
+            Storage::disk('public')->delete($user->profile_photo_path);
+        }
+
         $user->delete();
 
         $request->session()->invalidate();
