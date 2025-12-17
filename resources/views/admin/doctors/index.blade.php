@@ -56,7 +56,7 @@
                                             <div class="flex items-center">
                                                 <div class="flex-shrink-0 h-10 w-10">
                                                     <img class="h-10 w-10 rounded-full object-cover"
-                                                        src="{{ $user->profile_photo_url ? asset('storage/'.$user->profile_photo_url):'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
+                                                        src="{{ $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : 'https://ui-avatars.com/api/?name=' . urlencode($user->name) }}"
                                                         alt="{{ $user->name }}">
                                                 </div>
                                                 <div class="ml-4">

@@ -13,9 +13,9 @@
                 <!-- Navigation Links -->
                 <div class="hidden sm:flex sm:-my-px sm:ms-10 items-center space-x-8">
                     <!-- Profile (Text Only - Not a Link) -->
-                    <span class="inline-flex items-center px-1 pt-1 text-sm font-medium ">
+                    {{-- <span class="inline-flex items-center px-1 pt-1 text-sm font-medium ">
                         {{ __('Profile') }}
-                    </span>
+                    </span> --}}
 
                     <!-- Dashboard (Link) -->
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">

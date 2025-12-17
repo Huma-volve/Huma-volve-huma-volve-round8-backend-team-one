@@ -4,11 +4,38 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileTest extends TestCase
 {
     use RefreshDatabase;
+
+    public function test_profile_photo_is_deleted_when_account_is_deleted(): void
+    {
+        Storage::fake('public');
+
+        $user = User::factory()->create(['user_type' => 'patient']);
+        $file = UploadedFile::fake()->image('photo.jpg');
+        $path = $file->store('profile-photos', 'public');
+
+        $user->update(['profile_photo_path' => $path]);
+
+        $response = $this
+            ->actingAs($user)
+            ->delete('/profile', [
+                'password' => 'password',
+            ]);
+
+        $response
+            ->assertSessionHasNoErrors()
+            ->assertRedirect('/');
+
+        $this->assertGuest();
+        $this->assertNull($user->fresh());
+        Storage::disk('public')->assertMissing($path);
+    }
 
     public function test_profile_page_is_displayed(): void
     {
