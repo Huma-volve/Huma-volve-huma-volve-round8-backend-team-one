@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\Booking;
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AdminPanelTest extends TestCase
 {
-    use DatabaseTransactions;
+    use RefreshDatabase;
 
     public function test_admin_can_access_dashboard()
     {
@@ -94,6 +94,7 @@ class AdminPanelTest extends TestCase
         $response = $this->actingAs($admin)->post(route('admin.patients.toggle-block', $patient));
 
         $response->assertRedirect();
+
         $this->assertDatabaseHas('users', [
             'id' => $patient->id,
             'is_blocked' => true,
@@ -125,5 +126,29 @@ class AdminPanelTest extends TestCase
         $response = $this->actingAs($admin)->get(route('admin.bookings.index', ['status' => 'cancelled']));
         $response->assertStatus(200);
         $response->assertSee(number_format(123.45, 2)); // Check if price is visible
+    }
+    public function test_admin_can_filter_bookings_by_doctor()
+    {
+        $admin = User::factory()->create(['user_type' => 'admin']);
+        $doctor1 = User::factory()->create(['user_type' => 'doctor']);
+        $doctor2 = User::factory()->create(['user_type' => 'doctor']);
+
+        // Create bookings for doctor 1
+        Booking::factory()->create([
+            'doctor_id' => \App\Models\DoctorProfile::factory()->create(['user_id' => $doctor1->id])->id,
+            'price_at_booking' => 100
+        ]);
+
+        // Create booking for doctor 2
+        Booking::factory()->create([
+            'doctor_id' => \App\Models\DoctorProfile::factory()->create(['user_id' => $doctor2->id])->id,
+            'price_at_booking' => 200
+        ]);
+
+        // Filter by Doctor 1
+        $response = $this->actingAs($admin)->get(route('admin.bookings.index', ['doctor_id' => $doctor1->id]));
+        $response->assertStatus(200);
+        $response->assertSee(number_format(100, 2));
+        $response->assertDontSee(number_format(200, 2));
     }
 }

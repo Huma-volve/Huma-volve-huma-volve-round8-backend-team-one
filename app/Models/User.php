@@ -68,6 +68,7 @@ class User extends Authenticatable
         'address',
         'can_reset_password',
         'stripe_customer_id ',
+        'is_blocked',
     ];
 
     /**
@@ -92,6 +93,7 @@ class User extends Authenticatable
             'phone_verified_at' => 'datetime',
             'password' => 'hashed',
             'status' => 'integer',
+            'is_blocked' => 'boolean',
         ];
     }
 

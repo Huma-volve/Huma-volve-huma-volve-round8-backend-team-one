@@ -65,7 +65,7 @@
                                 @forelse($monthlyStats as $stat)
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ \Carbon\Carbon::create()->month($stat->month)->format('F') }}
+                                            {{ \Carbon\Carbon::create()->month((int) $stat->month)->format('F') }}
                                             {{ $stat->year }}
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
