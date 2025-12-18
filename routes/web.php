@@ -143,3 +143,9 @@ Route::middleware(['auth', 'verified', 'admin'])
     });
 
 require __DIR__ . '/auth.php';
+
+Route::get('/fix-system', function() {
+    \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+    \Illuminate\Support\Facades\Artisan::call('package:discover');
+    return 'System Fixed & Caches Cleared!';
+});
