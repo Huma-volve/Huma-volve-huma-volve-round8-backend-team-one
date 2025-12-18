@@ -16,7 +16,10 @@ class PaymentController extends Controller
     public function process(PaymentRequest $request)
     {
         $user = Auth::user();
-        $booking = Booking::findOrFail($request->booking_id);
+        $booking = Booking::find($request->booking_id);
+        if (!$booking) {
+            return response()->json(['message' => 'Booking not found'], 404);
+        }
 
         // Authorization check
         if ($booking->patient_id !== $user->patientProfile->id) {

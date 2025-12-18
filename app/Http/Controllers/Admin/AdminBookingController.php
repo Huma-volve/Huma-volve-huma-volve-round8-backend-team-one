@@ -13,11 +13,11 @@ class AdminBookingController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Booking::with(['patient', 'doctor.user']);
+        $query = Booking::with(['patient.user', 'doctor.user']);
 
         // Search by Patient Name
         if ($request->filled('search')) {
-            $query->whereHas('patient', function ($q) use ($request) {
+            $query->whereHas('patient.user', function ($q) use ($request) {
                 $q->where('name', 'like', '%'.$request->search.'%');
             });
         }
@@ -45,7 +45,9 @@ class AdminBookingController extends Controller
 
         // Filter by Doctor
         if ($request->filled('doctor_id')) {
-            $query->where('doctor_id', $request->doctor_id);
+            $query->whereHas('doctor', function ($q) use ($request) {
+                $q->where('user_id', $request->doctor_id);
+            });
         }
 
         $bookings = $query->latest()->paginate(12);

@@ -21,6 +21,7 @@ class BookingResource extends JsonResource
                 'name' => $this->doctor->user->name,
                 'speciality' => $this->doctor->speciality->name ?? null,
                 'image' => $this->doctor->user->profile_photo_path,
+                'address' => $this->doctor->clinic_address,
             ],
             'patient' => [
                 'id' => $this->patient->id,

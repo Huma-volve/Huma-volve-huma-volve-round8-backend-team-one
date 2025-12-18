@@ -84,7 +84,8 @@
                             class="block bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow duration-200">
                             <div class="p-6">
                                 <div class="flex justify-between items-start mb-4">
-                                    <h3 class="text-lg font-medium text-gray-900">{{ $booking->patient->name }}</h3>
+                                    <h3 class="text-lg font-medium text-gray-900">
+                                        {{ $booking->patient->user->name ?? 'Unknown' }}</h3>
                                     <span
                                         class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
                                     @if ($booking->status === 'completed') bg-green-100 text-green-800

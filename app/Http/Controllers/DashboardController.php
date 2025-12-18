@@ -19,12 +19,22 @@ class DashboardController extends Controller
 
             // 2. Monthly Stats (Bookings & Profit)
             // Group by year and month
-            $monthlyStats = Booking::selectRaw('
-                    YEAR(appointment_date) as year,
-                    MONTH(appointment_date) as month,
+            $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+
+            if ($driver === 'sqlite') {
+                $year = "strftime('%Y', appointment_date)";
+                $month = "strftime('%m', appointment_date)";
+            } else {
+                $year = "YEAR(appointment_date)";
+                $month = "MONTH(appointment_date)";
+            }
+
+            $monthlyStats = Booking::selectRaw("
+                    $year as year,
+                    $month as month,
                     COUNT(*) as total_bookings,
-                    SUM(CASE WHEN payment_status = "paid" THEN price_at_booking ELSE 0 END) as net_profit
-                ')
+                    SUM(CASE WHEN payment_status = 'paid' THEN price_at_booking ELSE 0 END) as net_profit
+                ")
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'desc')
                 ->orderBy('month', 'desc')

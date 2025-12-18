@@ -91,35 +91,35 @@
                 <div class="p-6">
                     <h3 class="text-lg font-medium text-gray-900 mb-4">Patient Information</h3>
                     <div class="flex items-center mb-6">
-                        @if ($booking->patient->profile_photo_path)
-                            <img src="{{ asset('storage/' . $booking->patient->profile_photo_path) }}"
+                        @if ($booking->patient->user->profile_photo_path)
+                            <img src="{{ asset('storage/' . $booking->patient->user->profile_photo_path) }}"
                                 class="h-16 w-16 rounded-full object-cover mr-4">
                         @else
                             <div
                                 class="h-16 w-16 rounded-full bg-gray-200 flex items-center justify-center mr-4 text-gray-500 text-xl font-bold">
-                                {{ substr($booking->patient->name, 0, 1) }}
+                                {{ substr($booking->patient->user->name, 0, 1) }}
                             </div>
                         @endif
                         <div>
-                            <h4 class="text-xl font-bold">{{ $booking->patient->name }}</h4>
-                            <p class="text-gray-500">{{ $booking->patient->email }}</p>
+                            <h4 class="text-xl font-bold">{{ $booking->patient->user->name }}</h4>
+                            <p class="text-gray-500">{{ $booking->patient->user->email }}</p>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
                         <div>
                             <p class="text-gray-500">Phone</p>
-                            <p class="font-medium">{{ $booking->patient->phone ?? 'N/A' }}</p>
+                            <p class="font-medium">{{ $booking->patient->user->phone ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <p class="text-gray-500">Gender</p>
-                            <p class="font-medium">{{ $booking->patient->patientProfile->gender ?? 'N/A' }}</p>
+                            <p class="font-medium">{{ $booking->patient->gender ?? 'N/A' }}</p>
                         </div>
                         <div>
                             <p class="text-gray-500">Age</p>
                             <p class="font-medium">
-                                @if (optional($booking->patient->patientProfile)->birthdate)
-                                    {{ \Carbon\Carbon::parse($booking->patient->patientProfile->birthdate)->age }}
+                                @if (optional($booking->patient)->birthdate)
+                                    {{ \Carbon\Carbon::parse($booking->patient->birthdate)->age }}
                                     years
                                 @else
                                     N/A

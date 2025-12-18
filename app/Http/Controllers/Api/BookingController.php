@@ -7,18 +7,18 @@ use App\Http\Requests\BookingRequest;
 use App\Http\Resources\BookingResource;
 use App\Models\Booking;
 use App\Models\DoctorProfile;
+use App\Models\DoctorSchedule;
 use App\Models\Transaction;
+use App\Models\User;
+use App\Notifications\AdminNotification;
+use App\Notifications\DoctorNotification;
+use App\Notifications\PatientNotification;
 use App\Services\Payment\PaymentFactory;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Notifications\DoctorNotification;
-use App\Notifications\PatientNotification;
-use App\Notifications\AdminNotification;
-use App\Models\User;
 use Illuminate\Support\Facades\Notification;
-
 
 class BookingController extends Controller
 {
@@ -50,6 +50,9 @@ class BookingController extends Controller
                 ->orderBy('appointment_time', 'desc')
                 ->get();
         }
+        if ($bookings->isEmpty()) {
+            return response()->json(['message' => 'No bookings found'], 404);
+        }
 
         return BookingResource::collection($bookings);
     }
@@ -68,42 +71,9 @@ class BookingController extends Controller
 
         $doctor = DoctorProfile::findOrFail($request->doctor_id);
 
-        // Check availability: if there is another booking in the same date and time
-        $existingBooking = Booking::where('doctor_id', $doctor->id)
-            ->whereDate('appointment_date', $request->appointment_date)
-            ->where('appointment_time', $request->appointment_time)
-            ->whereIn('status', ['pending', 'confirmed']) // Assuming these are the active statuses
-            ->exists();
-
-        if ($existingBooking) {
-            return response()->json(['message' => 'This date and time is already booked. Please choose another slot.'], 400);
-        }
-
-        // Validate that the doctor actually works on this day/time
-        $appointmentDate = Carbon::parse($request->appointment_date);
-        $dayOfWeek = $appointmentDate->dayOfWeek; // 0=Sunday
-        $appointmentTime = \Carbon\Carbon::parse($request->appointment_time);
-
-        $schedule = \App\Models\DoctorSchedule::where('doctor_profile_id', $doctor->id)
-            ->where('day_of_week', $dayOfWeek)
-            ->first();
-
-        if (! $schedule) {
-            return response()->json(['message' => 'The doctor does not work on this day.'], 400);
-        }
-
-        $shiftStart = \Carbon\Carbon::parse($schedule->start_time);
-        $shiftEnd = \Carbon\Carbon::parse($schedule->end_time);
-
-        // Normalize dates for comparison (ignore date part, compare time only)
-        // Note: Carbon comparisons with time strings can be tricky if dates differ.
-        // Easiest is to set all to same date.
-        $checkTime = $appointmentTime->setDate(2000, 1, 1);
-        $start = $shiftStart->setDate(2000, 1, 1);
-        $end = $shiftEnd->setDate(2000, 1, 1);
-
-        if ($checkTime->lt($start) || $checkTime->gte($end)) {
-            return response()->json(['message' => 'The doctor is not available at this time (Outside working hours).'], 400);
+        $validity = $this->checkAppointmentValidity($doctor->id, $request->appointment_date, $request->appointment_time);
+        if ($validity) {
+            return $validity;
         }
 
         return DB::transaction(function () use ($request, $patientProfile, $doctor) {
@@ -123,7 +93,7 @@ class BookingController extends Controller
                 'notes' => $request->notes,
             ]);
 
-            // Notification 
+            // Notification
             $doctorUser = $doctor->user;
 
             $doctorUser->notify(new DoctorNotification([
@@ -150,7 +120,10 @@ class BookingController extends Controller
      */
     public function show(string $id)
     {
-        $booking = Booking::with(['doctor.user', 'patient.user'])->findOrFail($id);
+        $booking = Booking::with(['doctor.user', 'patient.user'])->find($id);
+        if (! $booking) {
+            return response()->json(['message' => 'Booking not found'], 404);
+        }
         $this->authorizeBookingAccess($booking);
 
         return new BookingResource($booking);
@@ -161,15 +134,26 @@ class BookingController extends Controller
      */
     public function update(BookingRequest $request, string $id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::find($id);
+        if (! $booking) {
+            return response()->json(['message' => 'Booking not found'], 404);
+        }
         $this->authorizeBookingAccess($booking);
 
-        $booking->update($request->validated());
-
         if ($request->has('appointment_date') || $request->has('appointment_time')) {
+            $date = $request->input('appointment_date', $booking->appointment_date->format('Y-m-d'));
+            $timeInput = $request->input('appointment_time', $booking->appointment_time->format('H:i'));
+            $time = substr($timeInput, 0, 5);
+
+            $validity = $this->checkAppointmentValidity($booking->doctor_id, $date, $time, $booking->id);
+            if ($validity) {
+                return $validity;
+            }
+
             $booking->status = 'rescheduled';
-            $booking->save();
         }
+
+        $booking->update($request->validated());
 
         return new BookingResource($booking->load(['doctor.user', 'patient.user']));
     }
@@ -179,7 +163,10 @@ class BookingController extends Controller
      */
     public function cancel(Request $request, string $id)
     {
-        $booking = Booking::findOrFail($id);
+        $booking = Booking::find($id);
+        if (! $booking) {
+            return response()->json(['message' => 'Booking not found'], 404);
+        }
         $this->authorizeBookingAccess($booking);
 
         $request->validate([
@@ -227,49 +214,49 @@ class BookingController extends Controller
                 'cancelled_by' => Auth::id(),
                 'payment_status' => $booking->payment_status,
             ]);
-            
-        // Notification
-        $user = Auth::user();
 
-        if ($user->user_type === 'patient') {
+            // Notification
+            $user = Auth::user();
 
-            $doctorUser = $booking->doctor->user;
+            if ($user->user_type === 'patient') {
 
-            $doctorUser->notify(new DoctorNotification([
-                'type' => 'Booking Cancelled',
-                'message' => "The patient {$booking->patient->user->name} cancelled the booking.",
-                'booking_id' => $booking->id,
-            ]));
+                $doctorUser = $booking->doctor->user;
 
-            $admins = User::where('user_type', 'admin')->get();
+                $doctorUser->notify(new DoctorNotification([
+                    'type' => 'Booking Cancelled',
+                    'message' => "The patient {$booking->patient->user->name} cancelled the booking.",
+                    'booking_id' => $booking->id,
+                ]));
 
-            Notification::send($admins, new AdminNotification([
-                'type' => 'Booking Cancelled',
-                'message' => "Patient {$booking->patient->user->name} cancelled a booking with Dr. {$booking->doctor->user->name}.",
-                'booking_id' => $booking->id,
-                'cancelled_by' => 'patient',
-            ]));
-        }
+                $admins = User::where('user_type', 'admin')->get();
 
-        if ($user->user_type === 'doctor') {
+                Notification::send($admins, new AdminNotification([
+                    'type' => 'Booking Cancelled',
+                    'message' => "Patient {$booking->patient->user->name} cancelled a booking with Dr. {$booking->doctor->user->name}.",
+                    'booking_id' => $booking->id,
+                    'cancelled_by' => 'patient',
+                ]));
+            }
 
-            $patientUser = $booking->patient->user;
+            if ($user->user_type === 'doctor') {
 
-            $patientUser->notify(new PatientNotification([
-                'type' => 'Booking Cancelled',
-                'message' => "Dr. {$booking->doctor->user->name} cancelled your booking.",
-                'booking_id' => $booking->id,
-            ]));
+                $patientUser = $booking->patient->user;
 
-            $admins = User::where('user_type', 'admin')->get();
+                $patientUser->notify(new PatientNotification([
+                    'type' => 'Booking Cancelled',
+                    'message' => "Dr. {$booking->doctor->user->name} cancelled your booking.",
+                    'booking_id' => $booking->id,
+                ]));
 
-            Notification::send($admins, new AdminNotification([
-                'type' => 'Booking Cancelled',
-                'message' => "Dr. {$booking->doctor->user->name} cancelled a booking for patient {$booking->patient->user->name}.",
-                'booking_id' => $booking->id,
-                'cancelled_by' => 'doctor',
-            ]));
-        }
+                $admins = User::where('user_type', 'admin')->get();
+
+                Notification::send($admins, new AdminNotification([
+                    'type' => 'Booking Cancelled',
+                    'message' => "Dr. {$booking->doctor->user->name} cancelled a booking for patient {$booking->patient->user->name}.",
+                    'booking_id' => $booking->id,
+                    'cancelled_by' => 'doctor',
+                ]));
+            }
 
             return new BookingResource($booking->load(['doctor.user', 'patient.user']));
         });
@@ -287,5 +274,58 @@ class BookingController extends Controller
                 abort(403, 'Unauthorized access to this booking');
             }
         }
+    }
+
+    private function checkAppointmentValidity($doctorId, $date, $time, $ignoreBookingId = null)
+    {
+        // Check availability: if there is another booking in the same date and time
+        $existingBookingQuery = Booking::where('doctor_id', $doctorId)
+            ->whereDate('appointment_date', $date)
+            ->where('appointment_time', $time)
+            ->whereIn('status', ['pending', 'confirmed']);
+
+        if ($ignoreBookingId) {
+            $existingBookingQuery->where('id', '!=', $ignoreBookingId);
+        }
+
+        if ($existingBookingQuery->exists()) {
+            return response()->json(['message' => 'This date and time is already booked. Please choose another slot.'], 400);
+        }
+
+        // Validate that the doctor actually works on this day/time
+        $appointmentDate = Carbon::parse($date);
+        $dayOfWeek = $appointmentDate->dayOfWeek; // 0=Sunday
+        $appointmentTime = Carbon::parse($time);
+
+        $schedule = DoctorSchedule::where('doctor_profile_id', $doctorId)
+            ->where('day_of_week', $dayOfWeek)
+            ->first();
+
+        if (! $schedule) {
+            return response()->json(['message' => 'The doctor does not work on this day.'], 400);
+        }
+
+        $shiftStart = Carbon::parse($schedule->start_time);
+        $shiftEnd = Carbon::parse($schedule->end_time);
+        $avgConsultationTime = $schedule->avg_consultation_time ?? 30;
+
+        // Normalize dates for comparison
+        $checkTime = $appointmentTime->setDate(2000, 1, 1);
+        $start = $shiftStart->setDate(2000, 1, 1);
+        $end = $shiftEnd->setDate(2000, 1, 1);
+
+        if ($checkTime->lt($start) || $checkTime->gte($end)) {
+            return response()->json(['message' => 'The doctor is not available at this time (Outside working hours).'], 400);
+        }
+
+        // Check slot alignment
+        $minutesFromStart = $start->diffInMinutes($checkTime);
+        if ($minutesFromStart % $avgConsultationTime !== 0) {
+            return response()->json([
+                'message' => "Invalid time slot. Appointments must be every {$avgConsultationTime} minutes starting from ".$start->format('H:i'),
+            ], 400);
+        }
+
+        return null;
     }
 }
