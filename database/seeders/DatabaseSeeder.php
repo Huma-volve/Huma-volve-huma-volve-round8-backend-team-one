@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             SearchHistorySeeder::class,
             SavedCardSeeder::class,
             NotificationSeeder::class,
+            PatientChatSeeder::class,
         ]);
     }
 }
