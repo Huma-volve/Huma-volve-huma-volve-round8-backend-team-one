@@ -6,23 +6,17 @@ use App\Models\Conversation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Message>
- */
 class MessageFactory extends Factory
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'conversation_id' => Conversation::factory(),
-            'sender_id' => User::factory(),
-            'body' => $this->faker->sentence(),
+            'conversation_id' => Conversation::factory(), 
+            'sender_id' => User::factory(), 
             'type' => 'text',
+            'body' => $this->faker->realText(rand(30, 100)),
+            'read_at' => now(),
+            'created_at' => now(),
         ];
     }
 
@@ -30,7 +24,15 @@ class MessageFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'image',
-            'body' => 'https://via.placeholder.com/640x480.png',
+            'body' => 'https://placehold.co/600x400/png', 
+        ]);
+    }
+
+    public function file()
+    {
+        return $this->state(fn (array $attributes) => [
+            'type' => 'file',
+            'body' => 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
         ]);
     }
 }
