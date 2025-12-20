@@ -17,14 +17,15 @@ class PatientChatSeeder extends Seeder
         // 1. Setup Demo Patient (Fixed Credentials for Frontend)
         // ---------------------------------------------------------
         $patientEmail = 'demo_patient@app.com';
-        $patient = User::firstOrCreate(
+        $patient = User::updateOrCreate(
             ['email' => $patientEmail],
             [
                 'name' => 'Demo Patient',
-                'password' => bcrypt('password'), // 12345678
+                'password' => bcrypt('password'),
                 'user_type' => 'patient',
-                'phone' => '01099999999',
+                'phone' => '+20109999999', 
                 'email_verified_at' => now(),
+                'phone_verified_at' => now(),
             ]
         );
         // Ensure profile exists
@@ -108,7 +109,7 @@ class PatientChatSeeder extends Seeder
         // Create Conversation
         $conversation = Conversation::factory()->create();
 
-        // Fix Participants (Delete auto-generated ones from Factory hook to be safe, then add ours)
+        // Fix Participants 
         $conversation->participants()->delete();
         $conversation->participants()->createMany([
             ['user_id' => $patient->id, 'last_read_at' => now()],
@@ -130,7 +131,7 @@ class PatientChatSeeder extends Seeder
             $msgFactory->create([
                 'conversation_id' => $conversation->id,
                 'sender_id' => $sender->id,
-                'created_at' => now()->subMinutes(($messageCount - $i) * 10), // Chronological order
+                'created_at' => now()->subMinutes(($messageCount - $i) * 10),
             ]);
         }
 
