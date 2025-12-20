@@ -36,7 +36,12 @@ class RegisterController extends Controller
         $this->repo->createOtp($request->phone,$otp);
 
         // send sms
-        $data = User::where('phone' , $request->phone)->first();
-        return $this->success(new UserResource($data),'Account created. Please verify using the OTP which sent to your phone.',201);
+        $user = User::where('phone' , $request->phone)->first();
+        $data = [
+            'name'  => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone
+        ];
+        return $this->success($data,'Account created. Please verify using the OTP which sent to your phone.',201);
     }
 }

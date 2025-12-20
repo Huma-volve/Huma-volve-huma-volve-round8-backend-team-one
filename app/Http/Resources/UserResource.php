@@ -16,9 +16,11 @@ class UserResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'name'  => $this->name,
-            'email' => $this->email,
-            'phone' => $this->phone,
+            'name'       => $this->name,
+            'email'      => $this->email,
+            'phone'      => $this->phone,
+            'image'      => $this->profile_photo_path,
+            'address'    => $this->address,
             'extra_data' => new PatientProfileResource($this->whenLoaded('patientProfile')) ,
         ];
     }
