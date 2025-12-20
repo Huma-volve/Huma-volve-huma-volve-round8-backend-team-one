@@ -30,17 +30,22 @@ class DoctorService
 
 // if user authenticated save search
         if (auth('sanctum')->check()) {
-            $user = auth('sanctum')->user();
-            if (! empty($filters['search'] || ! empty($filters['specialty_id']) || ! empty('location_query'))) {
-                SearchHistory::create([
-                    'user_id' => $user->id,
-                    'keyword' => $filters['search'] ?? null,
-                    'filters' => $filters,
-                ]);
-            }
+    $user = auth('sanctum')->user();
 
-        }
-        return $this->doctorRepository->getFiltered($filters);
+    if (
+        !empty($filters['search'] ?? null) ||
+        !empty($filters['specialty_id'] ?? null) ||
+        !empty($filters['location_query'] ?? null)
+    ) {
+        SearchHistory::create([
+            'user_id' => $user->id,
+            'keyword' => $filters['search'] ?? null,
+            'filters' => $filters,
+        ]);
+    }
+}
+
+return $this->doctorRepository->getFiltered($filters);
 
     }
 
