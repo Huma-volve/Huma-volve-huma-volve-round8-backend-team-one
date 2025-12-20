@@ -19,7 +19,7 @@ class PatientChatSeeder extends Seeder
         
         // Use updateOrCreate searching by PHONE to avoid duplicate entry errors if user exists
         $patient = User::updateOrCreate(
-            ['phone' => '+20109999999'], 
+            ['phone' => '+201099999999'], 
             [
                 'email' => 'demo_patient@gmail.com',
                 'name' => 'Demo Patient',
