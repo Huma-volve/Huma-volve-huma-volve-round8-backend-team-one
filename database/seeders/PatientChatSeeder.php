@@ -16,19 +16,19 @@ class PatientChatSeeder extends Seeder
         // ---------------------------------------------------------
         // 1. Setup Demo Patient (Fixed Credentials for Frontend)
         // ---------------------------------------------------------
-        $patientEmail = 'demo_patient@app.com';
         $patient = User::updateOrCreate(
-            ['email' => $patientEmail],
+            ['email' => 'demo_patient@gmail.com'],
             [
+                'phone' => '+201099999999',
                 'name' => 'Demo Patient',
-                'password' => bcrypt('password'),
+                'password' => bcrypt('Demo@123'),
                 'user_type' => 'patient',
-                'phone' => '+20109999999', 
                 'email_verified_at' => now(),
                 'phone_verified_at' => now(),
             ]
         );
-        // Ensure profile exists
+
+        // Ensure patient profile exists
         PatientProfile::firstOrCreate(['user_id' => $patient->id]);
 
         // ---------------------------------------------------------
@@ -71,7 +71,7 @@ class PatientChatSeeder extends Seeder
             type: 'text'
         );
         
-        // Force the last message to be unread and from the doctor
+        // Create an unread message from doctor
         $lastMsg = Message::create([
             'conversation_id' => $unreadConv->id,
             'sender_id' => $doctors[2]->id,
@@ -81,10 +81,10 @@ class PatientChatSeeder extends Seeder
             'read_at' => null // Explicitly unread
         ]);
         
-        // Update conversation timestamp
+        // Sync timestamps
         $unreadConv->update(['last_message_at' => $lastMsg->created_at]);
         
-        // Set patient's last read time to be older than the new message
+        // Set patient read time to past
         $unreadConv->participants()->where('user_id', $patient->id)->update([
             'last_read_at' => now()->subHours(1)
         ]);
@@ -93,7 +93,8 @@ class PatientChatSeeder extends Seeder
         // 6. Scenario D: Empty/New Conversation
         // ---------------------------------------------------------
         $emptyConv = Conversation::factory()->create();
-        // Reset participants to be our specific users
+        
+        // Reset participants
         $emptyConv->participants()->delete();
         $emptyConv->participants()->createMany([
             ['user_id' => $patient->id, 'last_read_at' => now()],
@@ -102,26 +103,23 @@ class PatientChatSeeder extends Seeder
     }
 
     /**
-     * Helper to create a conversation with messages between two users.
+     * Helper to create a conversation with messages.
      */
     private function createConversationScenario(User $patient, User $doctor, int $messageCount, string $type)
     {
-        // Create Conversation
         $conversation = Conversation::factory()->create();
 
-        // Fix Participants 
+        // Reset and assign participants
         $conversation->participants()->delete();
         $conversation->participants()->createMany([
             ['user_id' => $patient->id, 'last_read_at' => now()],
             ['user_id' => $doctor->id, 'last_read_at' => now()],
         ]);
 
-        // Create Messages
+        // Generate messages
         for ($i = 0; $i < $messageCount; $i++) {
-            // Alternate sender
             $sender = ($i % 2 === 0) ? $patient : $doctor;
             
-            // Determine Message Type
             $msgFactory = Message::factory();
             if ($type === 'mixed') {
                  if ($i % 3 === 0) $msgFactory = $msgFactory->image();
@@ -135,7 +133,7 @@ class PatientChatSeeder extends Seeder
             ]);
         }
 
-        // Update last_message_at
+        // Update last message timestamp
         $lastMsg = $conversation->messages()->latest()->first();
         if ($lastMsg) {
             $conversation->update(['last_message_at' => $lastMsg->created_at]);
