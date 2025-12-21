@@ -18,10 +18,6 @@ class SupportContentService
         $this->repository = $repository;
     }
 
-    // ========================================================================
-    // POLICIES MANAGEMENT
-    // ========================================================================
-
     public function getAllPolicies(): Collection
     {
         return $this->repository->getPolicies();
@@ -29,7 +25,9 @@ class SupportContentService
 
     public function createPolicy(array $data): Policy
     {
-        return $this->repository->createPolicy($data);
+        $policy = $this->repository->createPolicy($data);
+        $this->clearPolicyCache();
+        return $policy;
     }
 
     public function updatePolicyBySlug(string $slug, array $data): Policy
@@ -40,7 +38,9 @@ class SupportContentService
             abort(404, 'Policy not found');
         }
 
-        return $this->repository->updatePolicy($policy, $data);
+        $updatedPolicy = $this->repository->updatePolicy($policy, $data);
+        $this->clearPolicyCache();
+        return $updatedPolicy;
     }
 
     public function deletePolicy(string $slug): bool
@@ -51,12 +51,22 @@ class SupportContentService
             abort(404, 'Policy not found');
         }
 
-        return $this->repository->deletePolicy($policy);
+        $result = $this->repository->deletePolicy($policy);
+        $this->clearPolicyCache();
+        return $result;
     }
 
-    // ========================================================================
-    // FAQ MANAGEMENT
-    // ========================================================================
+    public function getActivePoliciesForApi(): Collection
+    {
+        return Cache::remember('policies_public', 60 * 60 * 24, function () {
+            return $this->repository->getActivePolicies();
+        });
+    }
+
+    protected function clearPolicyCache(): void
+    {
+        Cache::forget('policies_public');
+    }
 
     public function getFaqsForAdmin(array $filters = []): LengthAwarePaginator
     {
@@ -66,9 +76,7 @@ class SupportContentService
     public function createFaq(array $data): Faq
     {
         $faq = $this->repository->createFaq($data);
-
         $this->clearFaqCache();
-
         return $faq;
     }
 
@@ -81,9 +89,7 @@ class SupportContentService
         }
 
         $updatedFaq = $this->repository->updateFaq($faq, $data);
-
         $this->clearFaqCache();
-
         return $updatedFaq;
     }
 
@@ -96,33 +102,26 @@ class SupportContentService
         }
 
         $result = $this->repository->deleteFaq($faq);
-
         $this->clearFaqCache();
-
         return $result;
     }
 
     public function reorderFaqs(array $order): void
     {
         $this->repository->updateFaqOrder($order);
-
         $this->clearFaqCache();
+    }
+
+    public function getActiveFaqsForApi(): Collection
+    {
+        return Cache::remember('faqs_public', 60 * 60 * 24, function () {
+            return $this->repository->getActiveFaqs();
+        });
     }
 
     protected function clearFaqCache(): void
     {
         Cache::forget('faqs_admin');
         Cache::forget('faqs_public');
-    }
-
-
-    public function getActivePoliciesForApi(): Collection
-    {
-        return $this->repository->getActivePolicies();
-    }
-
-    public function getActiveFaqsForApi(): Collection
-    {
-        return $this->repository->getActiveFaqs();
     }
 }

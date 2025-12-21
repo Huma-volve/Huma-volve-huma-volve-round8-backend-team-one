@@ -27,13 +27,14 @@ class SupportContentController extends Controller
     public function indexPolicies(): View
     {
         $policies = $this->service->getAllPolicies();
-
         return view('admin.content.policies.index', compact('policies'));
     }
 
     public function storePolicy(StorePolicyRequest $request): RedirectResponse
     {
         $data = $request->validated();
+        $data['is_active'] = $request->boolean('is_active');
+
         $this->service->createPolicy($data);
 
         return redirect()
@@ -43,7 +44,10 @@ class SupportContentController extends Controller
 
     public function updatePolicy(UpdatePolicyRequest $request, string $slug): RedirectResponse
     {
-        $policy = $this->service->updatePolicyBySlug($slug, $request->validated());
+        $data = $request->validated();
+        $data['is_active'] = $request->boolean('is_active');
+
+        $policy = $this->service->updatePolicyBySlug($slug, $data);
 
         return redirect()
             ->route('policy.show', $policy->slug)
@@ -62,14 +66,13 @@ class SupportContentController extends Controller
     public function indexFaqs(Request $request): View
     {
         $faqs = $this->service->getFaqsForAdmin($request->all());
-
         return view('admin.content.faqs.index', compact('faqs'));
     }
 
     public function storeFaq(StoreFaqRequest $request): RedirectResponse
     {
         $data = $request->validated();
-        $data['is_active'] = $request->has('is_active');
+        $data['is_active'] = $request->boolean('is_active');
 
         $this->service->createFaq($data);
 
@@ -81,7 +84,7 @@ class SupportContentController extends Controller
     public function updateFaq(UpdateFaqRequest $request, int $id): RedirectResponse
     {
         $data = $request->validated();
-        $data['is_active'] = $request->has('is_active');
+        $data['is_active'] = $request->boolean('is_active');
 
         $this->service->updateFaq($id, $data);
 
@@ -113,7 +116,6 @@ class SupportContentController extends Controller
     {
         $query = Policy::where('slug', $slug);
 
-        // Allow admins to view inactive policies
         if (! auth()->check() || auth()->user()->user_type !== 'admin') {
             $query->where('is_active', true);
         }
