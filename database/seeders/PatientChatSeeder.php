@@ -23,10 +23,13 @@ class PatientChatSeeder extends Seeder
                 'name' => 'Demo Patient',
                 'password' => bcrypt('Demo@123'),
                 'user_type' => 'patient',
-                'email_verified_at' => now(),
-                'phone_verified_at' => now(),
             ]
         );
+        
+        $patient->forceFill([
+            'email_verified_at' => now(),
+            'phone_verified_at' => now(),
+        ])->save();
 
         // Ensure patient profile exists
         PatientProfile::firstOrCreate(['user_id' => $patient->id]);
