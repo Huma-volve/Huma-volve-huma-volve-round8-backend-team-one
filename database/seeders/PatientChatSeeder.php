@@ -16,17 +16,15 @@ class PatientChatSeeder extends Seeder
         // ---------------------------------------------------------
         // 1. Setup Demo Patient (Fixed Credentials for Frontend)
         // ---------------------------------------------------------
-        
-        // Use updateOrCreate searching by PHONE to avoid duplicate entry errors if user exists
         $patient = User::updateOrCreate(
-            ['phone' => '+201099999999'], 
+            ['email' => 'demo_patient@gmail.com'],
             [
-                'email' => 'demo_patient@gmail.com',
+                'phone' => '+201099999999',
                 'name' => 'Demo Patient',
-                'password' => bcrypt('password'), // password: "password"
+                'password' => bcrypt('Demo@123'),
                 'user_type' => 'patient',
                 'email_verified_at' => now(),
-                'phone_verified_at' => now(), // Bypass OTP
+                'phone_verified_at' => now(),
             ]
         );
 
