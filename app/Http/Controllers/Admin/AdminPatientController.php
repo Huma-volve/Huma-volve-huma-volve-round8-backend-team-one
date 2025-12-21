@@ -11,7 +11,7 @@ class AdminPatientController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = User::where('user_type', 'patient');
+        $query = User::where('user_type', 'patient')->orderBy('created_at', 'desc');
 
         if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
