@@ -129,7 +129,7 @@
                     </div>
 
                     <div class="mt-6">
-                        <a href="{{ route('admin.patients.show', $booking->patient) }}"
+                        <a href="{{ route('admin.patients.show', $booking->patient->user) }}"
                             class="text-indigo-600 hover:text-indigo-900 font-medium">
                             View Full Patient Profile &rarr;
                         </a>
