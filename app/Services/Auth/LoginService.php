@@ -26,6 +26,10 @@ class LoginService {
             return $this->fail('Invalid credentials!');
         }
 
+        if($user->is_blocked){
+             return $this->fail('Your account is blocked by admin');
+        }
+
         if(!$user->phone_verified_at){
 
             $otp = 1234;
