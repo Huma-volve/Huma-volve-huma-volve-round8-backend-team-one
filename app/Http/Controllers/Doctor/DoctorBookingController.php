@@ -13,7 +13,7 @@ class DoctorBookingController extends Controller
     {
         $doctor = Auth::user()->doctorProfile;
 
-        if (!$doctor) {
+        if (! $doctor) {
             abort(403, 'Unauthorized access.');
         }
 
@@ -23,11 +23,11 @@ class DoctorBookingController extends Controller
         // Search by patient name or date
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->whereHas('patient.user', function($q) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('patient.user', function ($q) use ($search) {
                     $q->where('name', 'like', "%{$search}%");
                 })
-                ->orWhere('appointment_date', 'like', "%{$search}%");
+                    ->orWhere('appointment_date', 'like', "%{$search}%");
             });
         }
 
@@ -52,7 +52,7 @@ class DoctorBookingController extends Controller
                     break;
                 case 'month':
                     $query->whereMonth('appointment_date', now()->month)
-                          ->whereYear('appointment_date', now()->year);
+                        ->whereYear('appointment_date', now()->year);
                     break;
                 case 'upcoming':
                     $query->where('appointment_date', '>=', now()->toDateString());
@@ -82,7 +82,12 @@ class DoctorBookingController extends Controller
 
         $slots = Auth::user()->doctorProfile->getUpcomingSlots();
 
-        return view('doctor.bookings.show', compact('booking', 'slots'));
+        // Filter out today's slots and group by date
+        $groupedSlots = $slots->filter(function ($slot) {
+            return $slot['date'] !== now()->toDateString();
+        })->groupBy('date');
+
+        return view('doctor.bookings.show', compact('booking', 'groupedSlots'));
     }
 
     public function cancel(Request $request, Booking $booking)
@@ -114,15 +119,24 @@ class DoctorBookingController extends Controller
         $request->validate([
             'appointment_date' => 'required|date|after:today',
             'appointment_time' => 'required',
+            'reschedule_note' => 'nullable|string|max:500',
         ]);
 
         // Basic check if slot is available (should be more robust in real app)
         // For now, assuming the doctor selects from available slots shown in UI
 
+        $newNotes = $booking->notes;
+        if ($request->filled('reschedule_note')) {
+            $doctorName = Auth::user()->name;
+            $note = "Rescheduled by Dr. {$doctorName}: ".$request->reschedule_note.' (Date: '.now()->format('Y-m-d').')';
+            $newNotes = $newNotes ? $newNotes."\n\n".$note : $note;
+        }
+
         $booking->update([
             'appointment_date' => $request->appointment_date,
             'appointment_time' => $request->appointment_time,
             'status' => 'rescheduled', // Or keeping it 'confirmed' or 'pending' depending on logic
+            'notes' => $newNotes,
             // Reset cancellation info if it was previously cancelled?
             // For now, let's assume we are just moving a valid booking
         ]);
