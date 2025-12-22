@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class MessageResource extends JsonResource
@@ -22,6 +23,7 @@ class MessageResource extends JsonResource
                 ? $this->body 
                 : asset('storage/' . $this->body),
             'type' => $this->type,
+            'is_mine' => $this->sender_id === Auth::id(),
             'created_at' => $this->created_at->toIso8601String(),
         ];
     }

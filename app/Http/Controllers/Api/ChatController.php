@@ -55,8 +55,24 @@ class ChatController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $conversation->load('participants.user');
+        
+        $otherParticipant = $conversation->participants
+            ->where('user_id', '!=', $request->user()->id)
+            ->first();
+
         $messages = $this->chatRepository->getConversationMessages($conversation->id);
-        return MessageResource::collection($messages);
+        
+        return response()->json([
+            'other_user' => $otherParticipant?->user ? [
+                'id' => $otherParticipant->user->id,
+                'name' => $otherParticipant->user->name,
+                'avatar' => $otherParticipant->user->profile_photo_path 
+                    ? asset('storage/' . $otherParticipant->user->profile_photo_path) 
+                    : null,
+            ] : null,
+            'data' => MessageResource::collection($messages),
+        ]);
     }
 
     public function sendMessage(SendMessageRequest $request, Conversation $conversation)
