@@ -1,5 +1,5 @@
     {{-- Conversations Sidebar --}}
-    <aside class="w-80 border-{{ $isRtl ? 'l' : 'r' }} border-slate-100 flex flex-col">
+    <aside class="w-80 h-full border-{{ $isRtl ? 'l' : 'r' }} border-slate-100 flex flex-col">
 
         {{-- Sidebar Header --}}
         <div class="p-4 border-b border-slate-100">

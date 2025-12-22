@@ -24,7 +24,7 @@ class SendMessageTest extends TestCase
         // Arrange
         Event::fake();
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         // Act
@@ -60,7 +60,7 @@ class SendMessageTest extends TestCase
         Storage::fake('public');
 
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         $file = UploadedFile::fake()->image('test-image.jpg');
@@ -101,7 +101,7 @@ class SendMessageTest extends TestCase
         Storage::fake('public');
 
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         $file = UploadedFile::fake()->create('test-video.mp4', 5000, 'video/mp4');
@@ -142,7 +142,7 @@ class SendMessageTest extends TestCase
         Storage::fake('public');
 
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         $file = UploadedFile::fake()->create('voice-message.mp3', 1000, 'audio/mpeg');
@@ -196,10 +196,13 @@ class SendMessageTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create(['updated_at' => now()->subHour()]);
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
-
-        $oldTimestamp = $conversation->updated_at;
+        
+        // Set the conversation timestamp to an hour ago
+        $oldTimestamp = now()->subHour();
+        $conversation->update(['updated_at' => $oldTimestamp]);
+        $conversation->refresh();
 
         // Act
         $this->actingAs($user)->postJson("/api/conversations/{$conversation->id}/messages", [
@@ -216,7 +219,7 @@ class SendMessageTest extends TestCase
         // Arrange
         Storage::fake('public');
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         // create file larger than 50MB
@@ -237,7 +240,7 @@ class SendMessageTest extends TestCase
         // Arrange
         Storage::fake('public');
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         // create unsupported file type
@@ -277,7 +280,7 @@ class SendMessageTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();  
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
         $conversation->participants()->create(['user_id' => $user->id]);
 
         $longMessage = str_repeat('a', 5001);

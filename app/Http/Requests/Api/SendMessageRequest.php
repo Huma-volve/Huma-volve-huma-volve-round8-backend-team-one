@@ -19,7 +19,7 @@ class SendMessageRequest extends FormRequest
                 'nullable',
                 'file',
                 'max:51200', // 50MB
-                'mimes:jpeg,png,jpg,gif,webp,mp4,mov,avi,mp3,wav,m4a,ogg,aac',
+                'mimes:jpeg,png,jpg,gif,webp,mp4,mp3,wav,m4a,ogg,aac,webm',
                 'required_without:body'
             ],
         ];
