@@ -102,10 +102,25 @@ export function initDoctorChat(config) {
 
         loadMessages(conversationId);
         subscribeToChannel(conversationId);
+        markConversationAsRead(conversationId);
 
         item.dataset.unread = 'false';
         const badge = item.querySelector('.unread-badge');
         if (badge) badge.classList.add('hidden');
+    }
+
+    async function markConversationAsRead(conversationId) {
+        try {
+            await fetch(`${baseUrl}/${conversationId}/mark-read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+        } catch (error) {
+            console.error('Error marking conversation as read:', error);
+        }
     }
 
     function showContextMenu(e, item) {
