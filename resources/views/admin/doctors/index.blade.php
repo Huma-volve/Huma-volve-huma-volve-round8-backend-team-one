@@ -14,12 +14,14 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            @if(session('success'))
+            @if (session('success'))
                 <div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-r shadow-sm">
                     <div class="flex">
                         <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            <svg class="h-5 w-5 text-green-400" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
                         <div class="ml-3">
@@ -60,7 +62,8 @@
                                                         alt="{{ $user->name }}">
                                                 </div>
                                                 <div class="ml-4">
-                                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}</div>
+                                                    <div class="text-sm font-medium text-gray-900">{{ $user->name }}
+                                                    </div>
                                                     <div class="text-sm text-gray-500">{{ $user->email }}</div>
                                                 </div>
                                             </div>
@@ -72,22 +75,25 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <div class="text-sm text-gray-900">{{ $user->doctorProfile->clinic_address }}
+                                            <div class="text-sm text-gray-900">
+                                                {{ $user->doctorProfile->clinic_address }}
                                             </div>
-                                            <div class="text-sm text-gray-500">{{ $user->doctorProfile->session_price }}
+                                            <div class="text-sm text-gray-500">
+                                                {{ $user->doctorProfile->session_price }}
                                                 {{ __('EGP') }}</div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div class="flex justify-end space-x-3">
                                                 <a href="{{ route('admin.doctors.edit', $user->id) }}"
                                                     class="text-indigo-600 hover:text-indigo-900">{{ __('Edit') }}</a>
-                                                <form action="{{ route('admin.doctors.destroy', $user->id) }}" method="POST"
-                                                    class="inline-block"
-                                                    onsubmit="return confirm('{{ __('Are you sure you want to delete this doctor? This action cannot be undone.') }}')">
+                                                <form action="{{ route('admin.doctors.toggle-block', $user->id) }}"
+                                                    method="POST" class="inline-block"
+                                                    onsubmit="return confirm('{{ $user->is_blocked ? __('Are you sure you want to unblock this doctor?') : __('Are you sure you want to block this doctor?') }}')">
                                                     @csrf
-                                                    @method('DELETE')
                                                     <button type="submit"
-                                                        class="text-red-600 hover:text-red-900">{{ __('Delete') }}</button>
+                                                        class="{{ $user->is_blocked ? 'text-green-600 hover:text-green-900' : 'text-red-600 hover:text-red-900' }}">
+                                                        {{ $user->is_blocked ? __('Unblock') : __('Block') }}
+                                                    </button>
                                                 </form>
                                             </div>
                                         </td>

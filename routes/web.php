@@ -1,13 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Doctor\AvailabilityController;
 use App\Http\Controllers\Doctor\ChatController;
 use App\Http\Controllers\Doctor\DoctorBookingController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\DoctorController;
 use App\Http\Controllers\Doctor\ReviewController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,6 +61,7 @@ Route::middleware(['auth', 'doctor'])
             Route::get('/{booking}', 'show')->name('show');
             Route::post('/{booking}/cancel', 'cancel')->name('cancel');
             Route::post('/{booking}/reschedule', 'reschedule')->name('reschedule');
+            Route::post('/{booking}/complete', 'complete')->name('complete');
         });
 
         // Availability Management
@@ -76,7 +77,7 @@ Route::middleware(['auth', 'doctor'])
         // Reports & Earnings
         Route::get('/reports', [\App\Http\Controllers\Doctor\DoctorReportController::class, 'index'])->name('reports.index');
 
-        //Reviews
+        // Reviews
         Route::get('/reviews', [ReviewController::class, 'index'])->name('reviews.index');
         Route::get('/reviews/{review}/reply', [ReviewController::class, 'reply'])->name('reviews.reply');
         Route::post('/reviews/{review}/reply', [ReviewController::class, 'saveReply'])->name('reviews.saveReply');
@@ -137,15 +138,17 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::get('/create', 'create')->name('create');
             Route::post('/', 'store')->name('store');
             Route::get('/{id}/edit', 'edit')->name('edit'); // Added edit route
+            Route::get('/{id}/edit', 'edit')->name('edit'); // Added edit route
             Route::put('/{id}', 'update')->name('update'); // Added update route
-            Route::delete('/{id}', 'destroy')->name('destroy');
+            Route::post('/{id}/toggle-block', 'toggleBlock')->name('toggle-block');
         });
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
-Route::get('/fix-system', function() {
+Route::get('/fix-system', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     \Illuminate\Support\Facades\Artisan::call('package:discover');
+
     return 'System Fixed & Caches Cleared!';
 });

@@ -7,7 +7,6 @@ use App\Models\DoctorProfile;
 use App\Models\PatientProfile;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class DoctorBookingPanelTest extends TestCase
@@ -15,8 +14,11 @@ class DoctorBookingPanelTest extends TestCase
     use RefreshDatabase;
 
     protected $doctorUser;
+
     protected $doctorProfile;
+
     protected $patientUser;
+
     protected $patientProfile;
 
     protected function setUp(): void
@@ -65,7 +67,7 @@ class DoctorBookingPanelTest extends TestCase
         $response = $this->actingAs($this->doctorUser)->get(route('doctor.bookings.index', ['status' => 'cancelled']));
         $response->assertStatus(200);
         // $response->assertDontSee('Confirmed'); // 'Confirmed' is in the dropdown
-        $response->assertViewHas('bookings', function($bookings) {
+        $response->assertViewHas('bookings', function ($bookings) {
             return $bookings->count() === 0;
         });
     }
@@ -145,5 +147,97 @@ class DoctorBookingPanelTest extends TestCase
         $response = $this->actingAs($this->doctorUser)->get(route('doctor.bookings.show', $booking));
 
         $response->assertStatus(403);
+    }
+
+    public function test_doctor_can_complete_todays_paid_booking()
+    {
+        $booking = Booking::factory()->create([
+            'doctor_id' => $this->doctorProfile->id,
+            'patient_id' => $this->patientProfile->id,
+            'status' => 'confirmed',
+            'appointment_date' => now()->format('Y-m-d'), // Today
+            'appointment_time' => '10:00:00',
+            'payment_status' => 'paid',
+        ]);
+
+        $response = $this->actingAs($this->doctorUser)->post(route('doctor.bookings.complete', $booking));
+
+        $response->assertRedirect();
+        $this->assertEquals('completed', $booking->fresh()->status);
+    }
+
+    public function test_doctor_cannot_complete_unpaid_booking()
+    {
+        $booking = Booking::factory()->create([
+            'doctor_id' => $this->doctorProfile->id,
+            'patient_id' => $this->patientProfile->id,
+            'status' => 'confirmed',
+            'appointment_date' => now()->format('Y-m-d'), // Today
+            'appointment_time' => '10:00:00',
+            'payment_status' => 'unpaid',
+        ]);
+
+        $response = $this->actingAs($this->doctorUser)->post(route('doctor.bookings.complete', $booking));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('error'); // Should have error message
+        $this->assertNotEquals('completed', $booking->fresh()->status);
+    }
+
+    public function test_doctor_cannot_complete_future_booking()
+    {
+        $booking = Booking::factory()->create([
+            'doctor_id' => $this->doctorProfile->id,
+            'patient_id' => $this->patientProfile->id,
+            'status' => 'confirmed',
+            'appointment_date' => now()->addDay()->format('Y-m-d'), // Tomorrow
+            'appointment_time' => '10:00:00',
+            'payment_status' => 'paid',
+        ]);
+
+        $response = $this->actingAs($this->doctorUser)->post(route('doctor.bookings.complete', $booking));
+
+        $response->assertRedirect();
+        $this->assertNotEquals('completed', $booking->fresh()->status);
+    }
+
+    public function test_complete_button_visibility()
+    {
+        // 1. Today's PAID booking -> Should see button
+        $todayPaidBooking = Booking::factory()->create([
+            'doctor_id' => $this->doctorProfile->id,
+            'patient_id' => $this->patientProfile->id,
+            'status' => 'confirmed',
+            'appointment_date' => now()->format('Y-m-d'),
+            'payment_status' => 'paid',
+        ]);
+
+        $response = $this->actingAs($this->doctorUser)->get(route('doctor.bookings.show', $todayPaidBooking));
+        $response->assertSee('Complete Booking');
+
+        // 2. Today's UNPAID booking -> Should NOT see button
+        $todayUnpaidBooking = Booking::factory()->create([
+            'doctor_id' => $this->doctorProfile->id,
+            'patient_id' => $this->patientProfile->id,
+            'status' => 'confirmed',
+            'appointment_date' => now()->format('Y-m-d'),
+            'payment_status' => 'unpaid',
+        ]);
+
+        $response = $this->actingAs($this->doctorUser)->get(route('doctor.bookings.show', $todayUnpaidBooking));
+        $response->assertDontSee('Complete Booking');
+
+
+        // 3. Future booking -> Should NOT see button
+        $futureBooking = Booking::factory()->create([
+            'doctor_id' => $this->doctorProfile->id,
+            'patient_id' => $this->patientProfile->id,
+            'status' => 'confirmed',
+            'appointment_date' => now()->addDay()->format('Y-m-d'),
+            'payment_status' => 'paid',
+        ]);
+
+        $response = $this->actingAs($this->doctorUser)->get(route('doctor.bookings.show', $futureBooking));
+        $response->assertDontSee('Complete Booking');
     }
 }
