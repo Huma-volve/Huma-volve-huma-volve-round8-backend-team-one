@@ -137,6 +137,17 @@
 
                         <div x-data="{ showCancel: false, showReschedule: false }">
                             <div class="space-y-3">
+                                <!-- Complete Button (Only if today AND paid) -->
+                                @if ($booking->appointment_date->isToday() && $booking->payment_status === 'paid')
+                                    <form action="{{ route('doctor.bookings.complete', $booking) }}" method="POST">
+                                        @csrf
+                                        <button type="submit"
+                                            class="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                                            {{ __('Complete Booking') }}
+                                        </button>
+                                    </form>
+                                @endif
+
                                 <!-- Reschedule Button -->
                                 <button @click="showReschedule = !showReschedule; showCancel = false"
                                     class="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">

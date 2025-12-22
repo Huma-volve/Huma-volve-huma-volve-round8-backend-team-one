@@ -61,6 +61,7 @@ Route::middleware(['auth', 'doctor'])
             Route::get('/{booking}', 'show')->name('show');
             Route::post('/{booking}/cancel', 'cancel')->name('cancel');
             Route::post('/{booking}/reschedule', 'reschedule')->name('reschedule');
+            Route::post('/{booking}/complete', 'complete')->name('complete');
         });
 
         // Availability Management

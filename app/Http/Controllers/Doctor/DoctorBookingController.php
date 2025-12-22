@@ -143,4 +143,33 @@ class DoctorBookingController extends Controller
 
         return redirect()->route('doctor.bookings.show', $booking)->with('success', 'Booking rescheduled successfully.');
     }
+
+    public function complete(Booking $booking)
+    {
+        // 1. Authorization Check
+        if ($booking->doctor_id !== Auth::user()->doctorProfile->id) {
+            abort(403, 'Unauthorized access.');
+        }
+
+        // 2. Date Validation (Must be today)
+        if (! $booking->appointment_date->isToday()) {
+            return redirect()->back()->with('error', 'You can only complete bookings scheduled for today.');
+        }
+
+        // 3. Payment Validation
+        if ($booking->payment_status !== 'paid') {
+            return redirect()->back()->with('error', 'You cannot complete an unpaid booking.');
+        }
+
+        // 4. Status Validation (Optional but good practice)
+        if (in_array($booking->status, ['cancelled', 'completed'])) {
+            return redirect()->back()->with('error', 'Booking is already cancelled or completed.');
+        }
+
+        // 5. Update Status
+        $booking->update(['status' => 'completed']);
+
+        // 6. Redirect
+        return redirect()->back()->with('success', 'Booking marked as completed.');
+    }
 }
