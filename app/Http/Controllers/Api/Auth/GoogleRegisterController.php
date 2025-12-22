@@ -65,4 +65,3 @@ class GoogleRegisterController extends Controller
         }
     }
 }
-
