@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Google\Client as GoogleClient;
 use App\Models\User;
 use App\Traits\ApiResponse;
+use Illuminate\Support\Facades\Http;
 
 class GoogleRegisterController extends Controller
 {
@@ -15,15 +16,32 @@ class GoogleRegisterController extends Controller
     public function googleRegister(Request $request)
     {
         $request->validate([
-            'id_token' => 'required|string'
+            'code' => 'required|string'
         ]);
 
         try {
-            $client = new GoogleClient([
+            // تبادل الـ code مع Google للحصول على id_token
+            $response = Http::asForm()->post('https://oauth2.googleapis.com/token', [
+                'code' => $request->code,
                 'client_id' => config('services.google.client_id'),
+                'client_secret' => config('services.google.client_secret'),
+                'redirect_uri' => config('services.google.redirect_uri'),
+                'grant_type' => 'authorization_code',
             ]);
 
-            $payload = $client->verifyIdToken(trim($request->id_token));
+            if (!$response->successful()) {
+                return $this->fail('Failed to get token from Google', 400);
+            }
+
+            $idToken = $response->json()['id_token'] ?? null;
+
+            if (!$idToken) {
+                return $this->fail('No id_token returned by Google', 400);
+            }
+
+            // التحقق من الـ id_token باستخدام Google Client
+            $client = new GoogleClient(['client_id' => config('services.google.client_id')]);
+            $payload = $client->verifyIdToken($idToken);
 
             if (!$payload) {
                 return $this->fail('Invalid Google token', 401);
