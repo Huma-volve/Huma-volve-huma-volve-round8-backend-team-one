@@ -16,7 +16,7 @@
         <div class="flex flex-col hidden h-full relative overflow-hidden bg-slate-50" id="chatContainer">
 
             {{-- Chat Header --}}
-            <div class="p-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white z-10">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between shrink-0 bg-white relative shadow-sm" style="z-index: 5;">
                 <div class="flex items-center gap-3">
                     <img src="" id="chatPatientAvatar" class="w-10 h-10 rounded-full object-cover">
                     <div>
@@ -27,17 +27,7 @@
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors">
-                        <i class="ph ph-phone text-xl"></i>
-                    </button>
-                    <button class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors">
-                        <i class="ph ph-video-camera text-xl"></i>
-                    </button>
-                    <button class="p-2 text-slate-400 hover:text-primary-600 hover:bg-primary-50 rounded-full transition-colors">
-                        <i class="ph ph-dots-three-vertical text-xl"></i>
-                    </button>
-                </div>
+
             </div>
 
             {{-- Messages Area --}}
