@@ -23,13 +23,20 @@ class DoctorController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
+            'email' => 'required|email:rfc,dns|regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/|not_regex:/\.com\.com$/|unique:users,email',
+            'password' => 'required|string|min:8|max:255',
             'specialty_id' => 'required|exists:specialities,id',
-            'license_number' => 'required|string|unique:doctor_profiles,license_number',
-            'clinic_address' => 'required|string',
-            'session_price' => 'required|numeric|min:0',
-            'experience_length' => 'required|integer|min:0',
+            'license_number' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-\/]+$/',
+                'min:6',
+                'max:20',
+                'unique:doctor_profiles,license_number',
+            ],
+            'clinic_address' => ['required', 'string','max:255'],
+            'session_price' => ['required', 'numeric', 'min:0'],
+            'experience_length' => ['required', 'integer', 'min:0','max:20'],
         ]);
 
         $user = \App\Models\User::create([
@@ -66,13 +73,13 @@ class DoctorController extends Controller
         $user = \App\Models\User::findOrFail($id);
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
+            'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[A-Za-z\s]+$/'],
+            'email' => 'required|email:rfc,dns|regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/|not_regex:/\.com\.com$/|unique:users,email,' . $user->id,
             'specialty_id' => 'required|exists:specialities,id',
-            'license_number' => 'required|string|unique:doctor_profiles,license_number,'. $user->doctorProfile->id,
-            'clinic_address' => 'required|string',
-            'session_price' => 'required|numeric|min:0',
-            'experience_length' => 'required|integer|min:0',
+            'license_number' =>'required','string','regex:/^[A-Z0-9\-\/]+$/','min:6','max:20','unique:doctor_profiles,license_number,'. $user->doctorProfile->id,
+            'clinic_address' => ['required', 'string','max:255'],
+            'session_price' => ['required', 'numeric', 'min:0'],
+            'experience_length' => ['required', 'integer', 'min:0','max:20'],
         ]);
 
         $user->update([
@@ -80,9 +87,9 @@ class DoctorController extends Controller
             'email' => $validated['email'],
         ]);
 
-        if ($request->filled('password')) {
-            $user->update(['password' => \Illuminate\Support\Facades\Hash::make($validated['password'])]);
-        }
+        // if ($request->filled('password')) {
+        //     $user->update(['password' => \Illuminate\Support\Facades\Hash::make($validated['password'])]);
+        // }
 
         $user->doctorProfile()->update([
             'specialty_id' => $validated['specialty_id'],

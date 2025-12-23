@@ -40,6 +40,7 @@
 
     @livewireScripts
 
+    <x-password-toggle-script />
 </body>
 
 </html>

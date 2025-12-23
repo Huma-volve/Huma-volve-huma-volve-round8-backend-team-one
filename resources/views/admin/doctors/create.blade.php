@@ -13,21 +13,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            @if($errors->any())
-                <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-r shadow-sm">
-                    <div class="flex">
-                        <div class="ml-3">
-                            <h3 class="text-sm font-medium text-red-800">{{ __('There were errors with your submission') }}
-                            </h3>
-                            <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
-                                @foreach($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            @endif
+
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
@@ -43,18 +29,21 @@
                                     <x-input-label for="name" :value="__('Full Name')" />
                                     <x-text-input id="name" class="block mt-1 w-full" type="text" name="name"
                                         :value="old('name')" required autofocus />
+                                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
                                 </div>
 
                                 <div>
                                     <x-input-label for="email" :value="__('Email')" />
                                     <x-text-input id="email" class="block mt-1 w-full" type="email" name="email"
                                         :value="old('email')" required />
+                                    <x-input-error :messages="$errors->get('email')" class="mt-2" />
                                 </div>
 
                                 <div>
                                     <x-input-label for="password" :value="__('Password')" />
                                     <x-text-input id="password" class="block mt-1 w-full" type="password"
                                         name="password" required />
+                                    <x-input-error :messages="$errors->get('password')" class="mt-2" />
                                 </div>
                             </div>
 
@@ -73,18 +62,21 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    <x-input-error :messages="$errors->get('specialty_id')" class="mt-2" />
                                 </div>
 
                                 <div>
                                     <x-input-label for="experience_length" :value="__('Experience (Years)')" />
                                     <x-text-input id="experience_length" class="block mt-1 w-full" type="number"
                                         name="experience_length" :value="old('experience_length')" min="0" required />
+                                    <x-input-error :messages="$errors->get('experience_length')" class="mt-2" />
                                 </div>
 
                                 <div>
                                     <x-input-label for="license_number" :value="__('License Number')" />
                                     <x-text-input id="license_number" class="block mt-1 w-full" type="text"
                                         name="license_number" :value="old('license_number')" required />
+                                    <x-input-error :messages="$errors->get('license_number')" class="mt-2" />
                                 </div>
 
                                 <div>
@@ -98,6 +90,7 @@
                                     <x-input-label for="clinic_address" :value="__('Clinic Address')" />
                                     <x-text-input id="clinic_address" class="block mt-1 w-full" type="text"
                                         name="clinic_address" :value="old('clinic_address')" required />
+                                    <x-input-error :messages="$errors->get('clinic_address')" class="mt-2" />
                                 </div>
                             </div>
                         </div>
