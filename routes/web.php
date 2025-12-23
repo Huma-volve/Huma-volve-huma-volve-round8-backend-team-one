@@ -68,6 +68,8 @@ Route::middleware(['auth', 'doctor'])
         Route::prefix('availability')->name('availability.')->controller(AvailabilityController::class)->group(function () {
             Route::get('/', 'index')->name('index');
             Route::post('/', 'store')->name('store');
+            Route::get('/{schedule}/edit', 'edit')->name('edit');
+            Route::put('/{schedule}', 'update')->name('update');
             Route::delete('/{schedule}', 'destroy')->name('destroy');
         });
 
@@ -144,7 +146,7 @@ Route::middleware(['auth', 'verified', 'admin'])
         });
     });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::get('/fix-system', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');

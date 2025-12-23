@@ -94,10 +94,10 @@
         </div>
 
         <div>
-            <x-input-label for="experience" :value="__('Experience')" />
-            <x-text-input id="experience" name="experience" type="number" class="mt-1 block w-full"
-                :value="old('experience', $user->doctorProfile->experience_length ?? '')" />
-            <x-input-error class="mt-2" :messages="$errors->get('experience')" />
+            <x-input-label for="experience_length" :value="__('Experience')" />
+            <x-text-input id="experience_length" name="experience_length" type="number" class="mt-1 block w-full"
+                :value="old('experience_length', $user->doctorProfile->experience_length ?? '')" />
+            <x-input-error class="mt-2" :messages="$errors->get('experience_length')" />
         </div>
 
         <div>
