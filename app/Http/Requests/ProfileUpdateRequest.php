@@ -26,8 +26,9 @@ class ProfileUpdateRequest extends FormRequest
             'license_number' => [
                 'required',
                 'string',
-                'regex:/^[A-Za-z0-9._%+-]+$/',
+                'min:6',
                 'max:20',
+                'regex:/^[A-Z0-9\-\/]+$/',
                 'unique:doctor_profiles,license_number,'.(Auth::user()->doctorProfile->id ?? 'NULL'),
             ],
         ];
