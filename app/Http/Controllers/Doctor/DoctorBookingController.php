@@ -63,8 +63,7 @@ class DoctorBookingController extends Controller
             }
         }
 
-        $bookings = $query->orderBy('appointment_date', 'desc')
-            ->orderBy('appointment_time', 'desc')
+        $bookings = $query->orderBy('created_at', 'desc')
             ->paginate(10)
             ->withQueryString();
 
