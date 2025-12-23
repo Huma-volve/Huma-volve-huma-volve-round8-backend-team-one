@@ -56,7 +56,7 @@ class ChatService
                     ]);
                 }
 
-                $path = $data['attachment']->store('chat_media', 'public');
+                $path = $data['attachment']->store('chat-attachments', 'public');
                 
                 if (!$path) {
                     throw new \Exception('Failed to store file path.');

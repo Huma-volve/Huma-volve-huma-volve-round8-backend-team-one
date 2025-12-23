@@ -19,10 +19,10 @@ class ChatListTest extends TestCase
         $user = User::factory()->create();
         $otherUser = User::factory()->create(['name' => 'Dr. House']);
 
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
 
-        ChatParticipant::factory()->create(['user_id' => $user->id, 'conversation_id' => $conversation->id]);
-        ChatParticipant::factory()->create(['user_id' => $otherUser->id, 'conversation_id' => $conversation->id]);
+        ChatParticipant::create(['user_id' => $user->id, 'conversation_id' => $conversation->id]);
+        ChatParticipant::create(['user_id' => $otherUser->id, 'conversation_id' => $conversation->id]);
 
         Message::factory()->create([
             'conversation_id' => $conversation->id,
@@ -64,13 +64,13 @@ class ChatListTest extends TestCase
         $targetUser = User::factory()->create(['name' => 'Dr. Target']);
         $ignoredUser = User::factory()->create(['name' => 'Dr. Ignored']);
 
-        $conv1 = Conversation::factory()->create();
-        ChatParticipant::factory()->create(['user_id' => $user->id, 'conversation_id' => $conv1->id]);
-        ChatParticipant::factory()->create(['user_id' => $targetUser->id, 'conversation_id' => $conv1->id]);
+        $conv1 = Conversation::create(); // Use create() to avoid factory auto-creating participants
+        ChatParticipant::create(['user_id' => $user->id, 'conversation_id' => $conv1->id]);
+        ChatParticipant::create(['user_id' => $targetUser->id, 'conversation_id' => $conv1->id]);
 
-        $conv2 = Conversation::factory()->create();
-        ChatParticipant::factory()->create(['user_id' => $user->id, 'conversation_id' => $conv2->id]);
-        ChatParticipant::factory()->create(['user_id' => $ignoredUser->id, 'conversation_id' => $conv2->id]);
+        $conv2 = Conversation::create();
+        ChatParticipant::create(['user_id' => $user->id, 'conversation_id' => $conv2->id]);
+        ChatParticipant::create(['user_id' => $ignoredUser->id, 'conversation_id' => $conv2->id]);
 
         // Act
         $response = $this->actingAs($user)->getJson('/api/conversations?search=Target');
@@ -85,16 +85,16 @@ class ChatListTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
 
-        ChatParticipant::factory()->create([
+        ChatParticipant::create([
             'user_id' => $user->id,
             'conversation_id' => $conversation->id,
             'is_favorite' => true
         ]);
 
-        $conv2 = Conversation::factory()->create();
-        ChatParticipant::factory()->create(['user_id' => $user->id, 'conversation_id' => $conv2->id, 'is_favorite' => false]);
+        $conv2 = Conversation::create();
+        ChatParticipant::create(['user_id' => $user->id, 'conversation_id' => $conv2->id, 'is_favorite' => false]);
 
         // Act
         $response = $this->actingAs($user)->getJson('/api/conversations?type=favorites');
@@ -110,16 +110,16 @@ class ChatListTest extends TestCase
         // Arrange
         $user = User::factory()->create();
 
-        $unreadConv = Conversation::factory()->create();
-        ChatParticipant::factory()->create([
+        $unreadConv = Conversation::create(); // Use create() to avoid factory auto-creating participants
+        ChatParticipant::create([
             'user_id' => $user->id,
             'conversation_id' => $unreadConv->id,
             'last_read_at' => now()->subDay()
         ]);
         Message::factory()->create(['conversation_id' => $unreadConv->id, 'created_at' => now()]);
 
-        $readConv = Conversation::factory()->create();
-        ChatParticipant::factory()->create([
+        $readConv = Conversation::create();
+        ChatParticipant::create([
             'user_id' => $user->id,
             'conversation_id' => $readConv->id,
             'last_read_at' => now()->addHour()
@@ -139,8 +139,8 @@ class ChatListTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
-        $participant = ChatParticipant::factory()->create([
+        $conversation = Conversation::create(); // Use create() to avoid factory auto-creating participants
+        $participant = ChatParticipant::create([
             'user_id' => $user->id,
             'conversation_id' => $conversation->id,
             'is_favorite' => false

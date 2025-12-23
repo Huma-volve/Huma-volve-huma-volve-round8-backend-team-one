@@ -18,7 +18,10 @@ export function initDoctorChat(config) {
         filterTabs: document.querySelectorAll('.filter-tab'),
         attachmentBtn: document.getElementById('attachmentBtn'),
         attachmentInput: document.getElementById('attachmentInput'),
-        searchInput: document.getElementById('searchConversations')
+        searchInput: document.getElementById('searchConversations'),
+        voiceBtn: document.getElementById('voiceBtn'),
+        voiceIcon: document.getElementById('voiceIcon'),
+        recordingIndicator: document.getElementById('recordingIndicator')
     };
 
     let currentChannel = null;
@@ -29,6 +32,7 @@ export function initDoctorChat(config) {
         setupMessageForm();
         setupAttachment();
         setupSearch();
+        setupVoiceRecording();
     }
 
     function setupFilterTabs() {
@@ -98,10 +102,25 @@ export function initDoctorChat(config) {
 
         loadMessages(conversationId);
         subscribeToChannel(conversationId);
+        markConversationAsRead(conversationId);
 
         item.dataset.unread = 'false';
         const badge = item.querySelector('.unread-badge');
         if (badge) badge.classList.add('hidden');
+    }
+
+    async function markConversationAsRead(conversationId) {
+        try {
+            await fetch(`${baseUrl}/${conversationId}/mark-read`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    'Accept': 'application/json'
+                }
+            });
+        } catch (error) {
+            console.error('Error marking conversation as read:', error);
+        }
     }
 
     function showContextMenu(e, item) {
@@ -364,6 +383,95 @@ export function initDoctorChat(config) {
                 item.style.display = name.includes(query) ? 'block' : 'none';
             });
         });
+    }
+
+    function setupVoiceRecording() {
+        if (!elements.voiceBtn) return;
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let isRecording = false;
+
+        elements.voiceBtn.addEventListener('click', async function() {
+            if (!elements.currentConversationId.value) {
+                alert(isRtl ? 'الرجاء اختيار محادثة أولاً' : 'Please select a conversation first');
+                return;
+            }
+
+            if (!isRecording) {
+                // Start recording
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = (event) => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        stream.getTracks().forEach(track => track.stop());
+                        await sendVoiceMessage(audioBlob);
+                    };
+
+                    mediaRecorder.start();
+                    isRecording = true;
+                    updateRecordingUI(true);
+                } catch (err) {
+                    console.error('Error accessing microphone:', err);
+                    alert(isRtl ? 'لا يمكن الوصول إلى الميكروفون' : 'Cannot access microphone');
+                }
+            } else {
+                // Stop recording
+                if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                    mediaRecorder.stop();
+                }
+                isRecording = false;
+                updateRecordingUI(false);
+            }
+        });
+
+        function updateRecordingUI(recording) {
+            if (recording) {
+                elements.voiceIcon.classList.remove('ph-microphone');
+                elements.voiceIcon.classList.add('ph-stop-circle');
+                elements.voiceBtn.classList.add('text-red-500');
+                elements.recordingIndicator.classList.remove('hidden');
+            } else {
+                elements.voiceIcon.classList.remove('ph-stop-circle');
+                elements.voiceIcon.classList.add('ph-microphone');
+                elements.voiceBtn.classList.remove('text-red-500');
+                elements.recordingIndicator.classList.add('hidden');
+            }
+        }
+
+        async function sendVoiceMessage(audioBlob) {
+            const formData = new FormData();
+            formData.append('attachment', audioBlob, 'voice-message.webm');
+
+            try {
+                const response = await fetch(`${baseUrl}/${elements.currentConversationId.value}/send`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    appendMessage(data.message, true);
+                } else {
+                    console.error('Error sending voice message:', data);
+                    alert(isRtl ? 'فشل إرسال الرسالة الصوتية' : 'Failed to send voice message');
+                }
+            } catch (error) {
+                console.error('Error sending voice message:', error);
+                alert(isRtl ? 'فشل إرسال الرسالة الصوتية' : 'Failed to send voice message');
+            }
+        }
     }
 
     init();

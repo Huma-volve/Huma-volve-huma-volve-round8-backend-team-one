@@ -1,6 +1,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ config('app.name', 'Huma Volve') }}</title>
+
+    <title>{{ config('app.name', 'Huma-volve') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('imgs/heartbeat-fill.png') }}">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +18,7 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['{{ $isRtl ? "Cairo" : "Outfit" }}', 'sans-serif'],
+                        sans: ['{{ $isRtl ? 'Cairo' : 'Outfit' }}', 'sans-serif'],
                     },
                     colors: {
                         primary: {
@@ -47,12 +49,31 @@
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     <style>
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
+
         /* Smooth scrolling */
-        html { scroll-behavior: smooth; }
+        html {
+            scroll-behavior: smooth;
+        }
+
         /* Custom scrollbar for webkit */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
     </style>

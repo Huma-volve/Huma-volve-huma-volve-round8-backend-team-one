@@ -278,6 +278,12 @@ class BookingController extends Controller
 
     private function checkAppointmentValidity($doctorId, $date, $time, $ignoreBookingId = null)
     {
+        // 1. Check if the time is in the past (for today)
+        $appointmentDateTime = Carbon::parse("$date $time");
+        if ($appointmentDateTime->isPast()) {
+             return response()->json(['message' => 'You cannot book an appointment in the past.'], 400);
+        }
+
         // Check availability: if there is another booking in the same date and time
         $existingBookingQuery = Booking::where('doctor_id', $doctorId)
             ->whereDate('appointment_date', $date)

@@ -109,9 +109,9 @@ class DoctorProfile extends Model
 
                     $startTime->addMinutes($schedule->avg_consultation_time ?? 30);
 
-                    if ($slots->count() >= 5) {
+                    if ($slots->count() >= 50) {
                         break 2;
-                    } // Return first 5 slots
+                    } // Return first 50 slots
                 }
             }
         }

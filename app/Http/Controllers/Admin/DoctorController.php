@@ -95,10 +95,19 @@ class DoctorController extends Controller
         return redirect()->route('admin.doctors.index')->with('success', 'Doctor updated successfully.');
     }
 
-    public function destroy($id)
+    public function toggleBlock($id)
     {
         $user = \App\Models\User::findOrFail($id);
-        $user->delete();
-        return redirect()->route('admin.doctors.index')->with('success', 'Doctor deleted successfully.');
+
+        // Prevent blocking self if admin (though this controller is for doctors)
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'You cannot block yourself.');
+        }
+
+        $user->is_blocked = ! $user->is_blocked;
+        $user->save();
+
+        $status = $user->is_blocked ? 'blocked' : 'unblocked';
+        return redirect()->route('admin.doctors.index')->with('success', "Doctor {$status} successfully.");
     }
 }

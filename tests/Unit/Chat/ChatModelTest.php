@@ -16,7 +16,7 @@ class ChatModelTest extends TestCase
     {
         // Arrange
         $user = User::factory()->create();
-        $conversation = Conversation::factory()->create();
+        $conversation = Conversation::create(); // Use create() instead of factory() to avoid auto-participant creation
         $conversation->participants()->create(['user_id' => $user->id]);
 
         // Act
