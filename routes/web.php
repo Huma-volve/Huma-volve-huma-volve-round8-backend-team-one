@@ -54,8 +54,6 @@ Route::middleware(['auth', 'doctor'])
         Route::get('/chat/{conversation}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
         Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
         Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
-        Route::post('/chat/{conversation}/toggle-favorite', 'toggleFavorite')->name('chat.toggle-favorite');
-        Route::post('/chat/{conversation}/toggle-archive', 'toggleArchive')->name('chat.toggle-archive');
 
         Route::prefix('bookings')->name('bookings.')->controller(DoctorBookingController::class)->group(function () {
             Route::get('/', 'index')->name('index');
