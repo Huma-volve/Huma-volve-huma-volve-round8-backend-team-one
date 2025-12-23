@@ -14,6 +14,13 @@
          @if($notifications->whereNull('read_at')->count() > 0)
             <span class="absolute top-0 right-0 w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse"></span>
         @endif
+        @if($unreadCount > 0)
+            <span
+                class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold
+                        w-5 h-5 flex items-center justify-center rounded-full">
+                {{ $unreadCount }}
+            </span>
+        @endif
     </button>
 
     <div x-show="open" x-ref="dropdown" x-cloak
@@ -43,6 +50,15 @@
                 No notifications
             </div>
         @endforelse
+                {{-- Show All Button --}}
+        <div class="border-t mt-2 pt-2 px-4">
+            <a
+                href="{{ route('admin.notifications.index') }}"
+                class="block text-center text-sm font-semibold
+                        text-blue-600 hover:text-blue-800 transition">
+                Show all notifications
+            </a>
+        </div>
     </div>
 </div>
 </div>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class NotificationsAdmin extends Component
 {
     public $notifications = [];
+    public $unreadCount = 0;
 
     public function mount()
     {
@@ -21,11 +22,17 @@ class NotificationsAdmin extends Component
     {
         $user = Auth::user();
 
-        $this->notifications = $user->notifications()->latest()->get()
-            ->map(function($notif){
-                $notif->data = is_array($notif->data) ? $notif->data : json_decode($notif->data, true);
+        $this->notifications = $user->notifications()
+            ->latest()
+            ->get()
+            ->map(function ($notif) {
+                $notif->data = is_array($notif->data)
+                    ? $notif->data
+                    : json_decode($notif->data, true);
                 return $notif;
             });
+
+        $this->unreadCount = $user->unreadNotifications()->count();
     }
 
     public function markRead()

@@ -7,6 +7,7 @@ use App\Http\Controllers\Doctor\ChatController;
 use App\Http\Controllers\Doctor\DoctorBookingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\DoctorController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Doctor\ReviewController;
 use Illuminate\Support\Facades\Route;
 
@@ -140,6 +141,10 @@ Route::middleware(['auth', 'verified', 'admin'])
             Route::put('/{id}', 'update')->name('update'); // Added update route
             Route::delete('/{id}', 'destroy')->name('destroy');
         });
+
+        // Notifications
+        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     });
 
 require __DIR__ . '/auth.php';
