@@ -17,7 +17,7 @@ class DashboardController extends Controller
             $totalPatients = User::where('user_type', 'patient')->count();
             $totalDoctors = User::where('user_type', 'doctor')->count();
 
-            // 2. Monthly Stats (Bookings & Profit)
+            // 2. Monthly Stats (Bookings & Profit) - Only completed bookings
             // Group by year and month
             $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
 
@@ -29,11 +29,12 @@ class DashboardController extends Controller
                 $month = "MONTH(appointment_date)";
             }
 
-            $monthlyStats = Booking::selectRaw("
+            $monthlyStats = Booking::where('status', 'completed')
+                ->selectRaw("
                     $year as year,
                     $month as month,
                     COUNT(*) as total_bookings,
-                    SUM(CASE WHEN payment_status = 'paid' THEN price_at_booking ELSE 0 END) as net_profit
+                    SUM(price_at_booking) as net_profit
                 ")
                 ->groupBy('year', 'month')
                 ->orderBy('year', 'desc')
