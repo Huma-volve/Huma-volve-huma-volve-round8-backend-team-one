@@ -63,11 +63,11 @@ Route::get('/policies', [SupportContentController::class, 'index']);
 Route::get('/faqs', [SupportContentController::class, 'indexFaqs']);
 
 // Specialties
-Route::get('/specialties', [SpecialtyController::class, 'index']);
+Route::get('/specialties', [SpecialtyController::class, 'index'])->middleware('auth:sanctum');
 
 // Doctors
-Route::apiResource('doctors', DoctorController::class)->only(['index', 'show']);
-Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class);
+Route::apiResource('doctors', DoctorController::class)->only(['index', 'show'])->middleware('auth:sanctum');
+Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class)->middleware('auth:sanctum');
 
 // ============================================================================
 // PROTECTED ROUTES (auth:sanctum)
