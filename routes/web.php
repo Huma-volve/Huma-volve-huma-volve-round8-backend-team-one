@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DoctorController;
+use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
@@ -133,6 +134,13 @@ Route::middleware(['auth', 'verified', 'admin'])
         // Notifications
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+        // Contact Messages
+        Route::prefix('contact-messages')->name('contact-messages.')->controller(AdminContactMessageController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{message}', 'show')->name('show');
+            Route::delete('/{message}', 'destroy')->name('destroy');
+        });
     });
 
 require __DIR__.'/auth.php';
