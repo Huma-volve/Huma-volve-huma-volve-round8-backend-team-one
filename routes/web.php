@@ -1,8 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\DoctorController;
-use App\Http\Controllers\Admin\SupportContentController;
+use App\Http\Controllers\Admin\AdminContactMessageController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Doctor\AvailabilityController;
 use App\Http\Controllers\Doctor\ChatController;
@@ -54,6 +55,8 @@ Route::middleware(['auth', 'doctor'])
         Route::get('/chat/{conversation}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
         Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
         Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
+        Route::post('/chat/{conversation}/toggle-favorite', [ChatController::class, 'toggleFavorite'])->name('chat.toggle-favorite');
+        Route::post('/chat/{conversation}/toggle-archive', [ChatController::class, 'toggleArchive'])->name('chat.toggle-archive');
 
         Route::prefix('bookings')->name('bookings.')->controller(DoctorBookingController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -131,12 +134,20 @@ Route::middleware(['auth', 'verified', 'admin'])
         // Notifications
         Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+
+        // Contact Messages
+        Route::prefix('contact-messages')->name('contact-messages.')->controller(AdminContactMessageController::class)->group(function () {
+            Route::get('/', 'index')->name('index');
+            Route::get('/{message}', 'show')->name('show');
+            Route::delete('/{message}', 'destroy')->name('destroy');
+        });
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/fix-system', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     \Illuminate\Support\Facades\Artisan::call('package:discover');
+
     return 'System Fixed & Caches Cleared!';
 });

@@ -1,21 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\BookingController;
-use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\Auth\ForgetPasswordController;
+use App\Http\Controllers\Api\Auth\GoogleLoginController;
 // ============================================================================
 // CONTROLLERS
 // ============================================================================
 
-use App\Http\Controllers\Api\DoctorController;
-use App\Http\Controllers\Api\FavoriteController as ToggleFavoriteController;
-use App\Http\Controllers\Api\GetDoctorAvailabilityController;
-use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
-use App\Http\Controllers\Api\PaymentController;
-use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Api\SavedCardController;
-use App\Http\Controllers\Api\SpecialtyController;
-use App\Http\Controllers\Api\Auth\ForgetPasswordController;
-use App\Http\Controllers\Api\Auth\GoogleLoginController;
 use App\Http\Controllers\Api\Auth\GoogleRegisterController;
 use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
@@ -23,11 +13,22 @@ use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\Auth\ResendOtpController;
 use App\Http\Controllers\Api\Auth\ResetPasswordController;
 use App\Http\Controllers\Api\Auth\VerifyOtpController;
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\ContactMessageController;
+use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\FavoriteController as ToggleFavoriteController;
+use App\Http\Controllers\Api\GetDoctorAvailabilityController;
+use App\Http\Controllers\Api\NotificationController as ApiNotificationController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\Profile\ChangePasswordController;
 use App\Http\Controllers\Api\Profile\DeleteAccountController;
 use App\Http\Controllers\Api\Profile\FavoriteController as ProfileFavoriteController;
 use App\Http\Controllers\Api\Profile\NotificationController as ProfileNotificationController;
 use App\Http\Controllers\Api\Profile\ProfileAccountController;
+use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Api\SavedCardController;
+use App\Http\Controllers\Api\SpecialtyController;
 use App\Http\Controllers\Api\SupportContentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -68,6 +69,9 @@ Route::get('/specialties', [SpecialtyController::class, 'index'])->middleware('a
 // Doctors
 Route::apiResource('doctors', DoctorController::class)->only(['index', 'show'])->middleware('auth:sanctum');
 Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class)->middleware('auth:sanctum');
+
+// Contact Us
+Route::post('/contact-us', [ContactMessageController::class, 'store']);
 
 // ============================================================================
 // PROTECTED ROUTES (auth:sanctum)
