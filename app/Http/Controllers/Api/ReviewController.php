@@ -178,6 +178,41 @@ class ReviewController extends Controller
         ]);
     }
 
+    public function reviewsByDoctor(Request $request, $doctor)
+    {
+        if (!$request->user()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $doctor = DoctorProfile::find($doctor);
+
+        if (!$doctor) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Doctor not found'
+            ], 404);
+        }
+
+        $averageRating = round($doctor->reviews()->avg('rating') ?? 0, 1);
+
+        $reviews = Review::with(['patient.user'])
+            ->where('doctor_id', $doctor->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'doctor' => [
+                'id' => $doctor->id,
+                'name' => optional($doctor->user)->name,
+                'average_rating' => $averageRating
+            ],
+            'data' => ReviewResource::collection($reviews)
+        ]);
+    }
 }
 
 

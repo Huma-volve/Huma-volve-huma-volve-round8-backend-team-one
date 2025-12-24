@@ -128,6 +128,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/doctor/{review}/reply', [ReviewController::class, 'reply'])->name('doctor.reply');
         Route::get('/doctors/avg', [ReviewController::class, 'doctorsWithAvg']);
         Route::get('/all', [ReviewController::class, 'allReviews']);
+        Route::get('/doctor/{doctor}', [ReviewController::class, 'reviewsByDoctor'])->name('doctor.reviews');
     });
 
     // ------------------------------------------------------------------------
