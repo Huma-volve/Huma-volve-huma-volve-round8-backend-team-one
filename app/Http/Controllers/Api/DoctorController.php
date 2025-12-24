@@ -9,6 +9,7 @@ use App\Models\DoctorProfile;
 use App\Services\DoctorService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class DoctorController extends Controller
 {
@@ -40,7 +41,9 @@ class DoctorController extends Controller
     public function show(DoctorProfile $doctor): JsonResponse
     {
         // Load necessary relationships
-        $doctor->load(['user', 'speciality', 'reviews.patient.user']);
+        $doctor->load(['user', 'speciality', 'reviews.patient.user'])
+                ->loadCount(['reviews','bookings as patients_count' => function ($query) {$query->select(DB::raw('COUNT(DISTINCT patient_id)'));}])
+                ->loadAvg('reviews','rating');
 
         return $this->successResponse(
             new DoctorResource($doctor),

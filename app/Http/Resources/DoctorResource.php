@@ -17,6 +17,10 @@ class DoctorResource extends JsonResource
             'name' => $this->user->name,
             'email' => $this->user->email,
             'mobile' => $this->user->mobile,
+            'address' => $this->user->address,
+            'patient_count'=> $this->whenCounted('patients_count'),
+            'reviews_count' => $this->whenCounted('reviews') ?? 0,
+            'rating_avg' =>$this->whenAggregated('reviews', 'rating', 'avg') ?? 0 ,
             'profile_photo' => $this->user->profile_photo_path,
             'specialty' => [
                 'id' => $this->speciality->id,
@@ -24,7 +28,7 @@ class DoctorResource extends JsonResource
                 'image' => $this->speciality->image,
             ],
             'license_number' => $this->license_number,
-            'bio' => $this->bio,
+            'about_me' => $this->bio,
             'session_price' => (float) $this->session_price,
             'clinic_address' => $this->clinic_address,
             'location' => [
@@ -34,18 +38,18 @@ class DoctorResource extends JsonResource
 
             'experience_years' => $this->experience_length,
 
-            'is_favorite' => $this->when(
-                auth()->check(),
-                fn() => $this->isFavoritedBy(auth()->id())
-            ),
-            'availability' => $this->when(
-                $request->include_availability,
-                fn() => $this->getUpcomingSlots()
-            ),
-            'reviews' => $this->when(
-                $request->include_reviews,
-                fn() => ReviewResource::collection($this->reviews()->latest()->take(5)->get())
-            ),
+            // 'is_favorite' => $this->when(
+            //     auth()->check(),
+            //     fn() => $this->isFavoritedBy(auth()->id())
+            // ),
+            // 'availability' => $this->when(
+            //     $request->include_availability,
+            //     fn() => $this->getUpcomingSlots()
+            // ),
+            // 'reviews' => $this->when(
+            //     $request->include_reviews,
+            //     fn() => ReviewResource::collection($this->reviews()->latest()->take(5)->get())
+            // ),
         ];
     }
 }
