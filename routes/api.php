@@ -64,11 +64,11 @@ Route::get('/policies', [SupportContentController::class, 'index']);
 Route::get('/faqs', [SupportContentController::class, 'indexFaqs']);
 
 // Specialties
-Route::get('/specialties', [SpecialtyController::class, 'index']);
+Route::get('/specialties', [SpecialtyController::class, 'index'])->middleware('auth:sanctum');
 
 // Doctors
-Route::apiResource('doctors', DoctorController::class)->only(['index', 'show']);
-Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class);
+Route::apiResource('doctors', DoctorController::class)->only(['index', 'show'])->middleware('auth:sanctum');
+Route::get('/doctors/{doctor}/availability', GetDoctorAvailabilityController::class)->middleware('auth:sanctum');
 
 // Contact Us
 Route::post('/contact-us', [ContactMessageController::class, 'store']);
@@ -132,6 +132,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/doctor/{review}/reply', [ReviewController::class, 'reply'])->name('doctor.reply');
         Route::get('/doctors/avg', [ReviewController::class, 'doctorsWithAvg']);
         Route::get('/all', [ReviewController::class, 'allReviews']);
+        Route::get('/doctor/{doctor}', [ReviewController::class, 'reviewsByDoctor'])->name('doctor.reviews');
     });
 
     // ------------------------------------------------------------------------
