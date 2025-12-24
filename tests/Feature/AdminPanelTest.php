@@ -36,15 +36,17 @@ class AdminPanelTest extends TestCase
         // Create 2 Doctors
         User::factory()->count(2)->create(['user_type' => 'doctor']);
 
-        // Create Bookings
-        // 2 Paid bookings (Profit: 200)
+        // Create Bookings with status 'completed' (Monthly stats now only shows completed bookings)
+        // 2 Completed bookings (Profit: 200)
         Booking::factory()->count(2)->create([
+            'status' => 'completed',
             'payment_status' => 'paid',
             'price_at_booking' => 100.00,
             'appointment_date' => now(), // ensure current month
         ]);
-        // 1 Unpaid booking (Profit: 0)
+        // 1 Pending booking (should NOT appear in monthly stats since not completed)
         Booking::factory()->create([
+            'status' => 'pending',
             'payment_status' => 'unpaid',
             'price_at_booking' => 50.00,
             'appointment_date' => now(),
