@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\DoctorController;
-use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\SupportContentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Doctor\AvailabilityController;
 use App\Http\Controllers\Doctor\ChatController;
@@ -12,9 +12,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | Public & Dashboard Routes
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 
 Route::get('/', function () {
@@ -28,9 +28,9 @@ Route::get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | Profile Routes
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 
 Route::middleware('auth')->group(function () {
@@ -40,9 +40,9 @@ Route::middleware('auth')->group(function () {
 });
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | Doctor Routes
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'doctor'])
@@ -54,6 +54,8 @@ Route::middleware(['auth', 'doctor'])
         Route::get('/chat/{conversation}/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
         Route::post('/chat/{conversation}/send', [ChatController::class, 'sendMessage'])->name('chat.send');
         Route::post('/chat/{conversation}/mark-read', [ChatController::class, 'markAsRead'])->name('chat.mark-read');
+        Route::post('/chat/{conversation}/toggle-favorite', [ChatController::class, 'toggleFavorite'])->name('chat.toggle-favorite');
+        Route::post('/chat/{conversation}/toggle-archive', [ChatController::class, 'toggleArchive'])->name('chat.toggle-archive');
 
         Route::prefix('bookings')->name('bookings.')->controller(DoctorBookingController::class)->group(function () {
             Route::get('/', 'index')->name('index');
@@ -81,9 +83,9 @@ Route::middleware(['auth', 'doctor'])
     });
 
 /*
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 | Admin Routes
-|-------------------------------------------------------------------------- 
+|--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth', 'verified', 'admin'])
@@ -133,10 +135,11 @@ Route::middleware(['auth', 'verified', 'admin'])
         Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
     });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::get('/fix-system', function () {
     \Illuminate\Support\Facades\Artisan::call('optimize:clear');
     \Illuminate\Support\Facades\Artisan::call('package:discover');
+
     return 'System Fixed & Caches Cleared!';
 });
