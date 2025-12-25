@@ -19,10 +19,10 @@ class PatientProfileFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'birthdate' => fake()->date(),
-            'gender' => fake()->randomElement(['male', 'female']),
-            'latitude' => fake()->latitude(),
-            'longitude' => fake()->longitude(),
+            'birthdate' => $this->faker->date(),
+            'gender' => $this->faker->randomElement(['male', 'female']),
+            'latitude' => $this->faker->latitude(),
+            'longitude' => $this->faker->longitude(),
         ];
     }
 }
