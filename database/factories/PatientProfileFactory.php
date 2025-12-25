@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,12 +18,14 @@ class PatientProfileFactory extends Factory
      */
     public function definition(): array
     {
+        $faker = FakerFactory::create();
+
         return [
             'user_id' => User::factory(),
-            'birthdate' => $this->faker->date(),
-            'gender' => $this->faker->randomElement(['male', 'female']),
-            'latitude' => $this->faker->latitude(),
-            'longitude' => $this->faker->longitude(),
+            'birthdate' => $faker->date(),
+            'gender' => $faker->randomElement(['male', 'female']),
+            'latitude' => $faker->latitude(),
+            'longitude' => $faker->longitude(),
         ];
     }
 }

@@ -4,17 +4,20 @@ namespace Database\Factories;
 
 use App\Models\Conversation;
 use App\Models\User;
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MessageFactory extends Factory
 {
     public function definition(): array
     {
+        $faker = FakerFactory::create();
+
         return [
-            'conversation_id' => Conversation::factory(), 
-            'sender_id' => User::factory(), 
+            'conversation_id' => Conversation::factory(),
+            'sender_id' => User::factory(),
             'type' => 'text',
-            'body' => $this->faker->realText(rand(30, 100)),
+            'body' => $faker->realText(rand(30, 100)),
             'read_at' => now(),
             'created_at' => now(),
         ];
@@ -24,7 +27,7 @@ class MessageFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'type' => 'image',
-            'body' => 'https://placehold.co/600x400/png', 
+            'body' => 'https://placehold.co/600x400/png',
         ]);
     }
 

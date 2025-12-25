@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Speciality;
+use Faker\Factory as FakerFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class SpecialityFactory extends Factory
@@ -11,9 +12,11 @@ class SpecialityFactory extends Factory
 
     public function definition(): array
     {
+        $faker = FakerFactory::create();
+
         return [
-            'name' => $this->faker->word,
-            'image' => $this->faker->imageUrl(),
+            'name' => $faker->word,
+            'image' => $faker->imageUrl(),
         ];
     }
 }
