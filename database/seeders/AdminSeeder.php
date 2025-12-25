@@ -10,13 +10,15 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::create([
-            'name' => 'Super Admin',
-            'email' => 'admin@admin.com',
-            'password' => Hash::make('password'),
-            'user_type' => 'admin',
-            'phone' => '1234567890', // we changed mobile to phone
-            'email_verified_at' => now(),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@admin.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('password'),
+                'user_type' => 'admin',
+                'phone' => '1234567890',
+                'email_verified_at' => now(),
+            ]
+        );
     }
 }

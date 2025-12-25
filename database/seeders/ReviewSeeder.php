@@ -10,9 +10,10 @@ class ReviewSeeder extends Seeder
 {
     public function run(): void
     {
-        // جلب البوكينجز رقم 5 و 6 فقط لو حالتهم completed
-        $bookingsToReview = Booking::whereIn('id', [5, 6])
-            ->where('status', 'completed')
+        // Get completed bookings that don't already have reviews
+        $bookingsToReview = Booking::where('status', 'completed')
+            ->whereDoesntHave('reviews')
+            ->take(2)
             ->get();
 
         foreach ($bookingsToReview as $booking) {
@@ -21,7 +22,7 @@ class ReviewSeeder extends Seeder
                 'doctor_id' => $booking->doctor_id,
                 'patient_id' => $booking->patient_id,
                 'rating' => rand(4, 5),
-                'comment' => 'Review for booking #' . $booking->id,
+                'comment' => 'Review for booking #'.$booking->id,
             ]);
         }
     }

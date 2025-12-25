@@ -22,7 +22,7 @@ class StripePaymentGateway implements PaymentGatewayInterface
                 'currency' => $currency,
                 'payment_method' => $source,
                 'confirm' => true,
-                'return_url' => $options['return_url'] ?? 'http://localhost', // Required for some payment methods
+                'return_url' => $options['return_url'] ?? config('app.url'),
                 'automatic_payment_methods' => [
                     'enabled' => true,
                     'allow_redirects' => 'never', // For immediate confirmation

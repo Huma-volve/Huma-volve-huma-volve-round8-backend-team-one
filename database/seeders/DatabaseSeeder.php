@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
             SavedCardSeeder::class,
             NotificationSeeder::class,
             PatientChatSeeder::class,
+            ContactMessageSeeder::class,
         ]);
     }
 }

@@ -15,6 +15,9 @@ class DoctorAvailabilityTest extends TestCase
 
     public function test_can_get_doctor_availability()
     {
+        // Create a patient user for authentication
+        $patientUser = User::factory()->create(['user_type' => 'patient']);
+
         // Create Doctor and Schedule
         $doctorUser = User::factory()->create(['user_type' => 'doctor']);
         $specialty = Speciality::factory()->create();
@@ -33,8 +36,8 @@ class DoctorAvailabilityTest extends TestCase
             'avg_consultation_time' => 30,
         ]);
 
-        // Act
-        $response = $this->getJson("/api/doctors/{$doctorProfile->id}/availability");
+        // Act - authenticate as the patient user
+        $response = $this->actingAs($patientUser)->getJson("/api/doctors/{$doctorProfile->id}/availability");
 
         // Assert
         $response->assertStatus(200)
