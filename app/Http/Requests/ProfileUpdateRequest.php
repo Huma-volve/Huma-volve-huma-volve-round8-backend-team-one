@@ -25,7 +25,7 @@ class ProfileUpdateRequest extends FormRequest
         // Only require doctor-specific fields if the user is a doctor
         if (Auth::user() && Auth::user()->user_type === 'doctor') {
             $rules['clinic_address'] = ['required', 'string', 'max:255'];
-            $rules['experience_length'] = ['required', 'integer', 'min:0', 'max:20'];
+            $rules['experience_length'] = ['required', 'integer', 'min:0', 'max:50'];
             $rules['session_price'] = ['required', 'numeric', 'min:0'];
             $rules['license_number'] = [
                 'required',

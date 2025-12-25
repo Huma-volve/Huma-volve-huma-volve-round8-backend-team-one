@@ -78,7 +78,7 @@ class ProfileAccountController extends Controller
             'name'      => $user->name,
             'email'     => $user->email,
             'phone'     => $user->phone,
-            'image'     => $user->profile_photo_path,
+            'image'     => $user->profile_photo_path ? asset('storage/' . $user->profile_photo_path) : null,
             'address'   => $user->address,
             'birthdate' => [
                 'Day'   => $birthdate_factor ? $birthdate_factor->day   : null,
