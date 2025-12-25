@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'name'       => $this->name,
             'email'      => $this->email,
             'phone'      => $this->phone,
-            'image'      => $this->profile_photo_path,
+            'image'      => $this->profile_photo_path ? asset('storage/' . $this->profile_photo_path) : null,
             'address'    => $this->address,
             'extra_data' => new PatientProfileResource($this->whenLoaded('patientProfile')) ,
         ];

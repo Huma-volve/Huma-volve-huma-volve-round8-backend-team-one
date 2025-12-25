@@ -94,8 +94,6 @@ Route::middleware(['auth', 'verified', 'admin'])
     ->name('admin.')
     ->group(function () {
 
-        Route::get('/dashboard', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
-
         Route::prefix('policies')->name('policies.')->group(function () {
             Route::get('/', [SupportContentController::class, 'indexPolicies'])->name('index');
             Route::post('/', [SupportContentController::class, 'storePolicy'])->name('store');
