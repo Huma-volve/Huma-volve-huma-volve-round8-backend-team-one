@@ -21,13 +21,13 @@ class DoctorProfileFactory extends Factory
         return [
             'user_id' => User::factory(),
             'specialty_id' => Speciality::factory(),
-            'license_number' => fake()->numerify('LIC-#####'),
-            'bio' => fake()->paragraph(),
-            'session_price' => fake()->randomFloat(2, 50, 500),
-            'clinic_address' => fake()->address(),
-            'latitude' => fake()->latitude(),
-            'longitude' => fake()->longitude(),
-            'experience_length' => fake()->numberBetween(1, 30),
+            'license_number' => $this->faker->numerify('LIC-#####'),
+            'bio' => $this->faker->paragraph(),
+            'session_price' => $this->faker->randomFloat(2, 50, 500),
+            'clinic_address' => $this->faker->address(),
+            'latitude' => $this->faker->latitude(),
+            'longitude' => $this->faker->longitude(),
+            'experience_length' => $this->faker->numberBetween(1, 30),
         ];
     }
 }
