@@ -3,15 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\ContactMessage;
-use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
 class ContactMessageSeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create();
-
         $messages = [
             [
                 'name' => 'John Smith',
