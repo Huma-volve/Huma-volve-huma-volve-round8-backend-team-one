@@ -11,8 +11,20 @@ class NotificationSeeder extends Seeder
 {
     public function run(): void
     {
-        $notifications = [
-            1 => [ // Admin
+        // Get users dynamically by type
+        $admin = User::where('user_type', 'admin')->first();
+        $doctor = User::where('user_type', 'doctor')->first();
+        $patient = User::where('user_type', 'patient')->first();
+
+        if (!$admin && !$doctor && !$patient) {
+            return; // No users to create notifications for
+        }
+
+        $notificationsData = [];
+
+        // Admin notifications
+        if ($admin) {
+            $notificationsData[$admin->id] = [
                 [
                     'type' => 'Welcome Admin',
                     'message'  => 'Your admin account has been successfully created.',
@@ -35,11 +47,15 @@ class NotificationSeeder extends Seeder
                 ],
                 [
                     'type' => 'Reminder',
-                    'message'  => 'Don’t forget to review pending tasks.',
+                    'message'  => 'Dont forget to review pending tasks.',
                     'read'  => false,
                 ],
-            ],
-            2 => [ // Doctor
+            ];
+        }
+
+        // Doctor notifications
+        if ($doctor) {
+            $notificationsData[$doctor->id] = [
                 [
                     'type' => 'New Appointment',
                     'message'  => 'You have a new appointment scheduled.',
@@ -65,8 +81,12 @@ class NotificationSeeder extends Seeder
                     'message'  => 'Your payment for the last appointment has been confirmed.',
                     'read'  => false,
                 ],
-            ],
-            7 => [ // Patient
+            ];
+        }
+
+        // Patient notifications
+        if ($patient) {
+            $notificationsData[$patient->id] = [
                 [
                     'type' => 'Appointment Confirmed',
                     'message'  => 'Your appointment with Dr. Ahmed is confirmed.',
@@ -92,10 +112,10 @@ class NotificationSeeder extends Seeder
                     'message'  => 'Please provide feedback for your last visit.',
                     'read'  => false,
                 ],
-            ],
-        ];
+            ];
+        }
 
-        foreach ($notifications as $userId => $userNotifications) {
+        foreach ($notificationsData as $userId => $userNotifications) {
             foreach ($userNotifications as $notif) {
                 Notification::create([
                     'id' => Str::uuid(),

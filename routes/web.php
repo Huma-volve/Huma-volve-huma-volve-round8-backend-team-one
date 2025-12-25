@@ -148,4 +148,4 @@ Route::get('/fix-system', function () {
     \Illuminate\Support\Facades\Artisan::call('package:discover');
 
     return 'System Fixed & Caches Cleared!';
-});
+})->middleware(['auth', 'admin']);
