@@ -4,14 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\SearchHistory;
 use App\Models\User;
-use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 
 class SearchHistorySeeder extends Seeder
 {
     public function run(): void
     {
-        $faker = Faker::create();
         $users = User::where('user_type', 'patient')->get();
 
         $keywords = [
@@ -25,19 +23,26 @@ class SearchHistorySeeder extends Seeder
             'Psychiatrist',
         ];
 
-        foreach ($users as $user) {
-            // Each patient has 1-5 search history entries
-            $searchCount = $faker->numberBetween(1, 5);
+        $filterOptions = [
+            ['location' => 'Cairo', 'min_rating' => 4, 'max_price' => 200],
+            ['location' => 'Alexandria', 'min_rating' => 3, 'max_price' => 150],
+            ['location' => null, 'min_rating' => 5, 'max_price' => null],
+            ['location' => 'Giza', 'min_rating' => null, 'max_price' => 250],
+            ['location' => null, 'min_rating' => null, 'max_price' => 300],
+        ];
+
+        foreach ($users as $userIndex => $user) {
+            // Each patient has 1-3 search history entries based on user index
+            $searchCount = ($userIndex % 3) + 1;
 
             foreach (range(1, $searchCount) as $index) {
+                $keywordIndex = ($userIndex + $index) % count($keywords);
+                $filterIndex = ($userIndex + $index) % count($filterOptions);
+
                 SearchHistory::create([
                     'user_id' => $user->id,
-                    'keyword' => $faker->randomElement($keywords),
-                    'filters' => json_encode([
-                        'location' => $faker->optional()->city,
-                        'min_rating' => $faker->optional()->numberBetween(3, 5),
-                        'max_price' => $faker->optional()->numberBetween(100, 300),
-                    ]),
+                    'keyword' => $keywords[$keywordIndex],
+                    'filters' => json_encode($filterOptions[$filterIndex]),
                 ]);
             }
         }
