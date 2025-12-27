@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services;
 
 use App\Models\DoctorProfile;
@@ -28,25 +29,24 @@ class DoctorService
     {
 
 
-// if user authenticated save search
+        // if user authenticated save search
         if (auth('sanctum')->check()) {
-    $user = auth('sanctum')->user();
+            $user = auth('sanctum')->user();
 
-    if (
-        !empty($filters['search'] ?? null) ||
-        !empty($filters['specialty_id'] ?? null) ||
-        !empty($filters['location_query'] ?? null)
-    ) {
-        SearchHistory::create([
-            'user_id' => $user->id,
-            'keyword' => $filters['search'] ?? null,
-            'filters' => $filters,
-        ]);
-    }
-}
+            if (
+                !empty($filters['search'] ?? null) ||
+                !empty($filters['specialty_id'] ?? null) ||
+                !empty($filters['location_query'] ?? null)
+            ) {
+                SearchHistory::create([
+                    'user_id' => $user->id,
+                    'keyword' => $filters['search'] ?? null,
+                    'filters' => $filters,
+                ]);
+            }
+        }
 
-return $this->doctorRepository->getFiltered($filters);
-
+        return $this->doctorRepository->getFiltered($filters);
     }
 
     /**

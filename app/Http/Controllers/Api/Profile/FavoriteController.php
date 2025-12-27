@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Api\Profile;
 
-use App\Http\Controllers\Controller;
-use App\Models\FavoriteDoctor;
+use App\Models\Favorite;
 use App\Traits\ApiResponse;
+use App\Models\FavoriteDoctor;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
@@ -12,7 +13,7 @@ class FavoriteController extends Controller
     use ApiResponse;
     public function index(){
 
-        $favorits = FavoriteDoctor::with('doctorProfile.user')
+        $favorits =    Favorite::with('doctorProfile.user')
                                     ->where('user_id', Auth::id())
                                     ->get();
 
