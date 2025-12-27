@@ -21,7 +21,8 @@ export function initDoctorChat(config) {
         searchInput: document.getElementById('searchConversations'),
         voiceBtn: document.getElementById('voiceBtn'),
         voiceIcon: document.getElementById('voiceIcon'),
-        recordingIndicator: document.getElementById('recordingIndicator')
+        recordingIndicator: document.getElementById('recordingIndicator'),
+        conversationsCount: document.getElementById('conversationsCount')
     };
 
     let currentChannel = null;
@@ -33,6 +34,14 @@ export function initDoctorChat(config) {
         setupAttachment();
         setupSearch();
         setupVoiceRecording();
+        updateConversationsCount();
+    }
+
+    function updateConversationsCount() {
+        const count = document.querySelectorAll('.conversation-item').length;
+        if (elements.conversationsCount) {
+            elements.conversationsCount.textContent = count;
+        }
     }
 
     function setupFilterTabs() {
