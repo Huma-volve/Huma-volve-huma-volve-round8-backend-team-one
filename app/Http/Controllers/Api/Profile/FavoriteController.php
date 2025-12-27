@@ -13,8 +13,7 @@ class FavoriteController extends Controller
     use ApiResponse;
     public function index(){
 
-        $favorits =    Favorite::with('doctorProfile.user')
-                                    ->where('user_id', Auth::id())
+        $favorits =    Favorite::where('patient_id', Auth::id())
                                     ->get();
 
         if($favorits->count() > 0){
