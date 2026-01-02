@@ -2,11 +2,11 @@ name: Deploy to Server
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
 
+# ← Correct top-level "jobs"
 jobs:
-  deploy:
+  deploy:                     # Job ID (can be any name)
     runs-on: ubuntu-latest
 
     steps:
@@ -18,25 +18,34 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Add server to known_hosts
+      - name: Configure SSH for GoDaddy (legacy RSA support)
         run: |
           mkdir -p ~/.ssh
           ssh-keyscan -H 97.74.209.172 >> ~/.ssh/known_hosts
+          cat << EOF >> ~/.ssh/config
+          Host 97.74.209.172
+            HostKeyAlgorithms +ssh-rsa
+            PubkeyAcceptedKeyTypes +ssh-rsa
+          EOF
+          chmod 600 ~/.ssh/config ~/.ssh/known_hosts
 
       - name: Test SSH connection
         run: |
-          ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 'echo "SSH connection successful!" && whoami && pwd'
+          ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 '
+            echo "SSH successful! User: $(whoami)"
+          '
 
-      - name: Deploy via git pull
+      - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 << 'EOF'
+            set -e
             cd /home/grxngcrukci1/public_html/round8-backend-team-one.huma-volve.com
             git pull origin main
-            echo "Deployment completed."
-            # Extend here: add Laravel commands
-            # composer install --no-dev --optimize-autoloader
+            # Extend with Laravel commands when needed
+            # composer install --no-dev --optimize-autoloader --no-interaction
             # php artisan migrate --force
             # php artisan config:cache
             # php artisan route:cache
             # php artisan view:cache
+            echo "Deployment completed successfully!"
           EOF
