@@ -1,4 +1,4 @@
-name: Deploy on Push
+name: Deploy to Server
 
 on:
   push:
@@ -10,18 +10,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Set up SSH
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Test SSH Connection
-      run: |
-        ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 'echo "SSH connection successful!"'
-        
-    - name: Deploy to Server
-      run: |
-        ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 'cd /home/grxngcrukci1/public_html/round8-backend-team-one.huma-volve.com && git pull origin main && echo "Deployment completed successfully." || echo "Deployment failed."'
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 97.74.209.172 >> ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 'echo "SSH connection successful!" && whoami && pwd'
+
+      - name: Deploy via git pull
+        run: |
+          ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 << 'EOF'
+            cd /home/grxngcrukci1/public_html/round8-backend-team-one.huma-volve.com
+            git pull origin main
+            echo "Deployment completed."
+            # Extend here: add Laravel commands
+            # composer install --no-dev --optimize-autoloader
+            # php artisan migrate --force
+            # php artisan config:cache
+            # php artisan route:cache
+            # php artisan view:cache
+          EOF
