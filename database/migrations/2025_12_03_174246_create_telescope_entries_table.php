@@ -68,3 +68,4 @@ return new class extends Migration
         $schema->dropIfExists('telescope_monitoring');
     }
 };
+// review

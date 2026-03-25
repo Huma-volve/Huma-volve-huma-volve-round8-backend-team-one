@@ -1,8 +1,6 @@
 *.log
 .DS_Store
-.env
 .env.backup
-.env.production
 .phpactor.json
 .phpunit.result.cache
 /.fleet
@@ -30,3 +28,5 @@ temp_main_routes.php
 API_ENDPOINTS.md
 API_URLS.md
 POSTMAN_GUIDE.md
+// review
+config.bat

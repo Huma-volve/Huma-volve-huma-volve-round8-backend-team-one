@@ -16,3 +16,4 @@ class SpecialtyResource extends JsonResource
         ];
     }
 }
+// review

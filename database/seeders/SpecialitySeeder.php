@@ -27,3 +27,4 @@ class SpecialitySeeder extends Seeder
         }
     }
 }
+// review

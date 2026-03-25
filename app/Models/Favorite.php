@@ -24,3 +24,4 @@ class Favorite extends Model
         return $this->belongsTo(DoctorProfile::class, 'doctor_id');
     }
 }
+// review

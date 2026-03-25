@@ -139,3 +139,4 @@ class User extends Authenticatable
         return $this->hasManyThrough(Booking::class, PatientProfile::class, 'user_id', 'patient_id');
     }
 }
+// review

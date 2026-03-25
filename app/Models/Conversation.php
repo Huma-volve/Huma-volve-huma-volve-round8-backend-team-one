@@ -30,3 +30,4 @@ class Conversation extends Model
         return $this->hasOne(Message::class)->latestOfMany();
     }
 }
+// review

@@ -48,3 +48,4 @@ class SearchHistorySeeder extends Seeder
         }
     }
 }
+// review

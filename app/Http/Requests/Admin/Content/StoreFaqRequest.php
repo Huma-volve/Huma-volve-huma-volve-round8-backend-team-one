@@ -36,4 +36,4 @@ class StoreFaqRequest extends FormRequest
             'answer.ar' => 'Arabic Answer',
         ];
     }
-}
+}// review

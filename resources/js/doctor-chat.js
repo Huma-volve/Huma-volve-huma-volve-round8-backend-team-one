@@ -484,4 +484,4 @@ export function initDoctorChat(config) {
     }
 
     init();
-}
+}// review

@@ -26,4 +26,4 @@ class ReorderFaqsRequest extends FormRequest
             'order.*.exists' => 'One of the selected FAQs does not exist.',
         ];
     }
-}
+}// review

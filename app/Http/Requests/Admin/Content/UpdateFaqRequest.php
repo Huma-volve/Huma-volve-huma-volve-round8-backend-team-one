@@ -36,4 +36,4 @@ class UpdateFaqRequest extends FormRequest
             'answer.ar' => 'Arabic Answer',
         ];
     }
-}
+}// review

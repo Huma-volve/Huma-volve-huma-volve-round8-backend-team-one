@@ -24,4 +24,4 @@ interface DoctorChatRepositoryInterface
     public function toggleParticipantFavorite(ChatParticipant $participant): void;
 
     public function toggleParticipantArchive(ChatParticipant $participant): void;
-}
+}// review

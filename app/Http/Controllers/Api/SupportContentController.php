@@ -31,4 +31,4 @@ class SupportContentController extends Controller
 
         return $this->successResponse($faqs, 'FAQs retrieved successfully');
     }
-}
+}// review

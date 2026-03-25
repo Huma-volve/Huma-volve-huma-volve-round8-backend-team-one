@@ -26,3 +26,4 @@ interface SupportContentRepositoryInterface
     public function deleteFaq(Faq $faq): bool;
     public function updateFaqOrder(array $order): void;
 }
+// review

@@ -79,3 +79,4 @@
 -   `GET` http://127.0.0.1:8000/api/notifications
 -   `GET` http://127.0.0.1:8000/api/notifications/unread
 -   `POST` http://127.0.0.1:8000/api/notifications/{id}/read
+// review

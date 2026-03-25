@@ -45,3 +45,4 @@ class RegisterController extends Controller
         return $this->success($data,'Account created. Please verify using the OTP which sent to your phone.',201);
     }
 }
+// review

@@ -160,3 +160,4 @@ class DoctorPatientController extends Controller
         return back()->with('error', 'Deleting patients is not allowed for data integrity. Please block instead.');
     }
 }
+// review

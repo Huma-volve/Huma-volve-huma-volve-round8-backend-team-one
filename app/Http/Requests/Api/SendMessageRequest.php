@@ -35,4 +35,4 @@ class SendMessageRequest extends FormRequest
             'attachment.uploaded' => 'The file failed to upload. The file size might exceed the server configuration.', 
         ];
     }
-}
+}// review

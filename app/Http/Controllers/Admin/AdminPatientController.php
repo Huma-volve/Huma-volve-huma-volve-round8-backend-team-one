@@ -52,3 +52,4 @@ class AdminPatientController extends Controller
         return redirect()->back()->with('success', "Patient has been {$status}.");
     }
 }
+// review

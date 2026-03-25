@@ -98,3 +98,4 @@ class SameDayBookingTest extends TestCase
             ->assertJson(['message' => 'You cannot book an appointment in the past.']);
     }
 }
+// review

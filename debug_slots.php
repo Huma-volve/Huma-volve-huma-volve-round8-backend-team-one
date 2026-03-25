@@ -42,3 +42,4 @@ $groupedSlots = $slots->filter(function ($slot) {
 echo "Grouped Slots Count (Days): " . $groupedSlots->count() . "\n";
 echo "JSON Output:\n";
 echo json_encode($groupedSlots, JSON_PRETTY_PRINT);
+// review

@@ -55,3 +55,4 @@ class DoctorSettingController extends Controller
         return redirect()->route('doctor.settings.edit')->with('success', 'Settings updated successfully.');
     }
 }
+// review

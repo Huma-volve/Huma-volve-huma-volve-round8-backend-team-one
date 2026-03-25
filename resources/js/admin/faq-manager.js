@@ -100,4 +100,4 @@ export default function faqManager(config) {
             .catch(error => console.error(error));
         }
     }
-}
+}// review

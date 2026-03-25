@@ -16,3 +16,4 @@ class Speciality extends Model
         return $this->hasMany(DoctorProfile::class, 'specialty_id');
     }
 }
+// review

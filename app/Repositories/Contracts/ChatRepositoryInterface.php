@@ -14,4 +14,4 @@ interface ChatRepositoryInterface
     public function createMessage(array $data): Message; 
     
     public function updateConversationTimestamp(int $conversationId): void;
-}
+}// review

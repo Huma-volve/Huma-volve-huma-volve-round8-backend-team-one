@@ -36,4 +36,4 @@ return new class extends Migration
         Schema::dropIfExists('faqs');
         Schema::dropIfExists('policies');
     }
-};
+};// review

@@ -31,3 +31,4 @@ return new class extends Migration
         Schema::dropIfExists('verification_codes');
     }
 };
+// review

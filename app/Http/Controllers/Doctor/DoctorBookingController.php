@@ -172,3 +172,4 @@ class DoctorBookingController extends Controller
         return redirect()->back()->with('success', 'Booking marked as completed.');
     }
 }
+// review

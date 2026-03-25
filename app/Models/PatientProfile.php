@@ -43,3 +43,4 @@ class PatientProfile extends Model
         return $this->hasMany(SearchHistory::class, 'patient_id');
     }
 }
+// review

@@ -118,3 +118,4 @@ class DoctorController extends Controller
         return redirect()->route('admin.doctors.index')->with('success', "Doctor {$status} successfully.");
     }
 }
+// review

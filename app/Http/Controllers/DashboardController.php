@@ -54,3 +54,4 @@ class DashboardController extends Controller
         return view('doctor.dashboard', compact('bookingsCount', 'ratingAvg'));
     }
 }
+// review

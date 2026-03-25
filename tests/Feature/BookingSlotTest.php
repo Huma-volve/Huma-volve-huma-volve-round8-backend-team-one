@@ -104,3 +104,4 @@ class BookingSlotTest extends TestCase
         $this->assertEquals('10:30', $booking->appointment_time->format('H:i'));
     }
 }
+// review

@@ -124,4 +124,4 @@ class SupportContentController extends Controller
 
         return view('admin.content.policies.show', compact('policy'));
     }
-}
+}// review

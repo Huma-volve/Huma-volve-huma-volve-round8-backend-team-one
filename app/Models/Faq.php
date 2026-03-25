@@ -34,4 +34,4 @@ class Faq extends Model
         $query->orderBy('sort_order', 'asc')
               ->orderBy('id', 'desc');
     }
-}
+}// review

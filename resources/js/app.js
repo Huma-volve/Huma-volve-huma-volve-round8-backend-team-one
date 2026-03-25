@@ -9,4 +9,4 @@ Alpine.data('faqManager', faqManager);
 
 window.Alpine = Alpine;
 
-Alpine.start();
+Alpine.start();// review
