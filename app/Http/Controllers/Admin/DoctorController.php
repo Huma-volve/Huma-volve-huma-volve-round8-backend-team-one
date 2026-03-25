@@ -1,0 +1,120 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+
+class DoctorController extends Controller
+{
+    public function index()
+    {
+        $users = \App\Models\User::whereHas('doctorProfile')->with(['doctorProfile.speciality', 'doctorProfile.doctorSchedules'])->get();
+        return view('admin.doctors.index', compact('users'));
+    }
+
+    public function create()
+    {
+        $specialties = \App\Models\Speciality::all();
+        return view('admin.doctors.create', compact('specialties'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|min:8|max:255|regex:/^[A-Za-z\s]+$/',
+            'email' => 'required|email:rfc,dns|regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/|not_regex:/\.com\.com$/|unique:users,email',
+            'password' => 'required|string|min:8|max:255',
+            'specialty_id' => 'required|exists:specialities,id',
+            'license_number' => [
+                'required',
+                'string',
+                'regex:/^[A-Z0-9\-\/]+$/',
+                'min:6',
+                'max:20',
+                'unique:doctor_profiles,license_number',
+            ],
+            'clinic_address' => ['required', 'string','max:255'],
+            'session_price' => ['required', 'numeric', 'min:0'],
+            'experience_length' => ['required', 'integer', 'min:0','max:20'],
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'password' => \Illuminate\Support\Facades\Hash::make($validated['password']),
+            'user_type' => 'doctor',
+            'status' => 1,
+        ]);
+
+        $user->doctorProfile()->create([
+            'specialty_id' => $validated['specialty_id'],
+            'license_number' => $validated['license_number'],
+            'clinic_address' => $validated['clinic_address'],
+            'session_price' => $validated['session_price'],
+            'experience_length' => $validated['experience_length']
+        ]);
+
+        // Send email with credentials
+        \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\NewDoctorAccount($user, $validated['password']));
+
+        return redirect()->route('admin.doctors.index')->with('success', 'Doctor created successfully.');
+    }
+
+    public function edit($id)
+    {
+        $user = \App\Models\User::with('doctorProfile')->findOrFail($id);
+        $specialties = \App\Models\Speciality::all();
+        return view('admin.doctors.edit', compact('user', 'specialties'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'min:3', 'max:255', 'regex:/^[A-Za-z\s]+$/'],
+            'email' => 'required|email:rfc,dns|regex:/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/|not_regex:/\.com\.com$/|unique:users,email,' . $user->id,
+            'specialty_id' => 'required|exists:specialities,id',
+            'license_number' =>'required','string','regex:/^[A-Z0-9\-\/]+$/','min:6','max:20','unique:doctor_profiles,license_number,'. $user->doctorProfile->id,
+            'clinic_address' => ['required', 'string','max:255'],
+            'session_price' => ['required', 'numeric', 'min:0'],
+            'experience_length' => ['required', 'integer', 'min:0','max:20'],
+        ]);
+
+        $user->update([
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+        ]);
+
+        // if ($request->filled('password')) {
+        //     $user->update(['password' => \Illuminate\Support\Facades\Hash::make($validated['password'])]);
+        // }
+
+        $user->doctorProfile()->update([
+            'specialty_id' => $validated['specialty_id'],
+            'license_number' => $validated['license_number'],
+            'clinic_address' => $validated['clinic_address'],
+            'session_price' => $validated['session_price'],
+            'experience_length' => $validated['experience_length'],
+        ]);
+
+        return redirect()->route('admin.doctors.index')->with('success', 'Doctor updated successfully.');
+    }
+
+    public function toggleBlock($id)
+    {
+        $user = \App\Models\User::findOrFail($id);
+
+        // Prevent blocking self if admin (though this controller is for doctors)
+        if ($user->id === auth()->id()) {
+            return redirect()->back()->with('error', 'You cannot block yourself.');
+        }
+
+        $user->is_blocked = ! $user->is_blocked;
+        $user->save();
+
+        $status = $user->is_blocked ? 'blocked' : 'unblocked';
+        return redirect()->route('admin.doctors.index')->with('success', "Doctor {$status} successfully.");
+    }
+}

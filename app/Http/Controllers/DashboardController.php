@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Booking;
+use App\Models\Review;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class DashboardController extends Controller
+{
+    public function index(Request $request): View|\Illuminate\Http\RedirectResponse
+    {
+        if ($request->user()->user_type === 'admin') {
+            // 1. Total Patients & Doctors
+            $totalPatients = User::where('user_type', 'patient')->count();
+            $totalDoctors = User::where('user_type', 'doctor')->count();
+
+            // 2. Monthly Stats (Bookings & Profit) - Only completed bookings
+            // Group by year and month
+            $driver = \Illuminate\Support\Facades\DB::connection()->getDriverName();
+
+            if ($driver === 'sqlite') {
+                $year = "strftime('%Y', appointment_date)";
+                $month = "strftime('%m', appointment_date)";
+            } else {
+                $year = "YEAR(appointment_date)";
+                $month = "MONTH(appointment_date)";
+            }
+
+            $monthlyStats = Booking::where('status', 'completed')
+                ->selectRaw("
+                    $year as year,
+                    $month as month,
+                    COUNT(*) as total_bookings,
+                    SUM(price_at_booking) as net_profit
+                ")
+                ->groupBy('year', 'month')
+                ->orderBy('year', 'desc')
+                ->orderBy('month', 'desc')
+                ->get();
+
+            return view('admin.dashboard', compact('totalPatients', 'totalDoctors', 'monthlyStats'));
+        }
+
+        $doctorProfile = $request->user()->doctorProfile;
+        $bookingsCount = $doctorProfile ? $doctorProfile->bookings()->count() : 0;
+        $ratingAvg = $doctorProfile
+            ? Review::where('doctor_id', $doctorProfile->id)
+                    ->avg('rating')
+            : null;
+
+        return view('doctor.dashboard', compact('bookingsCount', 'ratingAvg'));
+    }
+}

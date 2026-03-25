@@ -1,0 +1,49 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Debug loaded keys
+        run: ssh-add -l  # Will show your RSA fingerprint
+
+      - name: Configure SSH for GoDaddy
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H 97.74.209.172 >> ~/.ssh/known_hosts
+          cat << EOF >> ~/.ssh/config
+          Host 97.74.209.172
+            HostKeyAlgorithms +ssh-rsa
+            PubkeyAcceptedKeyTypes +ssh-rsa
+            PubkeyAcceptedAlgorithms +ssh-rsa
+          EOF
+          chmod 600 ~/.ssh/config ~/.ssh/known_hosts
+
+      - name: Test SSH connection
+        run: |
+          ssh -vvv -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 '
+            echo "GitHub Actions SUCCESS! $(whoami)"
+          '
+
+      - name: Deploy
+        run: |
+          ssh -o StrictHostKeyChecking=no grxngcrukci1@97.74.209.172 << 'EOF'
+            set -e
+            cd /home/grxngcrukci1/public_html/round8-backend-team-one.huma-volve.com
+            git pull origin main
+            echo "Deployment successful!"
+            # Add more commands here anytime
+          EOF
